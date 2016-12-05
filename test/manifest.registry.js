@@ -1,4 +1,3 @@
-var log = require('./util/silentlog')
 var test = require('tap').test
 var nock = require('nock')
 
@@ -14,7 +13,6 @@ var SCOPEDPKG = {
 }
 
 var OPTS = {
-  log: log,
   registry: 'https://mock.reg'
 }
 
@@ -64,8 +62,7 @@ test('fetches version or tag from registry', function (t) {
       '//mock.reg/': {
         token: TOKEN
       }
-    },
-    log: log
+    }
   }
   server.get(
     '/foo/1.2.3'
@@ -83,8 +80,7 @@ test('uses scope from spec for registry lookup', function (t) {
   var opts = {
     '@myscope:registry': OPTS.registry,
     // package scope takes priority
-    scope: '@otherscope',
-    log: log
+    scope: '@otherscope'
   }
   server.get('/@myscope%2ffoo/1.2.3').once().reply(200, PKG)
   manifest('@myscope/foo@1.2.3', opts, function (err, pkg) {
@@ -103,8 +99,7 @@ test('uses scope opt for registry lookup', function (t) {
     '@myscope:registry': OPTS.registry,
     scope: '@myscope',
     // scope option takes priority
-    registry: 'nope',
-    log: log
+    registry: 'nope'
   }, function (err, pkg) {
     if (err) { throw err }
     t.deepEqual(pkg, PKG, 'used scope to pick registry')
@@ -112,8 +107,7 @@ test('uses scope opt for registry lookup', function (t) {
 
   manifest('foo@1.2.3', {
     '@myscope:registry': OPTS.registry,
-    scope: 'myscope', // @ auto-inserted
-    log: log
+    scope: 'myscope' // @ auto-inserted
   }, function (err, pkg) {
     if (err) { throw err }
     t.deepEqual(pkg, PKG, 'scope @ was auto-inserted')
@@ -140,8 +134,7 @@ test('supports scoped auth', function (t) {
       '//mock.reg/': {
         token: TOKEN
       }
-    },
-    log: log
+    }
   }
   server.get(
     '/foo/1.2.3'
