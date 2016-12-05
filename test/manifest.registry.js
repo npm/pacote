@@ -148,6 +148,26 @@ test('supports scoped auth', function (t) {
   })
 })
 
+test('package requests are case-sensitive', function (t) {
+  t.plan(2)
+
+  var CASEDPKG = {
+    name: 'Foo',
+    version: '1.2.3'
+  }
+  server.get('/Foo/1.2.3').once().reply(200, CASEDPKG)
+  manifest('Foo@1.2.3', OPTS, function (err, pkg) {
+    if (err) { throw err }
+    t.deepEqual(pkg, CASEDPKG, 'got Cased package')
+  })
+
+  server.get('/foo/1.2.3').once().reply(200, PKG)
+  manifest('foo@latest', OPTS, function (err, pkg) {
+    if (err) { throw err }
+    t.deepEqual(pkg, PKG, 'got lowercased package')
+  })
+})
+
 test('supports fetching from an optional cache')
 test('uses proxy settings')
 test('recovers from request errors')
