@@ -120,6 +120,17 @@ test('uses scope opt for registry lookup', function (t) {
   })
 })
 
+test('defaults to registry.npmjs.org if no option given', function (t) {
+  var server = nock('https://registry.npmjs.org')
+
+  server.get('/foo/1.2.3').once().reply(200, PKG)
+  manifest('foo@1.2.3', { registry: undefined }, function (err, pkg) {
+    if (err) { throw err }
+    t.deepEqual(pkg, PKG, 'used npm registry')
+    t.end()
+  })
+})
+
 test('supports scoped auth', function (t) {
   var TOKEN = 'deadbeef'
   var opts = {
