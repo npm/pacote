@@ -27,6 +27,7 @@
     "request": "^2.79.0"
   },
   "devDependencies": {
+    "mkdirp": "^0.5.1",
     "nyc": "^10.0.0",
     "standard": "^8.6.0",
     "tap": "^8.0.1"
