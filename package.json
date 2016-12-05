@@ -28,7 +28,8 @@
     "mississippi": "^1.2.0",
     "npm-registry-client": "^7.4.1",
     "realize-package-specifier": "^3.0.3",
-    "request": "^2.79.0"
+    "request": "^2.79.0",
+    "tar-fs": "^1.14.0"
   },
   "devDependencies": {
     "mkdirp": "^0.5.1",
