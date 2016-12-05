@@ -22,7 +22,8 @@
   "author": "Kat Marchán <kzm@sykosomatic.org>",
   "license": "CC0-1.0",
   "dependencies": {
-    "cacache": "^3.0.1"
+    "cacache": "^3.0.1",
+    "realize-package-specifier": "^3.0.3"
   },
   "devDependencies": {
     "nyc": "^10.0.0",
