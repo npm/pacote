@@ -162,7 +162,23 @@ test('package requests are case-sensitive', function (t) {
   })
 
   server.get('/foo/1.2.3').once().reply(200, PKG)
-  manifest('foo@latest', OPTS, function (err, pkg) {
+  manifest('foo@1.2.3', OPTS, function (err, pkg) {
+    if (err) { throw err }
+    t.deepEqual(pkg, PKG, 'got lowercased package')
+  })
+})
+
+test('handles server-side case-normalization', function (t) {
+  t.plan(2)
+
+  server.get('/Cased/1.2.3').once().reply(200, PKG)
+  manifest('Cased@1.2.3', OPTS, function (err, pkg) {
+    if (err) { throw err }
+    t.deepEqual(pkg, PKG, 'got Cased package')
+  })
+
+  server.get('/cased/latest').once().reply(200, PKG)
+  manifest('cased@latest', OPTS, function (err, pkg) {
     if (err) { throw err }
     t.deepEqual(pkg, PKG, 'got lowercased package')
   })
