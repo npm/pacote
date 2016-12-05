@@ -23,6 +23,7 @@
   "license": "CC0-1.0",
   "dependencies": {
     "cacache": "^3.0.1",
+    "dezalgo": "^1.0.3",
     "npm-registry-client": "^7.4.1",
     "realize-package-specifier": "^3.0.3",
     "request": "^2.79.0"
