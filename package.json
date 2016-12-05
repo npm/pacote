@@ -23,7 +23,8 @@
   "license": "CC0-1.0",
   "dependencies": {
     "cacache": "^3.0.1",
-    "realize-package-specifier": "^3.0.3"
+    "realize-package-specifier": "^3.0.3",
+    "request": "^2.79.0"
   },
   "devDependencies": {
     "nyc": "^10.0.0",
