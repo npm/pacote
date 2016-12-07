@@ -222,6 +222,37 @@ test('inflights concurrent requests', function (t) {
   })
 })
 
+test('recovers from request errors', function (t) {
+  t.plan(4)
+  var srv = tnock(t, OPTS.registry)
+  var opts = {
+    log: OPTS.log,
+    registry: OPTS.registry,
+    retry: {
+      retries: 2,
+      minTimeout: 1,
+      maxTimeout: 10
+    }
+  }
+
+  srv.get('/foo/1.2.3').reply(500, function (uri, body) {
+    srv.get('/foo/1.2.3').reply(500, function (uri, body) {
+      srv.get('/foo/1.2.3').reply(200, function (uri, body) {
+        t.ok(true, 'final success')
+        return PKG
+      })
+      t.ok(true, 'second errored request')
+      return body
+    })
+    t.ok(true, 'first errored request')
+    return body
+  })
+
+  manifest('foo@1.2.3', opts, function (err, pkg) {
+    if (err) { throw err }
+    t.deepEqual(pkg, PKG, 'got a manifest')
+  })
+})
+
 test('supports fetching from an optional cache')
 test('uses proxy settings')
-test('recovers from request errors')
