@@ -1,3 +1,4 @@
+var npmlog = require('npmlog')
 var test = require('tap').test
 var tnock = require('./util/tnock')
 
@@ -12,8 +13,10 @@ var SCOPEDPKG = {
   version: '1.2.3'
 }
 
+npmlog.level = process.env.LOGLEVEL || 'silent'
 var OPTS = {
-  registry: 'https://mock.reg'
+  registry: 'https://mock.reg',
+  log: npmlog
 }
 
 test('fetches version or tag from registry', function (t) {
@@ -53,6 +56,7 @@ test('fetches version or tag from scoped registry', function (t) {
 test('fetches version or tag from registry', function (t) {
   var TOKEN = 'deadbeef'
   var opts = {
+    log: OPTS.log,
     registry: OPTS.registry,
     auth: {
       '//mock.reg/': {
