@@ -1,3 +1,6 @@
+var cacache = require('cacache')
+var CACHE = require('./util/test-dir')(__filename)
+var cacheKey = require('../lib/util/cache-key')
 var npmlog = require('npmlog')
 var test = require('tap').test
 var tnock = require('./util/tnock')
@@ -254,5 +257,41 @@ test('recovers from request errors', function (t) {
   })
 })
 
-test('supports fetching from an optional cache')
+test('supports fetching from an optional cache', function (t) {
+  var opts = {
+    registry: OPTS.registry,
+    log: OPTS.log,
+    retry: OPTS.retry,
+    cache: CACHE
+  }
+  var key = cacheKey('registry', OPTS.registry + '/foo/1.2.3')
+  // ugh this API has gotta change
+  cacache.put.data(CACHE, key, 'FILENAME', 'test', {
+    metadata: PKG
+  }, function (err) {
+    if (err) { throw err }
+    manifest('foo@1.2.3', opts, function (err, pkg) {
+      if (err) { throw err }
+      t.deepEqual(pkg, PKG)
+      t.end()
+    })
+  })
+})
+
+test('falls back to registry if cache entry missing', function (t) {
+  var opts = {
+    registry: OPTS.registry,
+    log: OPTS.log,
+    retry: OPTS.retry,
+    cache: CACHE
+  }
+  var srv = tnock(t, opts.registry)
+  srv.get('/foo/1.2.3').reply(200, PKG)
+  manifest('foo@1.2.3', opts, function (err, pkg) {
+    if (err) { throw err }
+    t.deepEqual(pkg, PKG)
+    t.end()
+  })
+})
+
 test('uses proxy settings')
