@@ -19,7 +19,13 @@ var SCOPEDPKG = {
 npmlog.level = process.env.LOGLEVEL || 'silent'
 var OPTS = {
   registry: 'https://mock.reg',
-  log: npmlog
+  log: npmlog,
+  retry: {
+    retries: 1,
+    factor: 1,
+    minTimeout: 1,
+    maxTimeout: 10
+  }
 }
 
 test('fetches version or tag from registry', function (t) {
