@@ -84,6 +84,17 @@ test('fetches version or tag from registry', function (t) {
   })
 })
 
+test('treats options as optional', function (t) {
+  var srv = tnock(t, 'https://registry.npmjs.org')
+
+  srv.get('/foo/1.2.3').reply(200, PKG)
+  manifest('foo@1.2.3', function (err, pkg) {
+    if (err) { throw err }
+    t.deepEqual(pkg, PKG, 'used default options')
+    t.end()
+  })
+})
+
 test('uses scope from spec for registry lookup', function (t) {
   var opts = {
     '@myscope:registry': OPTS.registry,
