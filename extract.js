@@ -3,9 +3,9 @@ var cachingStream = require('./lib/util/caching-stream')
 var dezalgo = require('dezalgo')
 var extractStream = require('./lib/util/extract-stream')
 var pipe = require('mississippi').pipe
+var pipeline = require('mississippi').pipeline
 var optCheck = require('./lib/util/opt-check')
 var rps = require('realize-package-specifier')
-var through = require('mississippi').through
 
 module.exports = extract
 function extract (spec, dest, opts, cb) {
@@ -79,11 +79,11 @@ function tryFullFetch (spec, opts, cb) {
 }
 
 function pipeToDest (stream, dest, pkg, opts, cb) {
+  if (opts.cache) {
+    stream = pipeline(stream, cachingStream(pkg, opts))
+  }
   pipe(
     stream,
-    opts.cache
-    ? cachingStream(pkg, opts)
-    : through(),
     extractStream(dest, opts),
     function (err) {
       if (err) { return cb(err) }
