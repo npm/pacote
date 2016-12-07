@@ -191,6 +191,37 @@ test('handles server-side case-normalization', function (t) {
   })
 })
 
+test('memoizes identical registry requests', function (t) {
+  t.plan(2)
+  var srv = tnock(t, OPTS.registry)
+
+  srv.get('/foo/1.2.3').once().reply(200, PKG)
+  manifest('foo@1.2.3', OPTS, function (err, pkg) {
+    if (err) { throw err }
+    t.deepEqual(pkg, PKG, 'got a manifest')
+    manifest('foo@1.2.3', OPTS, function (err, pkg) {
+      if (err) { throw err }
+      t.deepEqual(pkg, PKG, 'got a manifest')
+    })
+  })
+})
+
+test('inflights concurrent requests', function (t) {
+  t.plan(2)
+  var srv = tnock(t, OPTS.registry)
+
+  srv.get('/foo/1.2.3').once().reply(200, PKG)
+  manifest('foo@1.2.3', OPTS, function (err, pkg) {
+    if (err) { throw err }
+    t.deepEqual(pkg, PKG, 'got a manifest')
+  })
+
+  manifest('foo@1.2.3', OPTS, function (err, pkg) {
+    if (err) { throw err }
+    t.deepEqual(pkg, PKG, 'got a manifest')
+  })
+})
+
 test('supports fetching from an optional cache')
 test('uses proxy settings')
 test('recovers from request errors')
