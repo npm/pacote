@@ -1,5 +1,5 @@
 var test = require('tap').test
-var nock = require('nock')
+var tnock = require('./util/tnock')
 
 var manifest = require('../manifest')
 
@@ -16,22 +16,17 @@ var OPTS = {
   registry: 'https://mock.reg'
 }
 
-var server
-test('setup', function (t) {
-  server = nock(OPTS.registry)
-  t.end()
-})
-
 test('fetches version or tag from registry', function (t) {
   t.plan(2)
+  var srv = tnock(t, OPTS.registry)
 
-  server.get('/foo/1.2.3').once().reply(200, PKG)
+  srv.get('/foo/1.2.3').once().reply(200, PKG)
   manifest('foo@1.2.3', OPTS, function (err, pkg) {
     if (err) { throw err }
     t.deepEqual(pkg, PKG, 'got manifest from version')
   })
 
-  server.get('/foo/latest').once().reply(200, PKG)
+  srv.get('/foo/latest').once().reply(200, PKG)
   manifest('foo@latest', OPTS, function (err, pkg) {
     if (err) { throw err }
     t.deepEqual(pkg, PKG, 'got manifest from tag')
@@ -40,14 +35,15 @@ test('fetches version or tag from registry', function (t) {
 
 test('fetches version or tag from scoped registry', function (t) {
   t.plan(2)
+  var srv = tnock(t, OPTS.registry)
 
-  server.get('/@usr%2ffoo/1.2.3').once().reply(200, SCOPEDPKG)
+  srv.get('/@usr%2ffoo/1.2.3').once().reply(200, SCOPEDPKG)
   manifest('@usr/foo@1.2.3', OPTS, function (err, pkg) {
     if (err) { throw err }
     t.deepEqual(pkg, SCOPEDPKG, 'got scoped manifest from version')
   })
 
-  server.get('/@usr%2ffoo/latest').once().reply(200, SCOPEDPKG)
+  srv.get('/@usr%2ffoo/latest').once().reply(200, SCOPEDPKG)
   manifest('@usr/foo@latest', OPTS, function (err, pkg) {
     if (err) { throw err }
     t.deepEqual(pkg, SCOPEDPKG, 'got scoped manifest from tag')
@@ -64,7 +60,9 @@ test('fetches version or tag from registry', function (t) {
       }
     }
   }
-  server.get(
+
+  var srv = tnock(t, OPTS.registry)
+  srv.get(
     '/foo/1.2.3'
   ).matchHeader(
     'authorization', 'Bearer ' + TOKEN
@@ -82,7 +80,8 @@ test('uses scope from spec for registry lookup', function (t) {
     // package scope takes priority
     scope: '@otherscope'
   }
-  server.get('/@myscope%2ffoo/1.2.3').once().reply(200, PKG)
+  var srv = tnock(t, OPTS.registry)
+  srv.get('/@myscope%2ffoo/1.2.3').once().reply(200, PKG)
   manifest('@myscope/foo@1.2.3', opts, function (err, pkg) {
     if (err) { throw err }
     t.deepEqual(pkg, PKG, 'used scope to pick registry')
@@ -92,9 +91,9 @@ test('uses scope from spec for registry lookup', function (t) {
 
 test('uses scope opt for registry lookup', function (t) {
   t.plan(2)
+  var srv = tnock(t, OPTS.registry)
 
-  server.get('/foo/1.2.3').once().reply(200, PKG)
-
+  srv.get('/foo/1.2.3').once().reply(200, PKG)
   manifest('foo@1.2.3', {
     '@myscope:registry': OPTS.registry,
     scope: '@myscope',
@@ -105,6 +104,7 @@ test('uses scope opt for registry lookup', function (t) {
     t.deepEqual(pkg, PKG, 'used scope to pick registry')
   })
 
+  srv.get('/foo/1.2.3').once().reply(200, PKG)
   manifest('foo@1.2.3', {
     '@myscope:registry': OPTS.registry,
     scope: 'myscope' // @ auto-inserted
@@ -115,9 +115,9 @@ test('uses scope opt for registry lookup', function (t) {
 })
 
 test('defaults to registry.npmjs.org if no option given', function (t) {
-  var server = nock('https://registry.npmjs.org')
+  var srv = tnock(t, 'https://registry.npmjs.org')
 
-  server.get('/foo/1.2.3').once().reply(200, PKG)
+  srv.get('/foo/1.2.3').once().reply(200, PKG)
   manifest('foo@1.2.3', { registry: undefined }, function (err, pkg) {
     if (err) { throw err }
     t.deepEqual(pkg, PKG, 'used npm registry')
@@ -136,7 +136,8 @@ test('supports scoped auth', function (t) {
       }
     }
   }
-  server.get(
+  var srv = tnock(t, OPTS.registry)
+  srv.get(
     '/foo/1.2.3'
   ).matchHeader(
     'authorization', 'Bearer ' + TOKEN
@@ -150,18 +151,19 @@ test('supports scoped auth', function (t) {
 
 test('package requests are case-sensitive', function (t) {
   t.plan(2)
+  var srv = tnock(t, OPTS.registry)
 
   var CASEDPKG = {
     name: 'Foo',
     version: '1.2.3'
   }
-  server.get('/Foo/1.2.3').once().reply(200, CASEDPKG)
+  srv.get('/Foo/1.2.3').once().reply(200, CASEDPKG)
   manifest('Foo@1.2.3', OPTS, function (err, pkg) {
     if (err) { throw err }
     t.deepEqual(pkg, CASEDPKG, 'got Cased package')
   })
 
-  server.get('/foo/1.2.3').once().reply(200, PKG)
+  srv.get('/foo/1.2.3').once().reply(200, PKG)
   manifest('foo@1.2.3', OPTS, function (err, pkg) {
     if (err) { throw err }
     t.deepEqual(pkg, PKG, 'got lowercased package')
@@ -170,14 +172,15 @@ test('package requests are case-sensitive', function (t) {
 
 test('handles server-side case-normalization', function (t) {
   t.plan(2)
+  var srv = tnock(t, OPTS.registry)
 
-  server.get('/Cased/1.2.3').once().reply(200, PKG)
+  srv.get('/Cased/1.2.3').once().reply(200, PKG)
   manifest('Cased@1.2.3', OPTS, function (err, pkg) {
     if (err) { throw err }
     t.deepEqual(pkg, PKG, 'got Cased package')
   })
 
-  server.get('/cased/latest').once().reply(200, PKG)
+  srv.get('/cased/latest').once().reply(200, PKG)
   manifest('cased@latest', OPTS, function (err, pkg) {
     if (err) { throw err }
     t.deepEqual(pkg, PKG, 'got lowercased package')
