@@ -18,7 +18,6 @@ needed to reduce excess operations, using [`cacache`](https://npm.im/cacache).
 * [Features](#features)
 * [Guide](#guide)
 * [API](#api)
-  * [`metadata`](#metadata)
   * [`manifest`](#manifest)
   * [`extract`](#extract)
   * [`options`](#options)
@@ -28,13 +27,7 @@ needed to reduce excess operations, using [`cacache`](https://npm.im/cacache).
 ```javascript
 const pacote = require('pacote')
 
-pacote.metadata('pacote', function (err, meta) {
-  console.log(meta.versions) // ['0.0.0', '1.0.0']
-  console.log(meta['dist-tags']) // { latest: '1.0.0' }
-  console.log(meta.dist.shasum) // 'deadbeef'
-})
-
-pacote.manifest('github:zkat/pacote', function (err, pkg) {
+pacote.manifest('pacote@^1', function (err, pkg) {
   console.log('package.json from github: ', pkg)
   // { "name": "pacote", "version": "1.0.0", ... }
 })
@@ -62,60 +55,16 @@ pacote.extract('http://hi.com/pkg.tgz', 'deadbeef', './-here', function (err) {
 
 ### API
 
-#### <a name="metadata"></a> `> pacote.metadata(spec, opts, cb)`
-
-Fetches the full metadata available for the package specified by `<spec>`.
-
-All valid metadata includes the following fields:
-
-* `name`
-* `version`
-* `_shasum`
-
-The following fields are included as long as the package specified by `spec`
-also includes them. Values will be from whichever version was specified.
-
-* `dependencies`
-* `devDependencies`
-* `optionalDependencies`
-* `peerDependencies`
-* `bundleDependencies`
-* `hasShrinkwrap`
-
-git and registry packages have two additional fields:
-
-* `versions` - all available versions for this package
-* `dist-tags` - tags/dist-tags associated with the package
-
-##### Example
-
-```javascript
-pacote.metadata('pacote@1.0.0', function (err, info) {
-  // fetched from registry
-})
-
-pacote.metadata('github:zkat/pacote', function (err, info) {
-  // fetched from github
-})
-
-pacote.metadata('./path/to/tarball.tgz', function (err, info) {
-  // fetched from local tarball
-})
-```
-
 #### <a name="manifest"></a> `> pacote.manifest(spec, [opts], cb)`
 
-Fetches the *manifest* for a package, aka `package.json`. This is a more limited
-request than `metadata` and will even be read from cache if a `cache` option was
-provided and the spec type is cacheable. This will not write to the cache,
-though -- a full download is required to associate a manifest with a package.
+Fetches the *manifest* for a package, aka `package.json`.
 
 Note that depending on the spec type, some additional fields might be present.
 For example, packages from `registry.npmjs.org` have additional metadata
 appended by the registry.
 
-The `_shasum` field will always be present for already-cached packages: if you
-find this field, the package tarball will be cached and ready to extract, barring cache corruption or race conditions (so prepare to do a named extract)
+Manifests returned will additionally include the `npm-shrinkwrap.json`
+associated with the published package, if any.
 
 ##### Example
 
