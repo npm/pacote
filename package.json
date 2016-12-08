@@ -30,6 +30,7 @@
     "npm-registry-client": "^7.4.1",
     "realize-package-specifier": "^3.0.3",
     "request": "^2.79.0",
+    "slide": "^1.1.6",
     "tar-fs": "^1.14.0",
     "tar-stream": "^1.5.2"
   },
