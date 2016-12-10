@@ -11,11 +11,7 @@ function manifest (spec, opts, cb) {
 
   rps(spec, function (err, res) {
     if (err) { return cb(err) }
-    // The registry module takes care of both of these.
-    var type = (res.type === 'tag' || res.type === 'version')
-    ? 'registry'
-    : type
-    var fetcher = require('./lib/' + type + '/manifest')
+    var fetcher = require('./lib/handlers/' + res.type + '/manifest')
     fetcher(res, opts, cb)
   })
 }

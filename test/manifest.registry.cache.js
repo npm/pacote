@@ -1,6 +1,6 @@
 var cacache = require('cacache')
 var CACHE = require('./util/test-dir')(__filename)
-var cacheKey = require('../lib/util/cache-key')
+var cacheKey = require('../lib/cache/cache-key')
 var npmlog = require('npmlog')
 var test = require('tap').test
 var tnock = require('./util/tnock')

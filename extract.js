@@ -73,7 +73,7 @@ function tryFullFetch (spec, opts, cb) {
     var type = (res.type === 'tag' || res.type === 'version')
     ? 'registry'
     : type
-    var fetcher = require('./lib/' + type + '/fetch-stream')
+    var fetcher = require('./lib/handlers/' + type + '/fetch-stream')
     fetcher(res, opts, cb)
   })
 }

@@ -1,12 +1,12 @@
 var nock = require('nock')
-var regManifest = require('../../lib/registry/manifest')
+var manifestCache = require('../../lib/cache/manifest')
 
 module.exports = tnock
 function tnock (t, host) {
+  manifestCache._clearMemoized()
   var server = nock(host)
   t.tearDown(function () {
     server.done()
-    regManifest._clearMemoized()
   })
   return server
 }
