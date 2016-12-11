@@ -1,9 +1,9 @@
 var nock = require('nock')
-var manifestCache = require('../../lib/cache/manifest')
+var clearMemoized = require('../../lib/registry/get')._clearMemoized
 
 module.exports = tnock
 function tnock (t, host) {
-  manifestCache._clearMemoized()
+  clearMemoized()
   var server = nock(host)
   t.tearDown(function () {
     server.done()
