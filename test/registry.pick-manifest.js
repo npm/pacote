@@ -1,6 +1,10 @@
 var test = require('tap').test
 
-var pickManifest = require('../lib/handlers/range/pick-manifest')
+var pickManifest = require('../lib/registry/pick-manifest')
+
+function spec (selector, type) {
+  return { spec: selector, type: type || 'range' }
+}
 
 test('basic carat range selection', function (t) {
   var metadata = {
@@ -11,7 +15,7 @@ test('basic carat range selection', function (t) {
       '2.0.0': { version: '2.0.0' }
     }
   }
-  pickManifest(metadata, '^1.0.0', {}, function (err, manifest) {
+  pickManifest(metadata, spec('^1.0.0'), {}, function (err, manifest) {
     if (err) { throw err }
     t.equal(manifest.version, '1.0.2', 'picked the right manifest using ^')
     t.end()
@@ -27,7 +31,7 @@ test('basic tilde range selection', function (t) {
       '2.0.0': { version: '2.0.0' }
     }
   }
-  pickManifest(metadata, '~1.0.0', {}, function (err, manifest) {
+  pickManifest(metadata, spec('~1.0.0'), {}, function (err, manifest) {
     if (err) { throw err }
     t.equal(manifest.version, '1.0.2', 'picked the right manifest using ~')
     t.end()
@@ -43,9 +47,45 @@ test('basic mathematical range selection', function (t) {
       '2.0.0': { version: '2.0.0' }
     }
   }
-  pickManifest(metadata, '>=1.0.0 <2', {}, function (err, manifest) {
+  pickManifest(metadata, spec('>=1.0.0 <2'), {}, function (err, manifest) {
     if (err) { throw err }
     t.equal(manifest.version, '1.0.2', 'picked the right manifest using mathematical range')
+    t.end()
+  })
+})
+
+test('basic version selection', function (t) {
+  var metadata = {
+    versions: {
+      '1.0.0': { version: '1.0.0' },
+      '1.0.1': { version: '1.0.1' },
+      '1.0.2': { version: '1.0.2' },
+      '2.0.0': { version: '2.0.0' }
+    }
+  }
+  pickManifest(metadata, spec('1.0.0', 'version'), {
+  }, function (err, manifest) {
+    if (err) { throw err }
+    t.equal(manifest.version, '1.0.0', 'picked the right manifest using specific version')
+    t.end()
+  })
+})
+
+test('basic tag selection', function (t) {
+  var metadata = {
+    'dist-tags': {
+      foo: '1.0.1'
+    },
+    versions: {
+      '1.0.0': { version: '1.0.0' },
+      '1.0.1': { version: '1.0.1' },
+      '1.0.2': { version: '1.0.2' },
+      '2.0.0': { version: '2.0.0' }
+    }
+  }
+  pickManifest(metadata, spec('foo', 'tag'), {}, function (err, manifest) {
+    if (err) { throw err }
+    t.equal(manifest.version, '1.0.1', 'picked the right manifest using tag')
     t.end()
   })
 })
@@ -58,7 +98,7 @@ test('ENOENT if range does not match anything', function (t) {
       '2.0.5': { version: '2.0.5' }
     }
   }
-  pickManifest(metadata, '^2.1.0', {}, function (err, manifest) {
+  pickManifest(metadata, spec('^2.1.0'), {}, function (err, manifest) {
     t.ok(err, 'got an error')
     t.equal(err.code, 'ENOENT', 'useful error code returned.')
     t.notOk(manifest, 'no manifest returned.')
@@ -79,19 +119,19 @@ test('if `defaultTag` matches a given range, use it', function (t) {
     }
   }
   t.plan(3)
-  pickManifest(metadata, '^1.0.0', {
+  pickManifest(metadata, spec('^1.0.0'), {
     defaultTag: 'foo'
   }, function (err, manifest) {
     if (err) { throw err }
     t.equal(manifest.version, '1.0.1', 'picked the version for foo')
   })
-  pickManifest(metadata, '^2.0.0', {
+  pickManifest(metadata, spec('^2.0.0'), {
     defaultTag: 'foo'
   }, function (err, manifest) {
     if (err) { throw err }
     t.equal(manifest.version, '2.0.0', 'no match, no foo')
   })
-  pickManifest(metadata, '^1.0.0', {}, function (err, manifest) {
+  pickManifest(metadata, spec('^1.0.0'), {}, function (err, manifest) {
     if (err) { throw err }
     t.equal(manifest.version, '1.0.0', 'default to `latest`')
   })
@@ -111,13 +151,13 @@ test('* ranges use `defaultTag` if no versions match', function (t) {
     }
   }
   t.plan(2)
-  pickManifest(metadata, '*', {
+  pickManifest(metadata, spec('*'), {
     defaultTag: 'beta'
   }, function (err, manifest) {
     if (err) { throw err }
     t.equal(manifest.version, '2.0.0-beta.0', 'used defaultTag for all-prerelease splat.')
   })
-  pickManifest(metadata, '*', {}, function (err, manifest) {
+  pickManifest(metadata, spec('*'), {}, function (err, manifest) {
     if (err) { throw err }
     t.equal(manifest.version, '1.0.0-pre.0', 'defaulted to `latest`.')
   })
@@ -147,23 +187,23 @@ test('optionally filters by engines', function (t) {
     }
   }
   t.plan(4)
-  pickManifest(metadata, '^1.0.0', {
+  pickManifest(metadata, spec('^1.0.0'), {
     engineFilter: { node: '2.0.0' }
   }, function (err, manifest) {
     if (err) { throw err }
     t.equal(manifest.version, '1.0.1', 'disqualified non-matching node')
   })
-  pickManifest(metadata, '^2.0.0', {
+  pickManifest(metadata, spec('^2.0.0'), {
     engineFilter: { npm: '2.0.0' }
   }, function (err, manifest) {
     if (err) { throw err }
     t.equal(manifest.version, '2.0.1', 'disqualified non-matching npm')
   })
-  pickManifest(metadata, '^2.0.0', {}, function (err, manifest) {
+  pickManifest(metadata, spec('^2.0.0'), {}, function (err, manifest) {
     if (err) { throw err }
     t.equal(manifest.version, '2.0.2', 'no filter, no problem')
   })
-  pickManifest(metadata, '^2.0.0', {
+  pickManifest(metadata, spec('^2.0.0'), {
     engineFilter: {}
   }, function (err, manifest) {
     if (err) { throw err }
