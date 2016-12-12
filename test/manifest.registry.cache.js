@@ -11,6 +11,14 @@ var PKG = {
   name: 'foo',
   version: '1.2.3'
 }
+var META = {
+  'dist-tags': {
+    latest: '1.2.3'
+  },
+  versions: {
+    '1.2.3': PKG
+  }
+}
 
 npmlog.level = process.env.LOGLEVEL || 'silent'
 var OPTS = {
@@ -28,7 +36,7 @@ test('memoizes identical registry requests', function (t) {
   t.plan(2)
   var srv = tnock(t, OPTS.registry)
 
-  srv.get('/foo/1.2.3').once().reply(200, PKG)
+  srv.get('/foo').once().reply(200, META)
   manifest('foo@1.2.3', OPTS, function (err, pkg) {
     if (err) { throw err }
     t.deepEqual(pkg, PKG, 'got a manifest')
@@ -60,7 +68,7 @@ test('tag requests memoize tags', function (t) {
   t.plan(2)
   var srv = tnock(t, OPTS.registry)
 
-  srv.get('/foo/latest').once().reply(200, PKG)
+  srv.get('/foo').once().reply(200, META)
   manifest('foo@latest', OPTS, function (err, pkg) {
     if (err) { throw err }
     t.deepEqual(pkg, PKG, 'got a manifest')
@@ -75,7 +83,7 @@ test('inflights concurrent requests', function (t) {
   t.plan(2)
   var srv = tnock(t, OPTS.registry)
 
-  srv.get('/foo/1.2.3').once().reply(200, PKG)
+  srv.get('/foo').once().reply(200, META)
   manifest('foo@1.2.3', OPTS, function (err, pkg) {
     if (err) { throw err }
     t.deepEqual(pkg, PKG, 'got a manifest')
@@ -94,11 +102,9 @@ test('supports fetching from an optional cache', function (t) {
     retry: OPTS.retry,
     cache: CACHE
   }
-  var key = cacheKey('registry', OPTS.registry + '/foo/1.2.3')
+  var key = cacheKey('registry-request', OPTS.registry + '/foo')
   // ugh this API has gotta change
-  cacache.put.data(CACHE, key, 'FILENAME', 'test', {
-    metadata: PKG
-  }, function (err) {
+  cacache.put.data(CACHE, key, '', JSON.stringify(META), {}, function (err) {
     if (err) { throw err }
     manifest('foo@1.2.3', opts, function (err, pkg) {
       if (err) { throw err }
@@ -116,7 +122,7 @@ test('falls back to registry if cache entry missing', function (t) {
     cache: CACHE
   }
   var srv = tnock(t, opts.registry)
-  srv.get('/foo/1.2.3').reply(200, PKG)
+  srv.get('/foo').reply(200, META)
   manifest('foo@1.2.3', opts, function (err, pkg) {
     if (err) { throw err }
     t.deepEqual(pkg, PKG)
