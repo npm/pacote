@@ -165,48 +165,12 @@ test('* ranges use `defaultTag` if no versions match', function (t) {
 
 test('errors if metadata has no versions', function (t) {
   t.plan(4)
-  pickManifest({versions: {}}, '^1.0.0', {}, function (err) {
+  pickManifest({versions: {}}, spec('^1.0.0'), {}, function (err) {
     t.ok(err, 'got an error')
     t.equal(err.code, 'ENOVERSIONS', 'useful error code')
   })
-  pickManifest({}, '^1.0.0', {}, function (err) {
+  pickManifest({}, spec('^1.0.0'), {}, function (err) {
     t.ok(err, 'got an error')
     t.equal(err.code, 'ENOVERSIONS', 'useful error code')
-  })
-})
-
-test('optionally filters by engines', function (t) {
-  var metadata = {
-    versions: {
-      '1.0.0': { version: '1.0.0' },
-      '1.0.1': { version: '1.0.1' },
-      '1.0.2': { version: '1.0.2', engines: { node: '^1.0.0' } },
-      '2.0.0': { version: '2.0.0' },
-      '2.0.1': { version: '2.0.1' },
-      '2.0.2': { version: '2.0.2', engines: { npm: '^1.0.0' } }
-    }
-  }
-  t.plan(4)
-  pickManifest(metadata, spec('^1.0.0'), {
-    engineFilter: { node: '2.0.0' }
-  }, function (err, manifest) {
-    if (err) { throw err }
-    t.equal(manifest.version, '1.0.1', 'disqualified non-matching node')
-  })
-  pickManifest(metadata, spec('^2.0.0'), {
-    engineFilter: { npm: '2.0.0' }
-  }, function (err, manifest) {
-    if (err) { throw err }
-    t.equal(manifest.version, '2.0.1', 'disqualified non-matching npm')
-  })
-  pickManifest(metadata, spec('^2.0.0'), {}, function (err, manifest) {
-    if (err) { throw err }
-    t.equal(manifest.version, '2.0.2', 'no filter, no problem')
-  })
-  pickManifest(metadata, spec('^2.0.0'), {
-    engineFilter: {}
-  }, function (err, manifest) {
-    if (err) { throw err }
-    t.equal(manifest.version, '2.0.2', 'empty filter, no problem')
   })
 })
