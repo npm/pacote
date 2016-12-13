@@ -10,11 +10,38 @@ var PKG = {
 }
 
 var META = {
-  'dist-tags': {
-    latest: '1.2.3'
-  },
+  name: 'foo',
+  'dist-tags': { latest: '1.2.3', lts: '1.2.1' },
   versions: {
-    '1.2.3': PKG
+    '0.0.0': {
+      name: 'foo',
+      version: '0.0.0'
+    },
+    '1.2.0': {
+      name: 'foo',
+      version: '1.2.0',
+      engines: {
+        node: '^1.0.0',
+        npm: '^2.0.1'
+      }
+    },
+    '2.0.4': {
+      name: 'foo',
+      version: '2.0.4'
+    },
+    '1.2.1': {
+      name: 'foo',
+      version: '1.2.1'
+    },
+    '1.2.3': PKG,
+    '1.2.4': {
+      name: 'foo',
+      version: '1.2.4'
+    },
+    '3.4.5': {
+      name: 'foo',
+      version: '3.4.5'
+    }
   }
 }
 
@@ -70,6 +97,29 @@ test('fetches tag from scoped registry', function (t) {
   manifest('@usr/foo@latest', OPTS, function (err, pkg) {
     if (err) { throw err }
     t.deepEqual(pkg, PKG, 'got scoped manifest from tag')
+    t.end()
+  })
+})
+
+test('fetches manifest from registry by range', function (t) {
+  var srv = tnock(t, OPTS.registry)
+
+  srv.get('/foo').reply(200, META)
+  manifest('foo@^1.2.0', OPTS, function (err, pkg) {
+    if (err) { throw err }
+    // Not 1.2.4 because 1.2.3 is `latest`
+    t.deepEqual(pkg, META.versions['1.2.3'], 'picked right manifest')
+    t.end()
+  })
+})
+
+test('fetches manifest from scoped registry by range', function (t) {
+  var srv = tnock(t, OPTS.registry)
+
+  srv.get('/@usr%2ffoo').reply(200, META)
+  manifest('@usr/foo@^1.2.0', OPTS, function (err, pkg) {
+    if (err) { throw err }
+    t.deepEqual(pkg, META.versions['1.2.3'], 'got scoped manifest from version')
     t.end()
   })
 })
