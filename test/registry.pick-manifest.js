@@ -90,6 +90,27 @@ test('basic tag selection', function (t) {
   })
 })
 
+test('skips any invalid version keys', function (t) {
+  // Various third-party registries are prone to having trash as
+  // keys. npm simply skips them. Yay robustness.
+  var metadata = {
+    versions: {
+      '1.0.0': { version: '1.0.0' },
+      'lol ok': { version: '1.0.1' }
+    }
+  }
+  t.plan(4)
+  pickManifest(metadata, spec('^1.0.0'), {}, function (err, manifest) {
+    if (err) { throw err }
+    t.equal(manifest.version, '1.0.0', 'avoided bad key')
+  })
+  pickManifest(metadata, spec('^1.0.1'), {}, function (err, manifest) {
+    t.notOk(manifest, 'no manifest returned')
+    t.ok(err, 'got an error')
+    t.equal(err.code, 'ENOENT', 'no matching specs')
+  })
+})
+
 test('ENOENT if range does not match anything', function (t) {
   var metadata = {
     versions: {
