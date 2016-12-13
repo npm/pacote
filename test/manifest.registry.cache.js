@@ -96,6 +96,7 @@ test('inflights concurrent requests', function (t) {
 })
 
 test('supports fetching from an optional cache', function (t) {
+  tnock(t, OPTS.registry)
   var opts = {
     registry: OPTS.registry,
     log: OPTS.log,
@@ -104,7 +105,9 @@ test('supports fetching from an optional cache', function (t) {
   }
   var key = cache.key('registry-request', OPTS.registry + '/foo')
   // ugh this API has gotta change
-  cacache.put.data(CACHE, key, '', JSON.stringify(META), {}, function (err) {
+  cacache.put.data(CACHE, key, '', JSON.stringify(META), {
+    hashAlgorithm: 'sha1'
+  }, function (err) {
     if (err) { throw err }
     manifest('foo@1.2.3', opts, function (err, pkg) {
       if (err) { throw err }
@@ -113,6 +116,9 @@ test('supports fetching from an optional cache', function (t) {
     })
   })
 })
+
+test('expires stale request data')
+test('allows forcing use of cache when data stale')
 
 test('falls back to registry if cache entry missing', function (t) {
   var opts = {
