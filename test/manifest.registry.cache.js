@@ -1,6 +1,6 @@
 var cacache = require('cacache')
 var CACHE = require('./util/test-dir')(__filename)
-var cacheKey = require('../lib/cache/cache-key')
+var cache = require('../lib/cache')
 var npmlog = require('npmlog')
 var test = require('tap').test
 var tnock = require('./util/tnock')
@@ -102,7 +102,7 @@ test('supports fetching from an optional cache', function (t) {
     retry: OPTS.retry,
     cache: CACHE
   }
-  var key = cacheKey('registry-request', OPTS.registry + '/foo')
+  var key = cache.key('registry-request', OPTS.registry + '/foo')
   // ugh this API has gotta change
   cacache.put.data(CACHE, key, '', JSON.stringify(META), {}, function (err) {
     if (err) { throw err }
