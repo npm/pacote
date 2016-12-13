@@ -142,6 +142,7 @@ test('ENOENT if range does not match anything', function (t) {
     t.end()
   })
 })
+
 test('if `defaultTag` matches a given range, use it', function (t) {
   var metadata = {
     'dist-tags': {
