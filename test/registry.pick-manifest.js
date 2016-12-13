@@ -90,6 +90,22 @@ test('basic tag selection', function (t) {
   })
 })
 
+test('errors if a non-registry spec is provided', function (t) {
+  var metadata = {
+    'dist-tags': {
+      foo: '1.0.1'
+    },
+    versions: {
+      '1.0.1': { version: '1.0.1' }
+    }
+  }
+  pickManifest(metadata, {spec: 'foo', type: 'uhhh'}, {}, function (err) {
+    t.ok(err, 'errored on bad spec type')
+    t.match(err.message, /Only tag, version, and range are supported/)
+    t.end()
+  })
+})
+
 test('skips any invalid version keys', function (t) {
   // Various third-party registries are prone to having trash as
   // keys. npm simply skips them. Yay robustness.
