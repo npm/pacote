@@ -6,7 +6,7 @@ var manifest = require('../manifest')
 
 var PKG = {
   name: 'foo',
-  versions: '1.2.3'
+  version: '1.2.3'
 }
 
 var META = {
