@@ -47,22 +47,20 @@ test('memoizes identical registry requests', function (t) {
   })
 })
 
-// This needs to be reimplemented.
-test('tag requests memoize versions')
-// test('tag requests memoize versions', function (t) {
-//   t.plan(2)
-//   var srv = tnock(t, OPTS.registry)
-//
-//   srv.get('/foo/latest').once().reply(200, PKG)
-//   manifest('foo@latest', OPTS, function (err, pkg) {
-//     if (err) { throw err }
-//     t.deepEqual(pkg, PKG, 'got a manifest')
-//     manifest('foo@1.2.3', OPTS, function (err, pkg) {
-//       if (err) { throw err }
-//       t.deepEqual(pkg, PKG, 'got a manifest')
-//     })
-//   })
-// })
+test('tag requests memoize versions', function (t) {
+  t.plan(2)
+  var srv = tnock(t, OPTS.registry)
+
+  srv.get('/foo').once().reply(200, META)
+  manifest('foo@latest', OPTS, function (err, pkg) {
+    if (err) { throw err }
+    t.deepEqual(pkg, PKG, 'got a manifest')
+    manifest('foo@1.2.3', OPTS, function (err, pkg) {
+      if (err) { throw err }
+      t.deepEqual(pkg, PKG, 'got a manifest')
+    })
+  })
+})
 
 test('tag requests memoize tags', function (t) {
   t.plan(2)
