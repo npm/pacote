@@ -65,3 +65,9 @@ test('no shrinkwrap in tarball', function (t) {
     })
   })
 })
+
+test('stops parsing tarball after shrinkwrap found')
+test('source stream continues after shrinkwrap found')
+test('source stream errors trigger extract error')
+test('only calls cb once if stream error after shrinkwrap found')
+test('works fine when teeing a `request` stream')
