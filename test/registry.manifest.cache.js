@@ -1,10 +1,10 @@
-var CACHE = require('./util/test-dir')(__filename)
 var cache = require('../lib/cache')
 var npmlog = require('npmlog')
-var rimraf = require('rimraf')
 var test = require('tap').test
+var testDir = require('./util/test-dir')
 var tnock = require('./util/tnock')
 
+var CACHE = testDir(__filename)
 var manifest = require('../manifest')
 
 var PKG = {
@@ -41,12 +41,10 @@ test('memoizes identical registry requests', function (t) {
   manifest('foo@1.2.3', OPTS, function (err, pkg) {
     if (err) { throw err }
     t.deepEqual(pkg, PKG, 'got a manifest')
-    rimraf(CACHE, function (err) {
+    testDir.reset(CACHE)
+    manifest('foo@1.2.3', OPTS, function (err, pkg) {
       if (err) { throw err }
-      manifest('foo@1.2.3', OPTS, function (err, pkg) {
-        if (err) { throw err }
-        t.deepEqual(pkg, PKG, 'got a manifest')
-      })
+      t.deepEqual(pkg, PKG, 'got a manifest')
     })
   })
 })
@@ -59,12 +57,10 @@ test('tag requests memoize versions', function (t) {
   manifest('foo@latest', OPTS, function (err, pkg) {
     if (err) { throw err }
     t.deepEqual(pkg, PKG, 'got a manifest')
-    rimraf(CACHE, function (err) {
+    testDir.reset(CACHE)
+    manifest('foo@1.2.3', OPTS, function (err, pkg) {
       if (err) { throw err }
-      manifest('foo@1.2.3', OPTS, function (err, pkg) {
-        if (err) { throw err }
-        t.deepEqual(pkg, PKG, 'got a manifest')
-      })
+      t.deepEqual(pkg, PKG, 'got a manifest')
     })
   })
 })
@@ -77,12 +73,10 @@ test('tag requests memoize tags', function (t) {
   manifest('foo@latest', OPTS, function (err, pkg) {
     if (err) { throw err }
     t.deepEqual(pkg, PKG, 'got a manifest')
-    rimraf(CACHE, function (err) {
+    testDir.reset(CACHE)
+    manifest('foo@latest', OPTS, function (err, pkg) {
       if (err) { throw err }
-      manifest('foo@latest', OPTS, function (err, pkg) {
-        if (err) { throw err }
-        t.deepEqual(pkg, PKG, 'got a manifest')
-      })
+      t.deepEqual(pkg, PKG, 'got a manifest')
     })
   })
 })
