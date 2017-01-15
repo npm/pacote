@@ -120,6 +120,7 @@ test('supports fetching from an optional cache', function (t) {
 
 test('expires stale request data')
 test('allows forcing use of cache when data stale')
+test('falls back to registry if cache entry is invalid JSON')
 
 test('falls back to registry if cache entry missing', function (t) {
   var opts = {
