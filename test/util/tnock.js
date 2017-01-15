@@ -1,5 +1,5 @@
 var nock = require('nock')
-var clearMemoized = require('../../lib/registry/get')._clearMemoized
+var clearMemoized = require('../../lib/cache')._clearMemoized
 
 module.exports = tnock
 function tnock (t, host) {

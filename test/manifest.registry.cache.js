@@ -1,7 +1,7 @@
-var cacache = require('cacache')
 var CACHE = require('./util/test-dir')(__filename)
 var cache = require('../lib/cache')
 var npmlog = require('npmlog')
+var rimraf = require('rimraf')
 var test = require('tap').test
 var tnock = require('./util/tnock')
 
@@ -22,6 +22,7 @@ var META = {
 
 npmlog.level = process.env.LOGLEVEL || 'silent'
 var OPTS = {
+  cache: CACHE,
   registry: 'https://mock.reg',
   log: npmlog,
   retry: {
@@ -40,9 +41,12 @@ test('memoizes identical registry requests', function (t) {
   manifest('foo@1.2.3', OPTS, function (err, pkg) {
     if (err) { throw err }
     t.deepEqual(pkg, PKG, 'got a manifest')
-    manifest('foo@1.2.3', OPTS, function (err, pkg) {
+    rimraf(CACHE, function (err) {
       if (err) { throw err }
-      t.deepEqual(pkg, PKG, 'got a manifest')
+      manifest('foo@1.2.3', OPTS, function (err, pkg) {
+        if (err) { throw err }
+        t.deepEqual(pkg, PKG, 'got a manifest')
+      })
     })
   })
 })
@@ -55,9 +59,12 @@ test('tag requests memoize versions', function (t) {
   manifest('foo@latest', OPTS, function (err, pkg) {
     if (err) { throw err }
     t.deepEqual(pkg, PKG, 'got a manifest')
-    manifest('foo@1.2.3', OPTS, function (err, pkg) {
+    rimraf(CACHE, function (err) {
       if (err) { throw err }
-      t.deepEqual(pkg, PKG, 'got a manifest')
+      manifest('foo@1.2.3', OPTS, function (err, pkg) {
+        if (err) { throw err }
+        t.deepEqual(pkg, PKG, 'got a manifest')
+      })
     })
   })
 })
@@ -70,12 +77,17 @@ test('tag requests memoize tags', function (t) {
   manifest('foo@latest', OPTS, function (err, pkg) {
     if (err) { throw err }
     t.deepEqual(pkg, PKG, 'got a manifest')
-    manifest('foo@latest', OPTS, function (err, pkg) {
+    rimraf(CACHE, function (err) {
       if (err) { throw err }
-      t.deepEqual(pkg, PKG, 'got a manifest')
+      manifest('foo@latest', OPTS, function (err, pkg) {
+        if (err) { throw err }
+        t.deepEqual(pkg, PKG, 'got a manifest')
+      })
     })
   })
 })
+
+test('memoization is scoped to a given cache')
 
 test('inflights concurrent requests', function (t) {
   t.plan(2)
@@ -95,19 +107,10 @@ test('inflights concurrent requests', function (t) {
 
 test('supports fetching from an optional cache', function (t) {
   tnock(t, OPTS.registry)
-  var opts = {
-    registry: OPTS.registry,
-    log: OPTS.log,
-    retry: OPTS.retry,
-    cache: CACHE
-  }
   var key = cache.key('registry-request', OPTS.registry + '/foo')
-  // ugh this API has gotta change
-  cacache.put.data(CACHE, key, '', JSON.stringify(META), {
-    hashAlgorithm: 'sha1'
-  }, function (err) {
+  cache.put(CACHE, key, JSON.stringify(META), OPTS, function (err) {
     if (err) { throw err }
-    manifest('foo@1.2.3', opts, function (err, pkg) {
+    manifest('foo@1.2.3', OPTS, function (err, pkg) {
       if (err) { throw err }
       t.deepEqual(pkg, PKG)
       t.end()
