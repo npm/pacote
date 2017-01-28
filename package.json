@@ -22,7 +22,7 @@
   "author": "Kat Marchán <kzm@sykosomatic.org>",
   "license": "CC0-1.0",
   "dependencies": {
-    "cacache": "^3.0.1",
+    "cacache": "^4.0.0",
     "dezalgo": "^1.0.3",
     "gunzip-maybe": "^1.3.1",
     "inflight": "^1.0.6",
