@@ -30,6 +30,11 @@ var OPTS = {
     factor: 1,
     minTimeout: 1,
     maxTimeout: 10
+  },
+  metadata: {
+    etag: 'my-etage',
+    lastModified: 'my-lastmodified',
+    time: +(new Date())
   }
 }
 
