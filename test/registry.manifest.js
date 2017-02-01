@@ -308,5 +308,3 @@ test('recovers from request errors', function (t) {
     t.deepEqual(pkg, PKG, 'got a manifest')
   })
 })
-
-test('uses proxy settings')
