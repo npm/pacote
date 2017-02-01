@@ -1,6 +1,8 @@
 var optCheck = require('./lib/util/opt-check')
 var rps = require('realize-package-specifier')
 
+var handlers = {}
+
 module.exports = manifest
 function manifest (spec, opts, cb) {
   if (!cb) {
@@ -11,7 +13,9 @@ function manifest (spec, opts, cb) {
 
   rps(spec, function (err, res) {
     if (err) { return cb(err) }
-    var fetcher = require('./lib/handlers/' + res.type + '/manifest')
-    fetcher(res, opts, cb)
+    var fetcher = handlers[res.type] || (handlers[res.type] = require('./lib/handlers/' + res.type + '/manifest'))
+    fetcher(res, opts, (err, mani) => {
+      cb(err, mani)
+    })
   })
 }
