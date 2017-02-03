@@ -28,21 +28,21 @@ needed to reduce excess operations, using [`cacache`](https://npm.im/cacache).
 const pacote = require('pacote')
 
 pacote.manifest('pacote@^1', function (err, pkg) {
-  console.log('package.json from github: ', pkg)
+  console.log('package manifest for registry pkg:', pkg)
   // { "name": "pacote", "version": "1.0.0", ... }
 })
 
-pacote.extract('http://hi.com/pkg.tgz', 'deadbeef', './-here', function (err) {
-  console.log('if `deadbeef` is present in the cache, network is skipped')
-  console.log('tarball contents extracted to ./here')
+pacote.extract('http://hi.com/pkg.tgz', './here', function (err) {
+  console.log('remote tarball contents extracted to ./here')
 })
 ```
 
 ### Features
 
 * simple interface to common package-related actions.
-* supports all package types.
-* fault-tolerant, fast, content-addressable cache.
+* supports all package types npm does.
+* fast cache
+* offline mode
 * authentication support (private git, private npm registries, etc)
 * npm-compatible for all relevant operations
 * github, gitlab, and bitbucket-aware
@@ -62,9 +62,6 @@ Fetches the *manifest* for a package, aka `package.json`.
 Note that depending on the spec type, some additional fields might be present.
 For example, packages from `registry.npmjs.org` have additional metadata
 appended by the registry.
-
-Manifests returned will additionally include the `npm-shrinkwrap.json`
-associated with the published package, if any.
 
 ##### Example
 
