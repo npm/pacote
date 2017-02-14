@@ -43,6 +43,7 @@
     "cacache": "^5.0.3",
     "dezalgo": "^1.0.3",
     "inflight": "^1.0.6",
+    "minimatch": "^3.0.3",
     "mississippi": "^1.2.0",
     "npm-registry-client": "^7.4.1",
     "realize-package-specifier": "^3.0.3",
