@@ -1,7 +1,7 @@
 'use strict'
 
 var cache = require('./lib/cache')
-var extractStream = require('./lib/util/extract-stream')
+var extractStream = require('./lib/extract-stream')
 var pipe = require('mississippi').pipe
 var optCheck = require('./lib/util/opt-check')
 var rps = require('realize-package-specifier')
