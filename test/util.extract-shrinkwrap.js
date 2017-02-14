@@ -1,3 +1,5 @@
+'use strict'
+
 var fs = require('fs')
 var npmlog = require('npmlog')
 var pipe = require('mississippi').pipe

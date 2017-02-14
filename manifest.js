@@ -1,3 +1,5 @@
+'use strict'
+
 var optCheck = require('./lib/util/opt-check')
 var rps = require('realize-package-specifier')
 

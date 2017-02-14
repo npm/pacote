@@ -1,3 +1,5 @@
+'use strict'
+
 var nock = require('nock')
 var clearMemoized = require('../../lib/cache')._clearMemoized
 

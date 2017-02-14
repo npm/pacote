@@ -1,3 +1,5 @@
+'use strict'
+
 var npmlog = require('npmlog')
 var test = require('tap').test
 var tnock = require('./util/tnock')

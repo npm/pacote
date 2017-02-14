@@ -1,3 +1,5 @@
+'use strict'
+
 var cache = require('./lib/cache')
 var extractStream = require('./lib/util/extract-stream')
 var pipe = require('mississippi').pipe

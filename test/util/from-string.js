@@ -1,3 +1,5 @@
+'use strict'
+
 var through = require('mississippi').through
 
 module.exports = fromString

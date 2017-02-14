@@ -1,3 +1,5 @@
+'use strict'
+
 var npmlog = require('npmlog')
 var tar = require('tar-stream')
 var test = require('tap').test

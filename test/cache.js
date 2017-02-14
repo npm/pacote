@@ -1,3 +1,5 @@
+'use strict'
+
 var crypto = require('crypto')
 var finished = require('mississippi').finished
 var fromString = require('./util/from-string')

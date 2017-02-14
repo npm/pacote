@@ -1,3 +1,5 @@
+'use strict'
+
 var cache = require('../lib/cache')
 var npmlog = require('npmlog')
 var test = require('tap').test
