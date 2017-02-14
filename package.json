@@ -35,6 +35,7 @@
     "tar-stream": "^1.5.2"
   },
   "devDependencies": {
+    "glob": "^7.1.1",
     "mkdirp": "^0.5.1",
     "nock": "^8.2.1",
     "npmlog": "^4.0.1",
