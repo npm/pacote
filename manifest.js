@@ -1,5 +1,6 @@
 'use strict'
 
+var finalizeManifest = require('./lib/finalize-manifest')
 var optCheck = require('./lib/util/opt-check')
 var rps = require('realize-package-specifier')
 
@@ -17,7 +18,8 @@ function manifest (spec, opts, cb) {
     if (err) { return cb(err) }
     var fetcher = handlers[res.type] || (handlers[res.type] = require('./lib/handlers/' + res.type + '/manifest'))
     fetcher(res, opts, function (err, mani) {
-      cb(err, mani)
+      if (err) { return cb(err) }
+      finalizeManifest(mani, res, opts, cb)
     })
   })
 }
