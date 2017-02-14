@@ -7,20 +7,29 @@ var testDir = require('./util/test-dir')
 var tnock = require('./util/tnock')
 
 var CACHE = testDir(__filename)
+var Manifest = require('../lib/finalize-manifest').Manifest
 var manifest = require('../manifest')
 
-var PKG = {
+var BASE = {
   name: 'foo',
-  version: '1.2.3'
+  version: '1.2.3',
+  _hasShrinkwrap: false,
+  _shasum: 'deadbeef',
+  _resolved: 'https://foo.bar/x.tgz',
+  dist: {
+    shasum: 'deadbeef',
+    tarball: 'https://foo.bar/x.tgz'
+  }
 }
 var META = {
   'dist-tags': {
     latest: '1.2.3'
   },
   versions: {
-    '1.2.3': PKG
+    '1.2.3': BASE
   }
 }
+var PKG = new Manifest(BASE)
 
 npmlog.level = process.env.LOGLEVEL || 'silent'
 var OPTS = {

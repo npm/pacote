@@ -4,11 +4,19 @@ var npmlog = require('npmlog')
 var test = require('tap').test
 var tnock = require('./util/tnock')
 
+var Manifest = require('../lib/finalize-manifest').Manifest
 var manifest = require('../manifest')
 
-var PKG = {
+var BASE = {
   name: 'foo',
-  version: '1.2.3'
+  version: '1.2.3',
+  _hasShrinkwrap: false,
+  _shasum: 'deadbeef',
+  _resolved: 'https://foo.bar/x.tgz',
+  dist: {
+    shasum: 'deadbeef',
+    tarball: 'https://foo.bar/x.tgz'
+  }
 }
 
 var META = {
@@ -35,7 +43,7 @@ var META = {
       name: 'foo',
       version: '1.2.1'
     },
-    '1.2.3': PKG,
+    '1.2.3': BASE,
     '1.2.4': {
       name: 'foo',
       version: '1.2.4'
@@ -46,6 +54,7 @@ var META = {
     }
   }
 }
+var PKG = new Manifest(BASE)
 
 npmlog.level = process.env.LOGLEVEL || 'silent'
 var OPTS = {
@@ -110,7 +119,7 @@ test('fetches manifest from registry by range', function (t) {
   manifest('foo@^1.2.0', OPTS, function (err, pkg) {
     if (err) { throw err }
     // Not 1.2.4 because 1.2.3 is `latest`
-    t.deepEqual(pkg, META.versions['1.2.3'], 'picked right manifest')
+    t.deepEqual(pkg, new Manifest(META.versions['1.2.3']), 'picked right manifest')
     t.end()
   })
 })
@@ -121,7 +130,7 @@ test('fetches manifest from scoped registry by range', function (t) {
   srv.get('/@usr%2ffoo').reply(200, META)
   manifest('@usr/foo@^1.2.0', OPTS, function (err, pkg) {
     if (err) { throw err }
-    t.deepEqual(pkg, META.versions['1.2.3'], 'got scoped manifest from version')
+    t.deepEqual(pkg, new Manifest(META.versions['1.2.3']), 'got scoped manifest from version')
     t.end()
   })
 })
@@ -241,13 +250,21 @@ test('package requests are case-sensitive', function (t) {
   t.plan(2)
   var srv = tnock(t, OPTS.registry)
 
-  var CASEDPKG = {
+  var CASEDBASE = {
     name: 'Foo',
-    version: '1.2.3'
+    version: '1.2.3',
+    _hasShrinkwrap: false,
+    _shasum: 'deadbeef',
+    _resolved: 'https://foo.bar/x.tgz',
+    dist: {
+      shasum: 'deadbeef',
+      tarball: 'https://foo.bar/x.tgz'
+    }
   }
+  var CASEDPKG = new Manifest(CASEDBASE)
   srv.get('/Foo').reply(200, {
     versions: {
-      '1.2.3': CASEDPKG
+      '1.2.3': CASEDBASE
     }
   })
   manifest('Foo@1.2.3', OPTS, function (err, pkg) {

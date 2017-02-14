@@ -21,10 +21,7 @@ var OPTS = {
 
 var PKG = {
   name: 'foo',
-  version: '1.2.3',
-  dist: {
-    tarball: OPTS.registry + '/foo/-/foo-1.2.3.tgz'
-  }
+  version: '1.2.3'
 }
 
 var SHRINKWRAP = {
@@ -63,7 +60,6 @@ test('fetches shrinkwrap data if missing + required', function (t) {
   manifest('foo@1.2.3', OPTS, function (err, pkg) {
     if (err) { throw err }
     t.ok(pkg, 'got a package manifest')
-    t.equal(pkg._hasShrinkwrap, true, '_hasShrinkwrap set')
     t.deepEqual(pkg._shrinkwrap, SHRINKWRAP, 'got a shrinkwrap')
     t.end()
   })
