@@ -10,17 +10,24 @@ var CACHE = testDir(__filename)
 var Manifest = require('../lib/finalize-manifest').Manifest
 var manifest = require('../manifest')
 
+// This is what the server sends
 var BASE = {
   name: 'foo',
   version: '1.2.3',
   _hasShrinkwrap: false,
-  _shasum: 'deadbeef',
-  _resolved: 'https://foo.bar/x.tgz',
   dist: {
     shasum: 'deadbeef',
     tarball: 'https://foo.bar/x.tgz'
   }
 }
+// This is what's returned by finalize-manifest
+var PKG = new Manifest({
+  name: 'foo',
+  version: '1.2.3',
+  _hasShrinkwrap: false,
+  _shasum: BASE.dist.shasum,
+  _resolved: BASE.dist.tarball
+})
 var META = {
   'dist-tags': {
     latest: '1.2.3'
@@ -29,7 +36,6 @@ var META = {
     '1.2.3': BASE
   }
 }
-var PKG = new Manifest(BASE)
 
 npmlog.level = process.env.LOGLEVEL || 'silent'
 var OPTS = {
