@@ -16,7 +16,7 @@ needed to reduce excess operations, using [`cacache`](https://npm.im/cacache).
 
 * [Example](#example)
 * [Features](#features)
-* [Guide](#guide)
+* [Contributing](#contributing)
 * [API](#api)
   * [`manifest`](#manifest)
   * [`extract`](#extract)
@@ -49,9 +49,9 @@ pacote.extract('http://hi.com/pkg.tgz', './here', function (err) {
 * version/tag aware when fetching from git repositories.
 * caches git repositories
 
-### Guide
+### Contributing
 
-#### Introduction
+The pacote team enthusiastically welcomes contributions and project participation! There's a bunch of things you can do if you want to contribute! The [Contributor Guide](CONTRIBUTING.md) has all the information you need for everything from reporting bugs to contributing entire new features. Please don't hesitate to jump in if you'd like to, or even ask us questions if something isn't clear.
 
 ### API
 
