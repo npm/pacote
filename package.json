@@ -46,6 +46,7 @@
     "inflight": "^1.0.6",
     "minimatch": "^3.0.3",
     "mississippi": "^1.2.0",
+    "normalize-package-data": "^2.3.5",
     "npm-registry-client": "^7.4.1",
     "realize-package-specifier": "^3.0.3",
     "request": "^2.79.0",
