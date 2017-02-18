@@ -15,7 +15,7 @@ The [Project Team](#join-the-project-team) looks forward to your contributions.~
 * Make Something 🤓👩🏽‍💻📜🍳
   * [Project Setup](#project-setup)
   * [Contribute Documentation](#contribute-documentation)
-  * [Contibute Code](#contribute-code)
+  * [Contribute Code](#contribute-code)
 * Manage Something ✅🙆🏼💃👔
   * [Provide Support on Issues](#provide-support-on-issues)
   * [Label Issues](#label-issues)
