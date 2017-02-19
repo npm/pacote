@@ -19,7 +19,22 @@
     "npm",
     "git"
   ],
-  "author": "Kat Marchán <kzm@sykosomatic.org>",
+  "author": {
+    "name": "Kat Marchán",
+    "email": "kzm@sykosomatic.org",
+    "twitter": "maybekatz"
+  },
+  "contributors": [
+    {
+      "name": "Charlotte Spencer",
+      "email": "charlottelaspencer@gmail.com",
+      "twitter": "charlotteis"
+    },
+    {
+      "name": "Rebecca Turner",
+      "email": "me@re-becca.org"
+    }
+  ],
   "license": "CC0-1.0",
   "dependencies": {
     "cacache": "^5.0.0",
