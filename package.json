@@ -43,6 +43,7 @@
     "rimraf": "^2.5.4",
     "standard": "^8.6.0",
     "tap": "^8.0.1",
+    "weallbehave": "^1.0.0",
     "weallcontribute": "^1.0.7"
   }
 }
