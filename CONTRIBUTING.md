@@ -2,7 +2,7 @@
 
 Thank you so much for your interest in contributing!. All types of contributions are encouraged and valued. See below for different ways to help, and details about how this project handles them!
 
-Please make sure to read the relevant section before making your contribution! It will make it a lot easier for us maintainers to make the most of it and smooth out the experience fo all involved. 💚
+Please make sure to read the relevant section before making your contribution! It will make it a lot easier for us maintainers to make the most of it and smooth out the experience for all involved. 💚
 
 The [Project Team](#join-the-project-team) looks forward to your contributions.~
 
@@ -24,6 +24,7 @@ The [Project Team](#join-the-project-team) looks forward to your contributions.~
   * [Merge Pull Requests](#merge-pull-requests)
   * [Tag a Release](#tag-a-release)
   * [Join the Project Team](#join-the-project-team)
+* [Add a Guide Like This One To My Project](#attribution) 🤖😻👻
 
 ## Request Support
 
@@ -233,12 +234,6 @@ TBD - need to hash out a bit more of this process. The most important bit here i
 
 ## Join the Project Team
 
-### Current Team
-
-* Kat Marchán ([@zkat](https://github.com/zkat)) - Owner
-* Charlotte Spencer ([@charlotteis](https://github.com/charlotteis)) - Collaborator - Commits
-* Rebecca Turner ([@iarna](https://github.com/iarna)) - Collaborator - Commits
-
 ### Ways to Join
 
 There are many ways to contribute! Most of them don't require any official status unless otherwise noted. That said, there's a couple of positions that grant special repository abilities, and this section describes how they're granted and what they do.
@@ -252,3 +247,7 @@ Permission | Description
 Issue Tracker | Granted to contributors who express a strong interest in spending time on the project's issue tracker. These tasks are mainly [labeling issues](#label-issues), [cleaning up old ones](#clean-up-issues-and-prs), and [reviewing pull requests](#review-pull-requests), as well as all the usual things non-team-member contributors can do. Issue handlers should not merge pull requests, tag releases, or directly commit code themselves: that should still be done through the usual pull request process. Becoming an Issue Handler means the project team trusts you to understand enough of the team's process and context to implement it on the issue tracker.
 Committer | Granted to contributors who want to handle the actual pull request merges, tagging new versions, etc. Committers should have a good level of familiarity with the codebase, and enough context to understand the implications of various changes, as well as a good sense of the will and expectations of the project team.
 Admin/Owner | Granted to people ultimately responsible for the project, its community, etc.
+
+## Attribution
+
+This guide was generated using the WeAllJS `CONTRIBUTING.md` generator. [Make your own](https://npm.im/weallcontribute)!
