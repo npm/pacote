@@ -65,10 +65,14 @@ Once the maintainers get involved, they will follow a documented series of steps
 
 You may get in touch with the maintainer team through any of the following methods:
 
-  * Email the maintainers directly at [coc@sykosomatic.org](mailto:coc@sykosomatic.org)
-  * Mention @zkat in a comment, or any of the other maintainers.
-  * Direct Message [@maybekatz](https://twitter.com/maybekatz) on Twitter with the details and any relevant links.
-  * Direct Message @kat in the [WeAllJS Slack Group](https://wealljs.org).
+  * Through email:
+    * [kzm@sykosomatic.org](mailto:kzm@sykosomatic.org) (Kat Marchán)
+    * [charlottelaspencer@gmail.com](mailto:charlottelaspencer@gmail.com) (Charlotte Spencer)
+    * [me@re-becca.org](mailto:me@re-becca.org) (Rebecca Turner)
+
+  * Through Twitter:
+    * [@maybekatz](https://twitter.com/maybekatz) (Kat Marchán)
+    * [@charlotteis](https://twitter.com/charlotteis) (Charlotte Spencer)
 
 ### Further Enforcement
 
@@ -139,7 +143,7 @@ Sometimes, though, you need to get maintainers involved. Maintainers will do the
 
 ## Attribution
 
-This Code of Conduct is adapted from the [WeAllJS Code of
+This Code of Conduct was generated using [WeAllJS Code of Conduct Generator](https://npm.im/weallbehave), which is based on the [WeAllJS Code of
 Conduct](https://wealljs.org/code-of-conduct), which is itself based on
 [Contributor Covenant](http://contributor-covenant.org), version 1.4, available
 at
