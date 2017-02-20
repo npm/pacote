@@ -39,7 +39,7 @@
   ],
   "license": "CC0-1.0",
   "dependencies": {
-    "cacache": "^5.0.0",
+    "cacache": "^5.0.3",
     "dezalgo": "^1.0.3",
     "inflight": "^1.0.6",
     "mississippi": "^1.2.0",
