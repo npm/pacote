@@ -41,6 +41,7 @@
   "license": "CC0-1.0",
   "dependencies": {
     "cacache": "^5.0.3",
+    "checksum-stream": "^1.0.2",
     "dezalgo": "^1.0.3",
     "inflight": "^1.0.6",
     "minimatch": "^3.0.3",
