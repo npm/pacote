@@ -48,10 +48,12 @@ test('memoizes identical registry requests', function (t) {
   manifest('foo@1.2.3', OPTS, function (err, pkg) {
     if (err) { throw err }
     t.deepEqual(pkg, PKG, 'got a manifest')
-    testDir.reset(CACHE)
-    manifest('foo@1.2.3', OPTS, function (err, pkg) {
+    testDir.reset(CACHE, function (err) {
       if (err) { throw err }
-      t.deepEqual(pkg, PKG, 'got a manifest')
+      manifest('foo@1.2.3', OPTS, function (err, pkg) {
+        if (err) { throw err }
+        t.deepEqual(pkg, PKG, 'got a manifest')
+      })
     })
   })
 })
@@ -64,10 +66,12 @@ test('tag requests memoize versions', function (t) {
   manifest('foo@latest', OPTS, function (err, pkg) {
     if (err) { throw err }
     t.deepEqual(pkg, PKG, 'got a manifest')
-    testDir.reset(CACHE)
-    manifest('foo@1.2.3', OPTS, function (err, pkg) {
+    testDir.reset(CACHE, function (err) {
       if (err) { throw err }
-      t.deepEqual(pkg, PKG, 'got a manifest')
+      manifest('foo@1.2.3', OPTS, function (err, pkg) {
+        if (err) { throw err }
+        t.deepEqual(pkg, PKG, 'got a manifest')
+      })
     })
   })
 })
@@ -80,10 +84,12 @@ test('tag requests memoize tags', function (t) {
   manifest('foo@latest', OPTS, function (err, pkg) {
     if (err) { throw err }
     t.deepEqual(pkg, PKG, 'got a manifest')
-    testDir.reset(CACHE)
-    manifest('foo@latest', OPTS, function (err, pkg) {
+    testDir.reset(CACHE, function (err) {
       if (err) { throw err }
-      t.deepEqual(pkg, PKG, 'got a manifest')
+      manifest('foo@latest', OPTS, function (err, pkg) {
+        if (err) { throw err }
+        t.deepEqual(pkg, PKG, 'got a manifest')
+      })
     })
   })
 })
@@ -119,10 +125,6 @@ test('supports fetching from an optional cache', function (t) {
   })
 })
 
-test('expires stale request data')
-test('allows forcing use of cache when data stale')
-test('falls back to registry if cache entry is invalid JSON')
-
 test('falls back to registry if cache entry missing', function (t) {
   var opts = {
     registry: OPTS.registry,
@@ -138,6 +140,10 @@ test('falls back to registry if cache entry missing', function (t) {
     t.end()
   })
 })
+
+test('expires stale request data')
+test('allows forcing use of cache when data stale')
+test('falls back to registry if cache entry is invalid JSON')
 
 // This test should prevent future footgunning if the caching logic changes
 // accidentally. Caching manifests themselves should be entirely the job of the

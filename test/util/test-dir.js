@@ -9,37 +9,38 @@ var cacheDir = path.resolve(__dirname, '../cache')
 
 module.exports = testDir
 function testDir (filename) {
-  var dir = path.join(cacheDir, path.basename(filename, '.js'))
-  reset(dir)
+  var base = path.basename(filename, '.js')
+  var dir = path.join(cacheDir, base)
+  tap.beforeEach(function (cb) {
+    reset(dir, function (err) {
+      if (err) { throw err }
+      cb()
+    })
+  })
   if (!process.env.KEEPCACHE) {
     tap.tearDown(function () {
       process.chdir(__dirname)
       try {
-        rimraf.sync(cacheDir)
+        rimraf.sync(dir)
       } catch (e) {
         if (process.platform !== 'win32') {
           throw e
         }
       }
     })
-    tap.afterEach(function (cb) {
-      reset(dir)
-      cb()
-    })
   }
   return dir
 }
 
 module.exports.reset = reset
-function reset (testDir) {
+function reset (testDir, cb) {
   process.chdir(__dirname)
-  try {
-    rimraf.sync(testDir)
-  } catch (e) {
-    if (process.platform !== 'win32') {
-      throw e
-    }
-  }
-  mkdirp.sync(testDir)
-  process.chdir(testDir)
+  rimraf(testDir, function (err) {
+    if (err) { return cb(err) }
+    mkdirp(testDir, function (err) {
+      if (err) { return cb(err) }
+      process.chdir(testDir)
+      cb()
+    })
+  })
 }
