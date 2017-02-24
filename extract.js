@@ -16,7 +16,7 @@ function extract (spec, dest, opts, cb) {
   if (opts.digest) {
     opts.log.silly('extract', 'trying ', spec, ' digest:', opts.digest)
     extractByDigest(dest, opts, function (err) {
-      if (err && err === 'ENOENT') {
+      if (err && err.code === 'ENOENT') {
         opts.log.silly('extract', 'digest for', spec, 'not present. Using manifest.')
         return extractByManifest(spec, dest, opts, cb)
       } else {
