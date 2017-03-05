@@ -1,25 +1,27 @@
 'use strict'
 
-var finalizeManifest = require('./lib/finalize-manifest')
-var optCheck = require('./lib/util/opt-check')
-var rps = require('realize-package-specifier')
+const BB = require('bluebird')
 
-var handlers = {}
+const finalizeManifest = require('./lib/finalize-manifest')
+const optCheck = require('./lib/util/opt-check')
+const rps = BB.promisify(require('realize-package-specifier'))
+
+let handlers = {}
 
 module.exports = manifest
-function manifest (spec, opts, cb) {
-  if (!cb) {
-    cb = opts
-    opts = null
-  }
+function manifest (spec, opts) {
   opts = optCheck(opts)
 
-  rps(spec, function (err, res) {
-    if (err) { return cb(err) }
-    var fetcher = handlers[res.type] || (handlers[res.type] = require('./lib/handlers/' + res.type + '/manifest'))
-    fetcher(res, opts, function (err, mani) {
-      if (err) { return cb(err) }
-      finalizeManifest(mani, res, opts, cb)
+  return rps(spec).then(res => {
+    const fetcher = (
+      handlers[res.type] ||
+      (
+        handlers[res.type] =
+        require('./lib/handlers/' + res.type + '/manifest')
+      )
+    )
+    return fetcher(res, opts).then(manifest => {
+      return finalizeManifest(manifest, res, opts)
     })
   })
 }

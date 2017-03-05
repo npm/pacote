@@ -1,13 +1,15 @@
 'use strict'
 
-var npmlog = require('npmlog')
-var test = require('tap').test
-var tnock = require('./util/tnock')
+const BB = require('bluebird')
 
-var Manifest = require('../lib/finalize-manifest').Manifest
-var manifest = require('../manifest')
+const npmlog = require('npmlog')
+const test = require('tap').test
+const tnock = require('./util/tnock')
 
-var BASE = {
+const Manifest = require('../lib/finalize-manifest').Manifest
+const manifest = require('../manifest')
+
+const BASE = {
   name: 'foo',
   version: '1.2.3',
   _hasShrinkwrap: false,
@@ -19,7 +21,7 @@ var BASE = {
   }
 }
 
-var META = {
+const META = {
   name: 'foo',
   'dist-tags': { latest: '1.2.3', lts: '1.2.1' },
   versions: {
@@ -54,10 +56,10 @@ var META = {
     }
   }
 }
-var PKG = new Manifest(BASE)
+const PKG = new Manifest(BASE)
 
 npmlog.level = process.env.LOGLEVEL || 'silent'
-var OPTS = {
+const OPTS = {
   registry: 'https://mock.reg',
   log: npmlog,
   retry: {
@@ -68,76 +70,64 @@ var OPTS = {
   }
 }
 
-test('fetches version from registry', function (t) {
-  var srv = tnock(t, OPTS.registry)
+test('fetches version from registry', t => {
+  const srv = tnock(t, OPTS.registry)
 
   srv.get('/foo').reply(200, META)
-  manifest('foo@1.2.3', OPTS, function (err, pkg) {
-    if (err) { throw err }
+  return manifest('foo@1.2.3', OPTS).then(pkg => {
     t.deepEqual(pkg, PKG, 'got manifest from version')
-    t.end()
   })
 })
 
-test('fetchest tag from registry', function (t) {
-  var srv = tnock(t, OPTS.registry)
+test('fetchest tag from registry', t => {
+  const srv = tnock(t, OPTS.registry)
 
   srv.get('/foo').reply(200, META)
-  manifest('foo@latest', OPTS, function (err, pkg) {
-    if (err) { throw err }
+  return manifest('foo@latest', OPTS).then(pkg => {
     t.deepEqual(pkg, PKG, 'got manifest from tag')
-    t.end()
   })
 })
 
-test('fetches version from scoped registry', function (t) {
-  var srv = tnock(t, OPTS.registry)
+test('fetches version from scoped registry', t => {
+  const srv = tnock(t, OPTS.registry)
 
   srv.get('/@usr%2ffoo').reply(200, META)
-  manifest('@usr/foo@1.2.3', OPTS, function (err, pkg) {
-    if (err) { throw err }
+  return manifest('@usr/foo@1.2.3', OPTS).then(pkg => {
     t.deepEqual(pkg, PKG, 'got scoped manifest from version')
-    t.end()
   })
 })
 
-test('fetches tag from scoped registry', function (t) {
-  var srv = tnock(t, OPTS.registry)
+test('fetches tag from scoped registry', t => {
+  const srv = tnock(t, OPTS.registry)
 
   srv.get('/@usr%2ffoo').reply(200, META)
-  manifest('@usr/foo@latest', OPTS, function (err, pkg) {
-    if (err) { throw err }
+  return manifest('@usr/foo@latest', OPTS).then(pkg => {
     t.deepEqual(pkg, PKG, 'got scoped manifest from tag')
-    t.end()
   })
 })
 
-test('fetches manifest from registry by range', function (t) {
-  var srv = tnock(t, OPTS.registry)
+test('fetches manifest from registry by range', t => {
+  const srv = tnock(t, OPTS.registry)
 
   srv.get('/foo').reply(200, META)
-  manifest('foo@^1.2.0', OPTS, function (err, pkg) {
-    if (err) { throw err }
+  return manifest('foo@^1.2.0', OPTS).then(pkg => {
     // Not 1.2.4 because 1.2.3 is `latest`
     t.deepEqual(pkg, new Manifest(META.versions['1.2.3']), 'picked right manifest')
-    t.end()
   })
 })
 
-test('fetches manifest from scoped registry by range', function (t) {
-  var srv = tnock(t, OPTS.registry)
+test('fetches manifest from scoped registry by range', t => {
+  const srv = tnock(t, OPTS.registry)
 
   srv.get('/@usr%2ffoo').reply(200, META)
-  manifest('@usr/foo@^1.2.0', OPTS, function (err, pkg) {
-    if (err) { throw err }
+  return manifest('@usr/foo@^1.2.0', OPTS).then(pkg => {
     t.deepEqual(pkg, new Manifest(META.versions['1.2.3']), 'got scoped manifest from version')
-    t.end()
   })
 })
 
-test('sends auth token if passed in opts', function (t) {
-  var TOKEN = 'deadbeef'
-  var opts = {
+test('sends auth token if passed in opts', t => {
+  const TOKEN = 'deadbeef'
+  const opts = {
     log: OPTS.log,
     registry: OPTS.registry,
     auth: {
@@ -147,84 +137,75 @@ test('sends auth token if passed in opts', function (t) {
     }
   }
 
-  var srv = tnock(t, OPTS.registry)
+  const srv = tnock(t, OPTS.registry)
   srv.get(
     '/foo'
   ).matchHeader(
     'authorization', 'Bearer ' + TOKEN
   ).reply(200, META)
-  manifest('foo@1.2.3', opts, function (err, pkg) {
-    if (err) { throw err }
+  return manifest('foo@1.2.3', opts).then(pkg => {
     t.deepEqual(pkg, PKG, 'got manifest from version')
-    t.end()
   })
 })
 
-test('treats options as optional', function (t) {
-  var srv = tnock(t, 'https://registry.npmjs.org')
+test('treats options as optional', t => {
+  const srv = tnock(t, 'https://registry.npmjs.org')
 
   srv.get('/foo').reply(200, META)
-  manifest('foo@1.2.3', function (err, pkg) {
-    if (err) { throw err }
+  return manifest('foo@1.2.3').then(pkg => {
     t.deepEqual(pkg, PKG, 'used default options')
-    t.end()
   })
 })
 
-test('uses scope from spec for registry lookup', function (t) {
-  var opts = {
+test('uses scope from spec for registry lookup', t => {
+  const opts = {
     '@myscope:registry': OPTS.registry,
     // package scope takes priority
     scope: '@otherscope'
   }
-  var srv = tnock(t, OPTS.registry)
+  const srv = tnock(t, OPTS.registry)
   srv.get('/@myscope%2ffoo').reply(200, META)
-  manifest('@myscope/foo@1.2.3', opts, function (err, pkg) {
-    if (err) { throw err }
+  return manifest('@myscope/foo@1.2.3', opts).then(pkg => {
     t.deepEqual(pkg, PKG, 'used scope to pick registry')
-    t.end()
   })
 })
 
-test('uses scope opt for registry lookup', function (t) {
-  t.plan(2)
-  var srv = tnock(t, OPTS.registry)
+test('uses scope opt for registry lookup', t => {
+  const srv = tnock(t, OPTS.registry)
 
   srv.get('/foo').reply(200, META)
-  manifest('foo@1.2.3', {
-    '@myscope:registry': OPTS.registry,
-    scope: '@myscope',
-    // scope option takes priority
-    registry: 'nope'
-  }, function (err, pkg) {
-    if (err) { throw err }
-    t.deepEqual(pkg, PKG, 'used scope to pick registry')
-  })
-
   srv.get('/bar').reply(200, META)
-  manifest('bar@latest', {
-    '@myscope:registry': OPTS.registry,
-    scope: 'myscope' // @ auto-inserted
-  }, function (err, pkg) {
-    if (err) { throw err }
-    t.deepEqual(pkg, PKG, 'scope @ was auto-inserted')
-  })
+
+  return BB.join(
+    manifest('foo@1.2.3', {
+      '@myscope:registry': OPTS.registry,
+      scope: '@myscope',
+      // scope option takes priority
+      registry: 'nope'
+    }).then(pkg => {
+      t.deepEqual(pkg, PKG, 'used scope to pick registry')
+    }),
+    manifest('bar@latest', {
+      '@myscope:registry': OPTS.registry,
+      scope: 'myscope' // @ auto-inserted
+    }).then(pkg => {
+      t.deepEqual(pkg, PKG, 'scope @ was auto-inserted')
+    })
+  )
 })
 
-test('defaults to registry.npmjs.org if no option given', function (t) {
-  var srv = tnock(t, 'https://registry.npmjs.org')
+test('defaults to registry.npmjs.org if no option given', t => {
+  const srv = tnock(t, 'https://registry.npmjs.org')
 
   srv.get('/foo').reply(200, META)
-  manifest('foo@1.2.3', { registry: undefined }, function (err, pkg) {
-    if (err) { throw err }
+  return manifest('foo@1.2.3', { registry: undefined }).then(pkg => {
     t.deepEqual(pkg, PKG, 'used npm registry')
-    t.end()
   })
 })
 
-test('supports scoped auth', function (t) {
-  var TOKEN = 'deadbeef'
-  var opts = {
+test('supports scoped auth', t => {
+  const TOKEN = 'deadbeef'
+  const opts = {
     scope: 'myscope',
     '@myscope:registry': OPTS.registry,
     auth: {
@@ -233,24 +214,21 @@ test('supports scoped auth', function (t) {
       }
     }
   }
-  var srv = tnock(t, OPTS.registry)
+  const srv = tnock(t, OPTS.registry)
   srv.get(
     '/foo'
   ).matchHeader(
     'authorization', 'Bearer ' + TOKEN
   ).reply(200, META)
-  manifest('foo@1.2.3', opts, function (err, pkg) {
-    if (err) { throw err }
+  return manifest('foo@1.2.3', opts).then(pkg => {
     t.deepEqual(pkg, PKG, 'used scope to pick registry and auth')
-    t.end()
   })
 })
 
-test('package requests are case-sensitive', function (t) {
-  t.plan(2)
-  var srv = tnock(t, OPTS.registry)
+test('package requests are case-sensitive', t => {
+  const srv = tnock(t, OPTS.registry)
 
-  var CASEDBASE = {
+  const CASEDBASE = {
     name: 'Foo',
     version: '1.2.3',
     _hasShrinkwrap: false,
@@ -261,45 +239,44 @@ test('package requests are case-sensitive', function (t) {
       tarball: 'https://foo.bar/x.tgz'
     }
   }
-  var CASEDPKG = new Manifest(CASEDBASE)
+  const CASEDPKG = new Manifest(CASEDBASE)
   srv.get('/Foo').reply(200, {
     versions: {
       '1.2.3': CASEDBASE
     }
   })
-  manifest('Foo@1.2.3', OPTS, function (err, pkg) {
-    if (err) { throw err }
-    t.deepEqual(pkg, CASEDPKG, 'got Cased package')
-  })
-
   srv.get('/foo').reply(200, META)
-  manifest('foo@1.2.3', OPTS, function (err, pkg) {
-    if (err) { throw err }
-    t.deepEqual(pkg, PKG, 'got lowercased package')
-  })
+
+  return BB.join(
+    manifest('Foo@1.2.3', OPTS).then(pkg => {
+      t.deepEqual(pkg, CASEDPKG, 'got Cased package')
+    }),
+    manifest('foo@1.2.3', OPTS).then(pkg => {
+      t.deepEqual(pkg, PKG, 'got lowercased package')
+    })
+  )
 })
 
-test('handles server-side case-normalization', function (t) {
-  t.plan(2)
-  var srv = tnock(t, OPTS.registry)
+test('handles server-side case-normalization', t => {
+  const srv = tnock(t, OPTS.registry)
 
   srv.get('/Cased').reply(200, META)
-  manifest('Cased@1.2.3', OPTS, function (err, pkg) {
-    if (err) { throw err }
-    t.deepEqual(pkg, PKG, 'got Cased package')
-  })
-
   srv.get('/cased').reply(200, META)
-  manifest('cased@latest', OPTS, function (err, pkg) {
-    if (err) { throw err }
-    t.deepEqual(pkg, PKG, 'got lowercased package')
-  })
+
+  return BB.join(
+    manifest('Cased@1.2.3', OPTS).then(pkg => {
+      t.deepEqual(pkg, PKG, 'got Cased package')
+    }),
+    manifest('cased@latest', OPTS).then(pkg => {
+      t.deepEqual(pkg, PKG, 'got lowercased package')
+    })
+  )
 })
 
-test('recovers from request errors', function (t) {
+test('recovers from request errors', t => {
   t.plan(4)
-  var srv = tnock(t, OPTS.registry)
-  var opts = {
+  const srv = tnock(t, OPTS.registry)
+  const opts = {
     log: OPTS.log,
     registry: OPTS.registry,
     retry: {
@@ -322,8 +299,7 @@ test('recovers from request errors', function (t) {
     return body
   })
 
-  manifest('foo@1.2.3', opts, function (err, pkg) {
-    if (err) { throw err }
+  manifest('foo@1.2.3', opts).then(pkg => {
     t.deepEqual(pkg, PKG, 'got a manifest')
   })
 })

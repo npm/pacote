@@ -1,16 +1,18 @@
 'use strict'
 
-var finished = require('mississippi').finished
-var mockTar = require('./util/mock-tarball')
-var npmlog = require('npmlog')
-var test = require('tap').test
-var tnock = require('./util/tnock')
+const BB = require('bluebird')
+
+const finished = BB.promisify(require('mississippi').finished)
+const mockTar = require('./util/mock-tarball')
+const npmlog = require('npmlog')
+const test = require('tap').test
+const tnock = require('./util/tnock')
 
 require('./util/test-dir')(__filename)
 
-var tarball = require('../lib/registry/tarball')
+const tarball = require('../lib/registry/tarball')
 
-var BASE = {
+const BASE = {
   name: 'foo',
   version: '1.2.3',
   _hasShrinkwrap: false,
@@ -20,7 +22,7 @@ var BASE = {
   }
 }
 
-var META = {
+const META = {
   name: 'foo',
   'dist-tags': { latest: '1.2.3' },
   versions: {
@@ -29,7 +31,7 @@ var META = {
 }
 
 npmlog.level = process.env.LOGLEVEL || 'silent'
-var OPTS = {
+const OPTS = {
   log: npmlog,
   registry: 'https://my.mock.registry/',
   retry: {
@@ -41,31 +43,30 @@ var OPTS = {
 }
 
 test('basic tarball streaming', function (t) {
-  var pkg = {
+  const pkg = {
     'package.json': JSON.stringify({
       name: 'foo',
       version: '1.2.3'
     }),
     'index.js': 'console.log("hello world!")'
   }
-  mockTar(pkg, function (err, tarData) {
-    if (err) { throw err }
-    var srv = tnock(t, OPTS.registry)
+  return mockTar(pkg).then(tarData => {
+    const srv = tnock(t, OPTS.registry)
     srv.get('/foo').reply(200, META)
     srv.get('/foo/-/foo-1.2.3.tgz').reply(200, tarData)
-    var data = ''
-    finished(tarball({
-      type: 'range',
-      raw: 'foo@^1.2.3',
-      name: 'foo',
-      escapedName: 'foo',
-      rawSpec: '^1.2.3',
-      spec: '>=1.2.3 <2.0.0',
-      scope: null
-    }, OPTS).on('data', function (d) { data += d }), function (err) {
-      if (err) { throw err }
+    let data = ''
+    return finished(
+      tarball({
+        type: 'range',
+        raw: 'foo@^1.2.3',
+        name: 'foo',
+        escapedName: 'foo',
+        rawSpec: '^1.2.3',
+        spec: '>=1.2.3 <2.0.0',
+        scope: null
+      }, OPTS).on('data', d => { data += d })
+    ).then(() => {
       t.equal(data, tarData, 'fetched tarball data matches one from server')
-      t.done()
     })
   })
 })

@@ -1,48 +1,44 @@
 'use strict'
 
-var cache = require('./lib/cache')
-var extractStream = require('./lib/extract-stream')
-var pipe = require('mississippi').pipe
-var optCheck = require('./lib/util/opt-check')
-var rps = require('realize-package-specifier')
+const BB = require('bluebird')
+
+const cache = require('./lib/cache')
+const extractStream = require('./lib/extract-stream')
+const pipe = BB.promisify(require('mississippi').pipe)
+const optCheck = require('./lib/util/opt-check')
+const rps = BB.promisify(require('realize-package-specifier'))
 
 module.exports = extract
-function extract (spec, dest, opts, cb) {
-  if (!cb) {
-    cb = opts
-    opts = null
-  }
+function extract (spec, dest, opts) {
   opts = optCheck(opts)
   if (opts.digest) {
     opts.log.silly('extract', 'trying ', spec, ' digest:', opts.digest)
-    extractByDigest(dest, opts, function (err) {
+    return extractByDigest(
+      dest, opts
+    ).catch(err => {
       if (err && err.code === 'ENOENT') {
         opts.log.silly('extract', 'digest for', spec, 'not present. Using manifest.')
-        return extractByManifest(spec, dest, opts, cb)
+        return extractByManifest(spec, dest, opts)
       } else {
-        return cb(err)
+        throw err
       }
     })
   } else {
     opts.log.silly('extract', 'no digest provided for ', spec, '- extracting by manifest')
-    extractByManifest(spec, dest, opts, cb)
+    return extractByManifest(spec, dest, opts)
   }
 }
 
-function extractByDigest (dest, opts, cb) {
-  var xtractor = extractStream(dest, opts)
-  var cached = cache.get.stream.byDigest(opts.cache, opts.digest, opts)
-  pipe(cached, xtractor, cb)
+function extractByDigest (dest, opts) {
+  const xtractor = extractStream(dest, opts)
+  const cached = cache.get.stream.byDigest(opts.cache, opts.digest, opts)
+  return pipe(cached, xtractor)
 }
 
-function extractByManifest (spec, dest, opts, cb) {
-  var xtractor = extractStream(dest, opts)
-  rps(spec, function (err, res) {
-    if (err) { return cb(err) }
-    var tarball = require('./lib/handlers/' + res.type + '/tarball')
-    pipe(tarball(res, opts), xtractor, function (err) {
-      opts.log.silly('extract', 'extraction finished for', spec)
-      cb(err)
-    })
+function extractByManifest (spec, dest, opts) {
+  const xtractor = extractStream(dest, opts)
+  return rps(spec).then(res => {
+    const tarball = require('./lib/handlers/' + res.type + '/tarball')
+    return pipe(tarball(res, opts), xtractor)
   })
 }

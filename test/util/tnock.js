@@ -1,7 +1,7 @@
 'use strict'
 
 var nock = require('nock')
-var clearMemoized = require('../../lib/cache')._clearMemoized
+var clearMemoized = require('../../lib/cache').clearMemoized
 
 module.exports = tnock
 function tnock (t, host) {

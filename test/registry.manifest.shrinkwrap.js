@@ -1,14 +1,14 @@
 'use strict'
 
-var npmlog = require('npmlog')
-var tar = require('tar-stream')
-var test = require('tap').test
-var tnock = require('./util/tnock')
+const npmlog = require('npmlog')
+const tar = require('tar-stream')
+const test = require('tap').test
+const tnock = require('./util/tnock')
 
-var manifest = require('../manifest')
+const manifest = require('../manifest')
 
 npmlog.level = process.env.LOGLEVEL || 'silent'
-var OPTS = {
+const OPTS = {
   registry: 'https://mock.reg',
   log: npmlog,
   retry: {
@@ -19,17 +19,17 @@ var OPTS = {
   }
 }
 
-var PKG = {
+const PKG = {
   name: 'foo',
   version: '1.2.3'
 }
 
-var SHRINKWRAP = {
+const SHRINKWRAP = {
   name: 'foo',
   version: '1.2.3'
 }
 
-var META = {
+const META = {
   name: 'foo',
   'dist-tags': { latest: '1.2.3', lts: '1.2.1' },
   versions: {
@@ -41,9 +41,9 @@ var META = {
   }
 }
 
-var TARBALL = ''
-test('tarball setup', function (t) {
-  var pack = tar.pack()
+let TARBALL = ''
+test('tarball setup', t => {
+  const pack = tar.pack()
   pack.entry({ name: 'package/npm-shrinkwrap.json' }, JSON.stringify(SHRINKWRAP))
   pack.entry({ name: 'package/package.json' }, JSON.stringify(PKG))
   pack.finalize()
@@ -52,16 +52,14 @@ test('tarball setup', function (t) {
   pack.on('end', function () { t.end() })
 })
 
-test('fetches shrinkwrap data if missing + required', function (t) {
+test('fetches shrinkwrap data if missing + required', t => {
   var srv = tnock(t, OPTS.registry)
 
   srv.get('/foo').reply(200, META)
   srv.get('/foo/-/foo-1.2.3.tgz').reply(200, TARBALL)
-  manifest('foo@1.2.3', OPTS, function (err, pkg) {
-    if (err) { throw err }
+  return manifest('foo@1.2.3', OPTS).then(pkg => {
     t.ok(pkg, 'got a package manifest')
     t.deepEqual(pkg._shrinkwrap, SHRINKWRAP, 'got a shrinkwrap')
-    t.end()
   })
 })
 

@@ -20,6 +20,7 @@ needed to reduce excess operations, using [`cacache`](https://npm.im/cacache).
 * [API](#api)
   * [`manifest`](#manifest)
   * [`extract`](#extract)
+  * [`prefetch`](#prefetch)
   * [`options`](#options)
 
 ### Example
@@ -27,27 +28,24 @@ needed to reduce excess operations, using [`cacache`](https://npm.im/cacache).
 ```javascript
 const pacote = require('pacote')
 
-pacote.manifest('pacote@^1', function (err, pkg) {
+pacote.manifest('pacote@^1').then(pkg => {
   console.log('package manifest for registry pkg:', pkg)
   // { "name": "pacote", "version": "1.0.0", ... }
 })
 
-pacote.extract('http://hi.com/pkg.tgz', './here', function (err) {
+pacote.extract('http://hi.com/pkg.tgz', './here').then(() => {
   console.log('remote tarball contents extracted to ./here')
 })
 ```
 
 ### Features
 
-* simple interface to common package-related actions.
-* supports all package types npm does.
-* fast cache
+* Handles all package types [npm](https://npm.im/npm) does
+* [high-performance, reliably, verified local cache](https://npm.im/cacache)
 * offline mode
 * authentication support (private git, private npm registries, etc)
-* npm-compatible for all relevant operations
 * github, gitlab, and bitbucket-aware
-* version/tag aware when fetching from git repositories.
-* caches git repositories
+* semver range support for git dependencies
 
 ### Contributing
 
@@ -55,9 +53,28 @@ The pacote team enthusiastically welcomes contributions and project participatio
 
 ### API
 
-#### <a name="manifest"></a> `> pacote.manifest(spec, [opts], cb)`
+#### <a name="manifest"></a> `> pacote.manifest(spec, [opts])`
 
-Fetches the *manifest* for a package, aka `package.json`.
+Fetches the *manifest* for a package. Manifest objects are similar and based
+on the `package.json` for that package, but with pre-processed and limited
+fields. The object has the following shape:
+
+```javascript
+{
+  "name": PkgName,
+  "version": SemverString,
+  "dependencies": { PkgName: SemverString },
+  "optionalDependencies": { PkgName: SemverString },
+  "devDependencies": { PkgName: SemverString },
+  "peerDependencies": { PkgName: SemverString },
+  "bundleDependencies": false || [PkgName],
+  "bin": { BinName: Path },
+  "_resolved": TarballSource, // different for each package type
+  "_shasum": TarballSha1Sum,
+  "_sha512sum": TarballSha512Sum,
+  "_shrinkwrap": null || ShrinkwrapJsonObj
+}
+```
 
 Note that depending on the spec type, some additional fields might be present.
 For example, packages from `registry.npmjs.org` have additional metadata
@@ -66,12 +83,12 @@ appended by the registry.
 ##### Example
 
 ```javascript
-pacote.manifest('pacote@1.0.0', function (err, pkgJson) {
-  // fetched `package.json` data from the registry (or cache, if cached)
+pacote.manifest('pacote@1.0.0').then(pkgJson => {
+  // fetched `package.json` data from the registry
 })
 ```
 
-#### <a name="extract"></a> `> pacote.extract(spec, destination, [opts], cb)`
+#### <a name="extract"></a> `> pacote.extract(spec, destination, [opts])`
 
 Extracts package data identified by `<spec>` into a directory named
 `<destination>`, which will be created if it does not already exist.
@@ -85,9 +102,22 @@ tarball.
 ```javascript
 pacote.extract('pacote@1.0.0', './woot', {
   digest: 'deadbeef'
-}, function (err) {
+}).then(() => {
   // Succeeds as long as `pacote@1.0.0` still exists somewhere. Network and
   // other operations are bypassed entirely if `digest` is present in the cache.
+})
+```
+
+#### <a name="prefetch"></a> `> pacote.prefetch(spec, [opts])`
+
+Fetches package data identified by `<spec>`, usually for the purpose of warming
+up the local package cache (with `opts.cache`). It does not return anything.
+
+##### Example
+
+```javascript
+pacote.prefetch('pacote@1.0.0', { cache: './my-cache' }).then(() => {
+  // ./my-cache now has both the manifest and tarball for `pacote@1.0.0`.
 })
 ```
 

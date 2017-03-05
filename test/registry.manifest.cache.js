@@ -1,17 +1,19 @@
 'use strict'
 
-var cache = require('../lib/cache')
-var npmlog = require('npmlog')
-var test = require('tap').test
-var testDir = require('./util/test-dir')
-var tnock = require('./util/tnock')
+const BB = require('bluebird')
 
-var CACHE = testDir(__filename)
-var Manifest = require('../lib/finalize-manifest').Manifest
-var manifest = require('../manifest')
+const cache = require('../lib/cache')
+const npmlog = require('npmlog')
+const test = require('tap').test
+const testDir = require('./util/test-dir')
+const tnock = require('./util/tnock')
+
+const CACHE = testDir(__filename)
+const Manifest = require('../lib/finalize-manifest').Manifest
+const manifest = require('../manifest')
 
 // This is what the server sends
-var BASE = {
+const BASE = {
   name: 'foo',
   version: '1.2.3',
   _hasShrinkwrap: false,
@@ -21,14 +23,14 @@ var BASE = {
   }
 }
 // This is what's returned by finalize-manifest
-var PKG = new Manifest({
+const PKG = new Manifest({
   name: 'foo',
   version: '1.2.3',
   _hasShrinkwrap: false,
   _shasum: BASE.dist.shasum,
   _resolved: BASE.dist.tarball
 })
-var META = {
+const META = {
   'dist-tags': {
     latest: '1.2.3'
   },
@@ -38,7 +40,7 @@ var META = {
 }
 
 npmlog.level = process.env.LOGLEVEL || 'silent'
-var OPTS = {
+const OPTS = {
   cache: CACHE,
   registry: 'https://mock.reg',
   log: npmlog,
@@ -55,104 +57,88 @@ var OPTS = {
   }
 }
 
-test('memoizes identical registry requests', function (t) {
+test('memoizes identical registry requests', t => {
   t.plan(2)
-  var srv = tnock(t, OPTS.registry)
+  const srv = tnock(t, OPTS.registry)
 
   srv.get('/foo').once().reply(200, META)
-  manifest('foo@1.2.3', OPTS, function (err, pkg) {
-    if (err) { throw err }
+  return manifest('foo@1.2.3', OPTS).then(pkg => {
     t.deepEqual(pkg, PKG, 'got a manifest')
-    testDir.reset(CACHE, function (err) {
-      if (err) { throw err }
-      manifest('foo@1.2.3', OPTS, function (err, pkg) {
-        if (err) { throw err }
-        t.deepEqual(pkg, PKG, 'got a manifest')
-      })
-    })
+    return testDir.reset(CACHE)
+  }).then(() => {
+    return manifest('foo@1.2.3', OPTS)
+  }).then(pkg => {
+    t.deepEqual(pkg, PKG, 'got a manifest')
   })
 })
 
-test('tag requests memoize versions', function (t) {
+test('tag requests memoize versions', t => {
   t.plan(2)
-  var srv = tnock(t, OPTS.registry)
+  const srv = tnock(t, OPTS.registry)
 
   srv.get('/foo').once().reply(200, META)
-  manifest('foo@latest', OPTS, function (err, pkg) {
-    if (err) { throw err }
+  return manifest('foo@latest', OPTS).then(pkg => {
     t.deepEqual(pkg, PKG, 'got a manifest')
-    testDir.reset(CACHE, function (err) {
-      if (err) { throw err }
-      manifest('foo@1.2.3', OPTS, function (err, pkg) {
-        if (err) { throw err }
-        t.deepEqual(pkg, PKG, 'got a manifest')
-      })
-    })
+    return testDir.reset(CACHE)
+  }).then(() => {
+    return manifest('foo@1.2.3', OPTS)
+  }).then(pkg => {
+    t.deepEqual(pkg, PKG, 'got a manifest')
   })
 })
 
-test('tag requests memoize tags', function (t) {
+test('tag requests memoize tags', t => {
   t.plan(2)
-  var srv = tnock(t, OPTS.registry)
+  const srv = tnock(t, OPTS.registry)
 
   srv.get('/foo').once().reply(200, META)
-  manifest('foo@latest', OPTS, function (err, pkg) {
-    if (err) { throw err }
+  return manifest('foo@latest', OPTS).then(pkg => {
     t.deepEqual(pkg, PKG, 'got a manifest')
-    testDir.reset(CACHE, function (err) {
-      if (err) { throw err }
-      manifest('foo@latest', OPTS, function (err, pkg) {
-        if (err) { throw err }
-        t.deepEqual(pkg, PKG, 'got a manifest')
-      })
-    })
+    return testDir.reset(CACHE)
+  }).then(() => {
+    return manifest('foo@latest', OPTS)
+  }).then(pkg => {
+    t.deepEqual(pkg, PKG, 'got a manifest')
   })
 })
 
 test('memoization is scoped to a given cache')
 
-test('inflights concurrent requests', function (t) {
-  t.plan(2)
-  var srv = tnock(t, OPTS.registry)
+test('inflights concurrent requests', t => {
+  const srv = tnock(t, OPTS.registry)
 
   srv.get('/foo').once().reply(200, META)
-  manifest('foo@1.2.3', OPTS, function (err, pkg) {
-    if (err) { throw err }
-    t.deepEqual(pkg, PKG, 'got a manifest')
-  })
-
-  manifest('foo@1.2.3', OPTS, function (err, pkg) {
-    if (err) { throw err }
-    t.deepEqual(pkg, PKG, 'got a manifest')
-  })
+  return BB.join(
+    manifest('foo@1.2.3', OPTS).then(pkg => {
+      t.deepEqual(pkg, PKG, 'got a manifest')
+    }),
+    manifest('foo@1.2.3', OPTS).then(pkg => {
+      t.deepEqual(pkg, PKG, 'got a manifest')
+    })
+  )
 })
 
-test('supports fetching from an optional cache', function (t) {
+test('supports fetching from an optional cache', t => {
   tnock(t, OPTS.registry)
-  var key = cache.key('registry-request', OPTS.registry + '/foo')
-  cache.put(CACHE, key, JSON.stringify(META), OPTS, function (err) {
-    if (err) { throw err }
-    manifest('foo@1.2.3', OPTS, function (err, pkg) {
-      if (err) { throw err }
+  const key = cache.key('registry-request', OPTS.registry + '/foo')
+  return cache.put(CACHE, key, JSON.stringify(META), OPTS).then(() => {
+    return manifest('foo@1.2.3', OPTS).then(pkg => {
       t.deepEqual(pkg, PKG)
-      t.end()
     })
   })
 })
 
-test('falls back to registry if cache entry missing', function (t) {
-  var opts = {
+test('falls back to registry if cache entry missing', t => {
+  const opts = {
     registry: OPTS.registry,
     log: OPTS.log,
     retry: OPTS.retry,
     cache: CACHE
   }
-  var srv = tnock(t, opts.registry)
+  const srv = tnock(t, opts.registry)
   srv.get('/foo').reply(200, META)
-  manifest('foo@1.2.3', opts, function (err, pkg) {
-    if (err) { throw err }
+  return manifest('foo@1.2.3', opts).then(pkg => {
     t.deepEqual(pkg, PKG)
-    t.end()
   })
 })
 

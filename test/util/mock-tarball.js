@@ -1,19 +1,17 @@
 'use strict'
 
-var pipeline = require('mississippi').pipeline
-var tar = require('tar-stream')
-var zlib = require('zlib')
+const BB = require('bluebird')
+
+const pipeline = require('mississippi').pipeline
+const tar = require('tar-stream')
+const zlib = require('zlib')
 
 module.exports = makeTarball
-function makeTarball (files, opts, cb) {
-  if (!cb) {
-    cb = opts
-    opts = null
-  }
+function makeTarball (files, opts) {
   opts = opts || {}
-  var pack = tar.pack()
+  const pack = tar.pack()
   Object.keys(files).forEach(function (filename) {
-    var entry = files[filename]
+    const entry = files[filename]
     pack.entry({
       name: (opts.noPrefix ? '' : 'package/') + filename,
       type: entry.type,
@@ -30,20 +28,22 @@ function makeTarball (files, opts, cb) {
     : files[filename].data)
   })
   pack.finalize()
-  if (opts.stream && opts.gzip) {
-    return cb(null, pipeline(pack, zlib.createGzip()))
-  } else if (opts.stream) {
-    return cb(null, pack)
-  } else {
-    var tarData = ''
-    pack.on('data', function (d) { tarData += d })
-    pack.on('error', cb)
-    pack.on('end', function () {
-      if (opts.gzip) {
-        zlib.gzip(tarData, cb)
-      } else {
-        cb(null, tarData)
-      }
-    })
-  }
+  return BB.fromNode(cb => {
+    if (opts.stream && opts.gzip) {
+      return cb(null, pipeline(pack, zlib.createGzip()))
+    } else if (opts.stream) {
+      return cb(null, pack)
+    } else {
+      let tarData = ''
+      pack.on('data', function (d) { tarData += d })
+      pack.on('error', cb)
+      pack.on('end', function () {
+        if (opts.gzip) {
+          zlib.gzip(tarData, cb)
+        } else {
+          cb(null, tarData)
+        }
+      })
+    }
+  })
 }
