@@ -122,7 +122,7 @@ test('skips any invalid version keys', t => {
       () => { throw new Error('expected a failure') },
       err => {
         t.ok(err, 'got an error')
-        t.equal(err.code, 'ENOENT', 'no matching specs')
+        t.equal(err.code, 'ETARGET', 'no matching specs')
       }
     )
   )
@@ -140,7 +140,7 @@ test('ENOENT if range does not match anything', t => {
     () => { throw new Error('expected a failure') },
     err => {
       t.ok(err, 'got an error')
-      t.equal(err.code, 'ENOENT', 'useful error code returned.')
+      t.equal(err.code, 'ETARGET', 'useful error code returned.')
     }
   )
 })
