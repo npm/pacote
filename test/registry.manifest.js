@@ -159,7 +159,9 @@ test('treats options as optional', t => {
 
 test('uses scope from spec for registry lookup', t => {
   const opts = {
-    '@myscope:registry': OPTS.registry,
+    scopeTargets: {
+      '@myscope': OPTS.registry
+    },
     // package scope takes priority
     scope: '@otherscope'
   }
@@ -178,7 +180,9 @@ test('uses scope opt for registry lookup', t => {
 
   return BB.join(
     manifest('foo@1.2.3', {
-      '@myscope:registry': OPTS.registry,
+      scopeTargets: {
+        '@myscope': OPTS.registry
+      },
       scope: '@myscope',
       // scope option takes priority
       registry: 'nope'
@@ -186,7 +190,9 @@ test('uses scope opt for registry lookup', t => {
       t.deepEqual(pkg, PKG, 'used scope to pick registry')
     }),
     manifest('bar@latest', {
-      '@myscope:registry': OPTS.registry,
+      scopeTargets: {
+        '@myscope': OPTS.registry
+      },
       scope: 'myscope' // @ auto-inserted
     }).then(pkg => {
       t.deepEqual(pkg, PKG, 'scope @ was auto-inserted')
@@ -207,7 +213,9 @@ test('supports scoped auth', t => {
   const TOKEN = 'deadbeef'
   const opts = {
     scope: 'myscope',
-    '@myscope:registry': OPTS.registry,
+    scopeTargets: {
+      '@myscope': OPTS.registry
+    },
     auth: {
       '//mock.reg/': {
         token: TOKEN
