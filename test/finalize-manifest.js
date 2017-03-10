@@ -37,7 +37,8 @@ test('returns a manifest with the right fields', t => {
     bin: './foo.js',
     _resolved: 'resolved.to.this',
     _shasum: 'deadbeefc0ffeebad1dea',
-    _hasShrinkwrap: false
+    _hasShrinkwrap: false,
+    _deprecated: 'foo'
   }
   return finalizeManifest(base, {}, OPTS).then(manifest => {
     t.deepEqual(manifest, {
@@ -54,6 +55,7 @@ test('returns a manifest with the right fields', t => {
       _resolved: 'resolved.to.this',
       _shasum: 'deadbeefc0ffeebad1dea',
       _shrinkwrap: null,
+      _deprecated: 'foo',
       _id: 'testing@1.2.3'
     }, 'fields as expected')
   })
@@ -80,6 +82,7 @@ test('defaults all field to expected types + values', t => {
       _resolved: base._resolved,
       _shasum: base._shasum,
       _shrinkwrap: null,
+      _deprecated: false,
       _id: 'testing@1.2.3'
     }, 'fields defaulted as expected')
   })
