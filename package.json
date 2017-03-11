@@ -51,7 +51,7 @@
     "npm-registry-client": "^7.4.6",
     "promise-inflight": "^1.0.1",
     "realize-package-specifier": "^3.0.3",
-    "request": "^2.79.0",
+    "request": "^2.81.0",
     "semver": "^5.3.0",
     "slide": "^1.1.6",
     "tar-fs": "^1.15.1",
