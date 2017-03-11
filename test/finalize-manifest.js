@@ -2,14 +2,16 @@
 
 const BB = require('bluebird')
 
+const cache = require('../lib/cache')
 const crypto = require('crypto')
 const npmlog = require('npmlog')
 const path = require('path')
 const tar = require('tar-stream')
 const test = require('tap').test
+const testDir = require('./util/test-dir')
 const tnock = require('./util/tnock')
 
-require('./util/test-dir')(__filename)
+const CACHE = testDir(__filename)
 
 const finalizeManifest = require('../lib/finalize-manifest')
 
@@ -17,6 +19,7 @@ npmlog.level = process.env.LOGLEVEL || 'silent'
 const OPTS = {
   registry: 'https://mock.reg/',
   log: npmlog,
+  hashAlgorithm: 'sha1',
   retry: {
     retries: 1,
     factor: 1,
@@ -94,7 +97,6 @@ test('fills in shrinkwrap if missing', t => {
     name: 'testing',
     version: '1.2.3',
     _resolved: OPTS.registry + tarballPath,
-    _shasum: 'deadbeefc0ffeebad1dea',
     _hasShrinkwrap: true
   }
   const sr = {
@@ -151,7 +153,6 @@ test('fills in `bin` if `directories.bin` string', t => {
       bin: 'foo/my/bin'
     },
     _resolved: OPTS.registry + tarballPath,
-    _shasum: 'deadbeefc0ffeebad1dea',
     _hasShrinkwrap: false
   }
   const sr = {
@@ -189,8 +190,8 @@ test('fills in `bin` if original was an array', t => {
     directories: {
       bin: 'foo'
     },
-    _resolved: OPTS.registry + tarballPath,
     _shasum: 'deadbeefc0ffeebad1dea',
+    _resolved: OPTS.registry + tarballPath,
     _hasShrinkwrap: false
   }
   return finalizeManifest(base, {
@@ -244,6 +245,55 @@ test('uses package.json as base if passed null', t => {
     })
   })
 })
+
+test('caches finalized manifests', t => {
+  cache.clearMemoized()
+  const tarballPath = 'testing/tarball-1.2.3.tgz'
+  const base = {
+    name: 'testing',
+    version: '1.2.3',
+    _resolved: OPTS.registry + tarballPath,
+    _hasShrinkwrap: true
+  }
+  const sr = {
+    name: base.name,
+    version: base.version
+  }
+  const opts = Object.create(OPTS)
+  opts.cache = CACHE
+  return makeTarball({
+    'package.json': base,
+    'npm-shrinkwrap.json': sr
+  }).then(tarData => {
+    tnock(t, OPTS.registry).get('/' + tarballPath).reply(200, tarData)
+    return finalizeManifest(base, {
+      name: base.name,
+      type: 'range'
+    }, opts).then(manifest1 => {
+      base._shasum = manifest1._shasum
+      base._sha512sum = manifest1._sha512sum
+      return cache.ls(CACHE, opts).then(entries => {
+        const promises = []
+        Object.keys(entries).forEach(k => {
+          if (!k.match(/^pacote:range-manifest/)) {
+            promises.push(cache.put(CACHE, k, '', opts))
+          } else {
+            t.ok(true, 'manifest entry exists in cache: ' + k)
+          }
+        })
+        return Promise.all(promises)
+      }).then(() => {
+        return finalizeManifest(base, {
+          name: base.name,
+          type: 'range'
+        }, opts)
+      }).then(manifest2 => {
+        t.deepEqual(manifest2, manifest1, 'got cached manifest')
+      })
+    })
+  })
+})
+
 // TODO - this is pending major changes in npm, so not implemented for now.
 test('manifest returned is immutable + inextensible')
 
