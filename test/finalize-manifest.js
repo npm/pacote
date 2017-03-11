@@ -204,6 +204,46 @@ test('fills in `bin` if original was an array', t => {
   })
 })
 
+test('uses package.json as base if passed null', t => {
+  const tarballPath = 'testing/tarball-1.2.3.tgz'
+  const base = {
+    name: 'testing',
+    version: '1.2.3',
+    dependencies: { foo: '1' },
+    directories: { bin: 'foo' }
+  }
+  const sr = {
+    name: base.name,
+    version: base.version
+  }
+  return makeTarball({
+    'package.json': base,
+    'npm-shrinkwrap.json': sr,
+    'foo/x': 'x()'
+  }).then(tarData => {
+    tnock(t, OPTS.registry).get('/' + tarballPath).reply(200, tarData)
+    return finalizeManifest(null, {
+      spec: OPTS.registry + tarballPath,
+      type: 'remote'
+    }, OPTS).then(manifest => {
+      t.deepEqual(manifest, {
+        name: base.name,
+        version: base.version,
+        dependencies: base.dependencies,
+        optionalDependencies: {},
+        devDependencies: {},
+        bundleDependencies: false,
+        peerDependencies: {},
+        _resolved: OPTS.registry + tarballPath,
+        _deprecated: false,
+        _shasum: crypto.createHash('sha1').update(tarData).digest('hex'),
+        _shrinkwrap: sr,
+        bin: { 'x': path.join('foo', 'x') },
+        _id: 'testing@1.2.3'
+      }, 'entire manifest filled out from tarball')
+    })
+  })
+})
 // TODO - this is pending major changes in npm, so not implemented for now.
 test('manifest returned is immutable + inextensible')
 
