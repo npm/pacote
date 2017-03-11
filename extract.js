@@ -36,8 +36,11 @@ function extractByDigest (dest, opts) {
 }
 
 function extractByManifest (spec, dest, opts) {
+  const res = typeof spec === 'string'
+  ? rps(spec, opts.where)
+  : BB.resolve(spec)
   const xtractor = extractStream(dest, opts)
-  return rps(spec).then(res => {
+  return res.then(res => {
     const tarball = require('./lib/handlers/' + res.type + '/tarball')
     return pipe(tarball(res, opts), xtractor)
   })

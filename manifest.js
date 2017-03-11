@@ -12,7 +12,11 @@ module.exports = manifest
 function manifest (spec, opts) {
   opts = optCheck(opts)
 
-  return rps(spec).then(res => {
+  const res = typeof spec === 'string'
+  ? rps(spec, opts.where)
+  : BB.resolve(spec)
+
+  return res.then(res => {
     const fetcher = (
       handlers[res.type] ||
       (

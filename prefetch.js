@@ -30,7 +30,10 @@ function prefetch (spec, opts) {
 }
 
 function prefetchByManifest (spec, opts) {
-  return rps(spec).then(res => {
+  const res = typeof spec === 'string'
+  ? rps(spec, opts.where)
+  : BB.resolve(spec)
+  return res.then(res => {
     const stream = require('./lib/handlers/' + res.type + '/tarball')(res, opts)
     setImmediate(() => stream.on('data', function () {}))
     return finished(stream)
