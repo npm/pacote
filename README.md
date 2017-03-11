@@ -41,7 +41,7 @@ pacote.extract('http://hi.com/pkg.tgz', './here').then(() => {
 ### Features
 
 * Handles all package types [npm](https://npm.im/npm) does
-* [high-performance, reliably, verified local cache](https://npm.im/cacache)
+* [high-performance, reliable, verified local cache](https://npm.im/cacache)
 * offline mode
 * authentication support (private git, private npm registries, etc)
 * github, gitlab, and bitbucket-aware
