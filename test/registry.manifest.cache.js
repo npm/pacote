@@ -58,7 +58,7 @@ const OPTS = {
 }
 
 test('memoizes identical registry requests', t => {
-  t.plan(2)
+  cache.clearMemoized()
   const srv = tnock(t, OPTS.registry)
 
   srv.get('/foo').once().reply(200, META)
@@ -73,7 +73,7 @@ test('memoizes identical registry requests', t => {
 })
 
 test('tag requests memoize versions', t => {
-  t.plan(2)
+  cache.clearMemoized()
   const srv = tnock(t, OPTS.registry)
 
   srv.get('/foo').once().reply(200, META)
@@ -88,7 +88,7 @@ test('tag requests memoize versions', t => {
 })
 
 test('tag requests memoize tags', t => {
-  t.plan(2)
+  cache.clearMemoized()
   const srv = tnock(t, OPTS.registry)
 
   srv.get('/foo').once().reply(200, META)
@@ -105,6 +105,7 @@ test('tag requests memoize tags', t => {
 test('memoization is scoped to a given cache')
 
 test('inflights concurrent requests', t => {
+  cache.clearMemoized()
   const srv = tnock(t, OPTS.registry)
 
   srv.get('/foo').once().reply(200, META)
@@ -119,6 +120,7 @@ test('inflights concurrent requests', t => {
 })
 
 test('supports fetching from an optional cache', t => {
+  cache.clearMemoized()
   tnock(t, OPTS.registry)
   const key = cache.key('registry-request', OPTS.registry + '/foo')
   return cache.put(CACHE, key, JSON.stringify(META), OPTS).then(() => {
@@ -129,6 +131,7 @@ test('supports fetching from an optional cache', t => {
 })
 
 test('falls back to registry if cache entry missing', t => {
+  cache.clearMemoized()
   const opts = {
     registry: OPTS.registry,
     log: OPTS.log,
@@ -139,6 +142,20 @@ test('falls back to registry if cache entry missing', t => {
   srv.get('/foo').reply(200, META)
   return manifest('foo@1.2.3', opts).then(pkg => {
     t.deepEqual(pkg, PKG)
+  })
+})
+
+test('tries again if cached data is missing target', t => {
+  cache.clearMemoized()
+  const srv = tnock(t, OPTS.registry)
+  const key = cache.key('registry-request', OPTS.registry + '/foo')
+  srv.get('/foo').reply(200, META)
+  return cache.put(CACHE, key, JSON.stringify({
+    versions: { '1.1.2': BASE }
+  }), OPTS).then(() => {
+    return manifest('foo@1.2.3', OPTS).then(pkg => {
+      t.deepEqual(pkg, PKG)
+    })
   })
 })
 
