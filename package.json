@@ -41,7 +41,7 @@
   "license": "CC0-1.0",
   "dependencies": {
     "bluebird": "^3.5.0",
-    "cacache": "^6.0.2",
+    "cacache": "^6.1.0",
     "checksum-stream": "^1.0.2",
     "dezalgo": "^1.0.3",
     "glob": "^7.1.1",
