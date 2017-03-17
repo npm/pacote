@@ -16,7 +16,7 @@ function prefetch (spec, opts) {
   }
   if (opts.digest) {
     opts.log.silly('prefetch', 'checking if ', spec, ' digest is already cached')
-    return cache.get.hasContent(opts.cache, opts.digest).then(exists => {
+    return cache.get.hasContent(opts.cache, opts.digest, opts.hashAlgorithm).then(exists => {
       if (exists) {
         opts.log.silly('prefetch', 'content already exists for', spec)
       } else {
