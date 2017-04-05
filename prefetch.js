@@ -15,7 +15,7 @@ function prefetch (spec, opts) {
     opts.log.info('prefetch', 'skipping prefetch: no cache provided')
     return BB.resolve()
   }
-  if (opts.integrity && !opts.refreshCache) {
+  if (opts.integrity && !opts.preferOnline) {
     opts.log.silly('prefetch', 'checking if', opts.integrity, 'is already cached')
     return cache.get.hasContent(opts.cache, opts.integrity).then(exists => {
       if (exists) {

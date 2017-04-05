@@ -14,7 +14,7 @@ module.exports = extract
 function extract (spec, dest, opts) {
   opts = optCheck(opts)
   const startTime = Date.now()
-  if (opts.integrity && opts.cache && !opts.refreshCache) {
+  if (opts.integrity && opts.cache && !opts.preferOnline) {
     opts.log.silly('pacote', 'trying', spec, 'by hash:', opts.integrity.toString())
     return extractByDigest(
       startTime, spec, dest, opts
