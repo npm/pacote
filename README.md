@@ -70,8 +70,7 @@ fields. The object has the following shape:
   "bundleDependencies": false || [PkgName],
   "bin": { BinName: Path },
   "_resolved": TarballSource, // different for each package type
-  "_shasum": TarballSha1Sum,
-  "_sha512sum": TarballSha512Sum,
+  "_integrity": SubresourceIntegrityHash,
   "_shrinkwrap": null || ShrinkwrapJsonObj
 }
 ```
@@ -123,14 +122,14 @@ pacote.prefetch('pacote@1.0.0', { cache: './my-cache' }).then(() => {
 
 #### <a name="options"></a> `> options`
 
-##### `opts.digest`
+##### `opts.integrity`
 
-If provided, pacote will confirm that the relevant `shasum` for each operation's
-results matches the given digest. The call will return `EBADCHECKSUM` if the
-check fails.
+If provided, pacote will confirm that the relevant integrity hash for each
+operation's results matches the given digest. The call will return `EINTEGRITY`
+if the check fails.
 
-Additionally, `pacote.extract` will check the cache before performing any other
-operations.
+Additionally, `pacote.extract` will use this integrity string check the cache
+directly for matching contents before performing any other operations.
 
 ##### `opts.cache`
 ##### `opts.cacheUid`/`opts.cacheGid`

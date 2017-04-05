@@ -14,9 +14,9 @@ function prefetch (spec, opts) {
     opts.log.info('prefetch', 'skipping prefetch: no cache provided')
     return BB.resolve()
   }
-  if (opts.digest) {
-    opts.log.silly('prefetch', 'checking if ', spec, ' digest is already cached')
-    return cache.get.hasContent(opts.cache, opts.digest, opts.hashAlgorithm).then(exists => {
+  if (opts.integrity && !opts.refreshCache) {
+    opts.log.silly('prefetch', 'checking if', opts.integrity, 'is already cached')
+    return cache.get.hasContent(opts.cache, opts.integrity).then(exists => {
       if (exists) {
         opts.log.silly('prefetch', 'content already exists for', spec)
       } else {
@@ -24,7 +24,7 @@ function prefetch (spec, opts) {
       }
     })
   } else {
-    opts.log.silly('prefetch', 'no digest provided for ', spec, '- fetching by manifest')
+    opts.log.silly('prefetch', 'no integrity hash provided for', spec, '- fetching by manifest')
     return prefetchByManifest(spec, opts)
   }
 }

@@ -6,36 +6,63 @@ const cache = require('./lib/cache')
 const extractStream = require('./lib/extract-stream')
 const pipe = BB.promisify(require('mississippi').pipe)
 const optCheck = require('./lib/util/opt-check')
+const retry = require('promise-retry')
+const rimraf = BB.promisify(require('rimraf'))
 const rps = BB.promisify(require('realize-package-specifier'))
 
 module.exports = extract
 function extract (spec, dest, opts) {
   opts = optCheck(opts)
-  if (opts.digest) {
-    opts.log.silly('extract', 'trying ', spec, ' digest:', opts.digest)
+  const startTime = Date.now()
+  if (opts.integrity && opts.cache && !opts.refreshCache) {
+    opts.log.silly('pacote', 'trying', spec, 'by hash:', opts.integrity.toString())
     return extractByDigest(
-      dest, opts
+      startTime, spec, dest, opts
     ).catch(err => {
-      if (err && err.code === 'ENOENT') {
-        opts.log.silly('extract', 'digest for', spec, 'not present. Using manifest.')
-        return extractByManifest(spec, dest, opts)
+      if (err.code === 'ENOENT') {
+        opts.log.silly('pacote', `data for ${opts.integrity} not present. Using manifest.`)
+        return extractByManifest(startTime, spec, dest, opts)
+      } else if (err.code === 'EINTEGRITY') {
+        opts.log.warn('pacote', `cached data for ${opts.integrity} failed integrity check. Refreshing cache.`)
+        return cleanUpCached(
+          dest, opts.cache, opts.integrity, opts
+        ).then(() => {
+          return extractByManifest(startTime, spec, dest, opts)
+        })
       } else {
         throw err
       }
     })
   } else {
-    opts.log.silly('extract', 'no digest provided for ', spec, '- extracting by manifest')
-    return extractByManifest(spec, dest, opts)
+    opts.log.silly('pacote', 'no tarball hash provided for', spec, '- extracting by manifest')
+    return retry((tryAgain, attemptNum) => {
+      return extractByManifest(
+        startTime, spec, dest, opts
+      ).catch(err => {
+        // We're only going to retry at this level if the local cache might
+        // have gotten corrupted.
+        if (err.code === 'EINTEGRITY' && opts.cache) {
+          opts.log.warn('pacote', `tarball integrity check for ${spec} failed. Clearing cache entry. ${err.message}`)
+          return cleanUpCached(
+            dest, opts.cache, err.sri, opts
+          ).then(() => tryAgain(err))
+        } else {
+          throw err
+        }
+      })
+    }, {retries: 1})
   }
 }
 
-function extractByDigest (dest, opts) {
+function extractByDigest (start, spec, dest, opts) {
   const xtractor = extractStream(dest, opts)
-  const cached = cache.get.stream.byDigest(opts.cache, opts.digest, opts)
-  return pipe(cached, xtractor)
+  const cached = cache.get.stream.byDigest(opts.cache, opts.integrity, opts)
+  return pipe(cached, xtractor).then(() => {
+    opts.log.verbose('pacote', `${spec} extracted to ${dest} by content address ${Date.now() - start}ms`)
+  })
 }
 
-function extractByManifest (spec, dest, opts) {
+function extractByManifest (start, spec, dest, opts) {
   const res = typeof spec === 'string'
   ? rps(spec, opts.where)
   : BB.resolve(spec)
@@ -43,5 +70,14 @@ function extractByManifest (spec, dest, opts) {
   return res.then(res => {
     const tarball = require('./lib/handlers/' + res.type + '/tarball')
     return pipe(tarball(res, opts), xtractor)
+  }).then(() => {
+    opts.log.verbose('pacote', `${res.name}@${res.spec} extracted in ${Date.now() - start}ms`)
   })
+}
+
+function cleanUpCached (dest, cachePath, integrity, opts) {
+  return BB.join(
+    rimraf(dest),
+    cache.rm.content(cachePath, integrity, opts)
+  )
 }

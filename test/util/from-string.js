@@ -1,10 +1,10 @@
 'use strict'
 
-var through = require('mississippi').through
+const PassThrough = require('stream')
 
 module.exports = fromString
 function fromString (str) {
-  var stream = through()
+  var stream = new PassThrough()
   setTimeout(function () {
     stream.write(str)
     stream.end()

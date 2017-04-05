@@ -13,10 +13,10 @@ const BASE = {
   name: 'foo',
   version: '1.2.3',
   _hasShrinkwrap: false,
-  _shasum: 'deadbeef',
+  _integrity: 'sha1-deadbeef',
   _resolved: 'https://foo.bar/x.tgz',
   dist: {
-    shasum: 'deadbeef',
+    integrity: 'sha1-deadbeef',
     tarball: 'https://foo.bar/x.tgz'
   }
 }
@@ -240,10 +240,10 @@ test('package requests are case-sensitive', t => {
     name: 'Foo',
     version: '1.2.3',
     _hasShrinkwrap: false,
-    _shasum: 'deadbeef',
+    _integrity: 'sha1-foobarbaz',
     _resolved: 'https://foo.bar/x.tgz',
     dist: {
-      shasum: 'deadbeef',
+      integrity: 'sha1-foobarbaz',
       tarball: 'https://foo.bar/x.tgz'
     }
   }
@@ -309,5 +309,33 @@ test('recovers from request errors', t => {
 
   manifest('foo@1.2.3', opts).then(pkg => {
     t.deepEqual(pkg, PKG, 'got a manifest')
+  })
+})
+
+test('optionally annotates manifest with request-related metadata', t => {
+  const srv = tnock(t, OPTS.registry)
+  const opts = {
+    log: OPTS.log,
+    registry: OPTS.registry,
+    retry: false,
+    annotate: true,
+    where: 'right here'
+  }
+  const annotated = new Manifest(BASE)
+  annotated._requested = {
+    escapedName: 'foo',
+    name: 'foo',
+    raw: 'foo@1.2.3',
+    rawSpec: '1.2.3',
+    scope: null,
+    spec: '1.2.3',
+    type: 'version'
+  }
+  annotated._spec = 'foo@1.2.3'
+  annotated._where = opts.where
+
+  srv.get('/foo').reply(200, META)
+  return manifest('foo@1.2.3', opts).then(pkg => {
+    t.deepEqual(pkg, annotated, 'additional data was added to pkg')
   })
 })

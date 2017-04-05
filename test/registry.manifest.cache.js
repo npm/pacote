@@ -19,6 +19,7 @@ const BASE = {
   _hasShrinkwrap: false,
   dist: {
     shasum: 'deadbeef',
+    integrity: 'sha1-deadbeef',
     tarball: 'https://foo.bar/x.tgz'
   }
 }
@@ -27,9 +28,10 @@ const PKG = new Manifest({
   name: 'foo',
   version: '1.2.3',
   _hasShrinkwrap: false,
-  _shasum: BASE.dist.shasum,
+  _integrity: BASE.dist.integrity,
   _resolved: BASE.dist.tarball
 })
+
 const META = {
   'dist-tags': {
     latest: '1.2.3'
@@ -49,66 +51,18 @@ const OPTS = {
     factor: 1,
     minTimeout: 1,
     maxTimeout: 10
-  },
-  metadata: {
-    etag: 'my-etage',
-    lastModified: 'my-lastmodified',
-    time: +(new Date())
   }
 }
 
-test('memoizes identical registry requests', t => {
-  cache.clearMemoized()
-  const srv = tnock(t, OPTS.registry)
-
-  srv.get('/foo').once().reply(200, META)
-  return manifest('foo@1.2.3', OPTS).then(pkg => {
-    t.deepEqual(pkg, PKG, 'got a manifest')
-    return testDir.reset(CACHE)
-  }).then(() => {
-    return manifest('foo@1.2.3', OPTS)
-  }).then(pkg => {
-    t.deepEqual(pkg, PKG, 'got a manifest')
-  })
-})
-
-test('tag requests memoize versions', t => {
-  cache.clearMemoized()
-  const srv = tnock(t, OPTS.registry)
-
-  srv.get('/foo').once().reply(200, META)
-  return manifest('foo@latest', OPTS).then(pkg => {
-    t.deepEqual(pkg, PKG, 'got a manifest')
-    return testDir.reset(CACHE)
-  }).then(() => {
-    return manifest('foo@1.2.3', OPTS)
-  }).then(pkg => {
-    t.deepEqual(pkg, PKG, 'got a manifest')
-  })
-})
-
-test('tag requests memoize tags', t => {
-  cache.clearMemoized()
-  const srv = tnock(t, OPTS.registry)
-
-  srv.get('/foo').once().reply(200, META)
-  return manifest('foo@latest', OPTS).then(pkg => {
-    t.deepEqual(pkg, PKG, 'got a manifest')
-    return testDir.reset(CACHE)
-  }).then(() => {
-    return manifest('foo@latest', OPTS)
-  }).then(pkg => {
-    t.deepEqual(pkg, PKG, 'got a manifest')
-  })
-})
-
-test('memoization is scoped to a given cache')
+const HEADERS = {
+  'content-length': JSON.stringify(META).length
+}
 
 test('inflights concurrent requests', t => {
   cache.clearMemoized()
   const srv = tnock(t, OPTS.registry)
 
-  srv.get('/foo').once().reply(200, META)
+  srv.get('/foo').once().reply(200, META, HEADERS)
   return BB.join(
     manifest('foo@1.2.3', OPTS).then(pkg => {
       t.deepEqual(pkg, PKG, 'got a manifest')
@@ -121,9 +75,9 @@ test('inflights concurrent requests', t => {
 
 test('supports fetching from an optional cache', t => {
   cache.clearMemoized()
-  tnock(t, OPTS.registry)
-  const key = cache.key('registry-request', OPTS.registry + '/foo')
-  return cache.put(CACHE, key, JSON.stringify(META), OPTS).then(() => {
+  tnock(t, OPTS.registry).get('/foo').once().reply(200, META, HEADERS)
+  return manifest('foo@1.2.3', OPTS).then(() => {
+    cache.clearMemoized()
     return manifest('foo@1.2.3', OPTS).then(pkg => {
       t.deepEqual(pkg, PKG)
     })
@@ -148,22 +102,19 @@ test('falls back to registry if cache entry missing', t => {
 test('tries again if cached data is missing target', t => {
   cache.clearMemoized()
   const srv = tnock(t, OPTS.registry)
-  const key = cache.key('registry-request', OPTS.registry + '/foo')
-  srv.get('/foo').reply(200, META)
-  return cache.put(CACHE, key, JSON.stringify({
-    versions: { '1.1.2': BASE }
-  }), OPTS).then(() => {
+  srv.get('/foo').reply(() => {
+    srv.get('/foo').reply(200, META, HEADERS)
+    return [
+      200, {
+        versions: { '1.1.2': BASE }
+      }, HEADERS
+    ]
+  })
+  return manifest('foo@1.1.2', OPTS).then(pkg => {
+    t.deepEqual(pkg, PKG, 'got expected package from network')
+    cache.clearMemoized()
     return manifest('foo@1.2.3', OPTS).then(pkg => {
-      t.deepEqual(pkg, PKG)
+      t.deepEqual(pkg, PKG, 'got updated package in spite of cache')
     })
   })
 })
-
-test('expires stale request data')
-test('allows forcing use of cache when data stale')
-test('falls back to registry if cache entry is invalid JSON')
-
-// This test should prevent future footgunning if the caching logic changes
-// accidentally. Caching manifests themselves should be entirely the job of the
-// package fetcher.
-test('does not insert plain manifests into the cache')

@@ -10,6 +10,7 @@ platform:
 install:
   - ps: Install-Product node $env:nodejs_version $env:platform
   - npm config set spin false
+  - npm i -g npm@latest
   - npm install
 
 test_script:
@@ -17,5 +18,5 @@ test_script:
 
 matrix:
   fast_finish: true
-  
+
 build: off

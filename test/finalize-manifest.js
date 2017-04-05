@@ -6,6 +6,7 @@ const cache = require('../lib/cache')
 const crypto = require('crypto')
 const npmlog = require('npmlog')
 const path = require('path')
+const ssri = require('ssri')
 const tar = require('tar-stream')
 const test = require('tap').test
 const testDir = require('./util/test-dir')
@@ -21,7 +22,7 @@ const OPTS = {
   log: npmlog,
   hashAlgorithm: 'sha1',
   retry: {
-    retries: 1,
+    retries: 0,
     factor: 1,
     minTimeout: 1,
     maxTimeout: 10
@@ -39,7 +40,7 @@ test('returns a manifest with the right fields', t => {
     peerDependencies: {},
     bin: './foo.js',
     _resolved: 'resolved.to.this',
-    _shasum: 'deadbeefc0ffeebad1dea',
+    _integrity: 'sha1-deadbeefc0ffeebad1dea',
     _hasShrinkwrap: false,
     _deprecated: 'foo'
   }
@@ -56,7 +57,7 @@ test('returns a manifest with the right fields', t => {
         testing: './foo.js'
       },
       _resolved: 'resolved.to.this',
-      _shasum: 'deadbeefc0ffeebad1dea',
+      _integrity: 'sha1-deadbeefc0ffeebad1dea',
       _shrinkwrap: null,
       _deprecated: 'foo',
       _id: 'testing@1.2.3'
@@ -69,7 +70,7 @@ test('defaults all field to expected types + values', t => {
     name: 'testing',
     version: '1.2.3',
     _resolved: 'resolved.to.this',
-    _shasum: 'deadbeefc0ffeebad1dea',
+    _integrity: 'sha1-deadbeefc0ffeebad1dea',
     _hasShrinkwrap: false
   }
   return finalizeManifest(base, {}, OPTS).then(manifest => {
@@ -83,7 +84,7 @@ test('defaults all field to expected types + values', t => {
       peerDependencies: {},
       bin: null,
       _resolved: base._resolved,
-      _shasum: base._shasum,
+      _integrity: base._integrity,
       _shrinkwrap: null,
       _deprecated: false,
       _id: 'testing@1.2.3'
@@ -117,7 +118,7 @@ test('fills in shrinkwrap if missing', t => {
   })
 })
 
-test('fills in shasum if missing', t => {
+test('fills in integrity hash if missing', t => {
   const tarballPath = 'testing/tarball-1.2.3.tgz'
   const base = {
     name: 'testing',
@@ -133,13 +134,13 @@ test('fills in shasum if missing', t => {
     'package.json': base,
     'npm-shrinkwrap.json': sr
   }).then(tarData => {
-    const sha = crypto.createHash('sha1').update(tarData).digest('hex')
+    const integrity = ssri.fromData(tarData, {algorithms: ['sha1']}).toString()
     tnock(t, OPTS.registry).get('/' + tarballPath).reply(200, tarData)
     return finalizeManifest(base, {
       name: base.name,
       type: 'range'
     }, OPTS).then(manifest => {
-      t.deepEqual(manifest._shasum, sha, 'shasum successfully added')
+      t.deepEqual(manifest._integrity, integrity, 'integrity hash successfully added')
     })
   })
 })
@@ -190,7 +191,7 @@ test('fills in `bin` if original was an array', t => {
     directories: {
       bin: 'foo'
     },
-    _shasum: 'deadbeefc0ffeebad1dea',
+    _integrity: 'sha1-deadbeefc0ffeebad1dea',
     _resolved: OPTS.registry + tarballPath,
     _hasShrinkwrap: false
   }
@@ -237,7 +238,7 @@ test('uses package.json as base if passed null', t => {
         peerDependencies: {},
         _resolved: OPTS.registry + tarballPath,
         _deprecated: false,
-        _shasum: crypto.createHash('sha1').update(tarData).digest('hex'),
+        _integrity: ssri.fromData(tarData, {algorithms: ['sha1']}).toString(),
         _shrinkwrap: sr,
         bin: { 'x': path.join('foo', 'x') },
         _id: 'testing@1.2.3'
@@ -270,8 +271,7 @@ test('caches finalized manifests', t => {
       name: base.name,
       type: 'range'
     }, opts).then(manifest1 => {
-      base._shasum = manifest1._shasum
-      base._sha512sum = manifest1._sha512sum
+      base._integrity = manifest1._integrity
       return cache.ls(CACHE, opts).then(entries => {
         const promises = []
         Object.keys(entries).forEach(k => {

@@ -1,15 +1,16 @@
 'use strict'
 
-const npmlog = require('npmlog')
-const tar = require('tar-stream')
-const crypto = require('crypto')
-const test = require('tap').test
-const tnock = require('./util/tnock')
 const cache = require('../lib/cache')
-const testDir = require('./util/test-dir')
-const CACHE = testDir(__filename)
-const prefetch = require('../prefetch')
 const mockTar = require('./util/mock-tarball')
+const npmlog = require('npmlog')
+const ssri = require('ssri')
+const test = require('tap').test
+const testDir = require('./util/test-dir')
+const tnock = require('./util/tnock')
+
+const CACHE = testDir(__filename)
+
+const prefetch = require('../prefetch')
 
 npmlog.level = process.env.LOGLEVEL || 'silent'
 const BASE = {
@@ -32,7 +33,7 @@ const META = {
   name: 'foo',
   'dist-tags': { latest: '1.2.3', lts: '1.0.0' },
   versions: {
-    '1.0.0': BASE,
+    '1.0.0': BASE
   }
 }
 
@@ -44,12 +45,8 @@ const PKG = {
   'index.js': 'console.log("hello world!")'
 }
 
-const SHRINKWRAP = {
-  name: 'foo',
-  version: '1.0.0'
-}
-
-test('prefetch by manifest if no digest', t => {
+test('prefetch by manifest if no integrity hash', t => {
+  cache.clearMemoized()
   return mockTar(PKG).then(tarData => {
     const srv = tnock(t, OPTS.registry)
     srv.get('/foo').reply(200, META)
@@ -65,6 +62,7 @@ test('prefetch by manifest if no digest', t => {
 })
 
 test('skip if no cache is provided', t => {
+  cache.clearMemoized()
   return prefetch('foo@1.0.0', {}).then(() => {
     return cache.ls(CACHE)
   }).then(result => {
@@ -73,26 +71,30 @@ test('skip if no cache is provided', t => {
 })
 
 test('use cache content if found', t => {
-  const key = cache.key('registry-request', OPTS.registry + '/foo')
-  return cache.put(CACHE, key, JSON.stringify(META), OPTS).then(digest => {
-    OPTS.digest = digest
-    OPTS.hashAlgorithm = 'sha512'
-    return prefetch('foo@1.0.0', OPTS).then(() => {
-      return cache.ls(CACHE)
-    }).then(result => {
-      t.equal(Object.keys(result).length, 1)
-    })
+  cache.clearMemoized()
+  tnock(t, OPTS.registry).get('/foo').reply(200, META)
+  return mockTar(PKG).then(tarData => {
+    tnock(t, 'https://foo.bar').get('/x.tgz').reply(200, tarData)
+    return prefetch('foo@1.0.0', OPTS)
+  }).then(() => {
+    cache.clearMemoized()
+    return prefetch('foo@1.0.0', OPTS)
+  }).then(() => {
+    return cache.ls(CACHE)
+  }).then(result => {
+    t.equal(Object.keys(result).length, 2)
   })
 })
 
 test('prefetch by manifest if digest provided but no cache content found', t => {
+  cache.clearMemoized()
   return mockTar(PKG).then(tarData => {
     const srv = tnock(t, OPTS.registry)
     srv.get('/foo').reply(200, META)
 
     tnock(t, 'https://foo.bar').get('/x.tgz').reply(200, tarData)
-    const sha = crypto.createHash('sha1').update(tarData).digest('hex')
-    OPTS.digest = sha
+    const integrity = ssri.fromData(tarData)
+    OPTS.digest = integrity
 
     return prefetch('foo@1.0.0', OPTS).then(() => {
       t.equal(srv.isDone(), true)
