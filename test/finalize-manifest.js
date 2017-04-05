@@ -20,7 +20,6 @@ npmlog.level = process.env.LOGLEVEL || 'silent'
 const OPTS = {
   registry: 'https://mock.reg/',
   log: npmlog,
-  hashAlgorithm: 'sha1',
   retry: {
     retries: 0,
     factor: 1,
