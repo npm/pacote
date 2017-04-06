@@ -19,7 +19,7 @@ function prefetch (spec, opts) {
     opts.log.silly('prefetch', 'checking if', opts.integrity, 'is already cached')
     return cache.get.hasContent(opts.cache, opts.integrity).then(exists => {
       if (exists) {
-        opts.log.silly('prefetch', 'content already exists for', spec, `(${Date.now() - startTime}ms)`)
+        opts.log.silly('prefetch', 'content already exists for', spec.raw, `(${Date.now() - startTime}ms)`)
       } else {
         return prefetchByManifest(startTime, spec, opts)
       }
@@ -36,7 +36,7 @@ function prefetchByManifest (start, spec, opts) {
   : BB.resolve(spec)
   return res.then(res => {
     const stream = require('./lib/handlers/' + res.type + '/tarball')(res, opts)
-    setImmediate(() => stream.on('data', function () {}))
+    stream.on('data', function () {})
     return finished(stream)
   }).then(() => {
     opts.log.verbose('prefetch', `${spec} done in ${Date.now() - start}ms`)
