@@ -3,7 +3,6 @@
 const BB = require('bluebird')
 
 const cache = require('../lib/cache')
-const crypto = require('crypto')
 const npmlog = require('npmlog')
 const path = require('path')
 const ssri = require('ssri')
