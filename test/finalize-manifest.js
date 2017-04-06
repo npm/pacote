@@ -40,7 +40,7 @@ test('returns a manifest with the right fields', t => {
     _resolved: 'resolved.to.this',
     _integrity: 'sha1-deadbeefc0ffeebad1dea',
     _hasShrinkwrap: false,
-    _deprecated: 'foo'
+    deprecated: 'foo'
   }
   return finalizeManifest(base, {}, OPTS).then(manifest => {
     t.deepEqual(manifest, {
@@ -57,7 +57,7 @@ test('returns a manifest with the right fields', t => {
       _resolved: 'resolved.to.this',
       _integrity: 'sha1-deadbeefc0ffeebad1dea',
       _shrinkwrap: null,
-      _deprecated: 'foo',
+      deprecated: 'foo',
       _id: 'testing@1.2.3'
     }, 'fields as expected')
   })
@@ -84,7 +84,7 @@ test('defaults all field to expected types + values', t => {
       _resolved: base._resolved,
       _integrity: base._integrity,
       _shrinkwrap: null,
-      _deprecated: false,
+      deprecated: false,
       _id: 'testing@1.2.3'
     }, 'fields defaulted as expected')
   })
@@ -235,7 +235,7 @@ test('uses package.json as base if passed null', t => {
         bundleDependencies: false,
         peerDependencies: {},
         _resolved: OPTS.registry + tarballPath,
-        _deprecated: false,
+        deprecated: false,
         _integrity: ssri.fromData(tarData, {algorithms: ['sha1']}).toString(),
         _shrinkwrap: sr,
         bin: { 'x': path.join('foo', 'x') },
