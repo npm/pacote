@@ -13,28 +13,6 @@ require('./util/test-dir')(__filename)
 
 const tarball = require('../lib/registry/tarball')
 
-function BASE (tarData) {
-  return {
-    name: 'foo',
-    version: '1.2.3',
-    _hasShrinkwrap: false,
-    dist: {
-      integrity: ssri.fromData(tarData, {algorithms: ['sha1']}).toString(),
-      tarball: 'https://my.mock.registry/foo/-/foo-1.2.3.tgz'
-    }
-  }
-}
-
-function META (tarData) {
-  return {
-    name: 'foo',
-    'dist-tags': { latest: '1.2.3' },
-    versions: {
-      '1.2.3': BASE(tarData)
-    }
-  }
-}
-
 npmlog.level = process.env.LOGLEVEL || 'silent'
 const OPTS = {
   log: npmlog,
@@ -44,6 +22,30 @@ const OPTS = {
     factor: 1,
     minTimeout: 1,
     maxTimeout: 10
+  }
+}
+
+function BASE (tarData, registry) {
+  registry = registry || OPTS.registry
+  return {
+    name: 'foo',
+    version: '1.2.3',
+    _hasShrinkwrap: false,
+    dist: {
+      integrity: ssri.fromData(tarData, {algorithms: ['sha1']}).toString(),
+      tarball: `${registry}foo/-/foo-1.2.3.tgz`
+    }
+  }
+}
+
+function META (tarData, registry) {
+  registry = registry || OPTS.registry
+  return {
+    name: 'foo',
+    'dist-tags': { latest: '1.2.3' },
+    versions: {
+      '1.2.3': BASE(tarData)
+    }
   }
 }
 
@@ -101,6 +103,64 @@ test('errors if manifest fails', t => {
     }).catch(err => {
       t.ok(err, 'correctly errored')
       t.equal(err.code, 'E404', 'got a 404 back')
+    })
+  })
+})
+
+test('tarball url updated to fit registry protocol', t => {
+  const pkg = {
+    'package.json': JSON.stringify({
+      name: 'foo',
+      version: '1.2.3'
+    }),
+    'index.js': 'console.log("hello world!")'
+  }
+  return mockTar(pkg).then(tarData => {
+    const srv = tnock(t, OPTS.registry)
+    srv.get('/foo').reply(200, META(tarData, 'http://my.mock.registry/'))
+    srv.get('/foo/-/foo-1.2.3.tgz').reply(200, tarData)
+    let data = ''
+    return finished(
+      tarball({
+        type: 'range',
+        raw: 'foo@^1.2.3',
+        name: 'foo',
+        escapedName: 'foo',
+        rawSpec: '^1.2.3',
+        spec: '>=1.2.3 <2.0.0',
+        scope: null
+      }, OPTS).on('data', d => { data += d })
+    ).then(() => {
+      t.equal(data, tarData, 'fetched tarball from https server')
+    })
+  })
+})
+
+test('tarball url updated to fit registry protocol+port', t => {
+  const pkg = {
+    'package.json': JSON.stringify({
+      name: 'foo',
+      version: '1.2.3'
+    }),
+    'index.js': 'console.log("hello world!")'
+  }
+  return mockTar(pkg).then(tarData => {
+    const srv = tnock(t, OPTS.registry)
+    srv.get('/foo').reply(200, META(tarData, 'http://my.mock.registry:567/'))
+    srv.get('/foo/-/foo-1.2.3.tgz').reply(200, tarData)
+    let data = ''
+    return finished(
+      tarball({
+        type: 'range',
+        raw: 'foo@^1.2.3',
+        name: 'foo',
+        escapedName: 'foo',
+        rawSpec: '^1.2.3',
+        spec: '>=1.2.3 <2.0.0',
+        scope: null
+      }, OPTS).on('data', d => { data += d })
+    ).then(() => {
+      t.equal(data, tarData, 'fetched tarball from https server and adjusted port')
     })
   })
 })
