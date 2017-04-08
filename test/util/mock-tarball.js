@@ -17,7 +17,7 @@ function makeTarball (files, opts) {
       type: entry.type,
       size: entry.size,
       mode: entry.mode,
-      mtime: entry.mtime,
+      mtime: entry.mtime || new Date(0),
       linkname: entry.linkname,
       uid: entry.uid,
       gid: entry.gid,

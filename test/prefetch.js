@@ -45,6 +45,13 @@ const PKG = {
   'index.js': 'console.log("hello world!")'
 }
 
+test('setup integrity', t => {
+  return mockTar(PKG).then(tarData => {
+    BASE.dist.integrity = BASE._integrity = ssri.fromData(tarData, {algorithms: ['sha1']}).toString()
+    return 'lol ok'
+  })
+})
+
 test('prefetch by manifest if no integrity hash', t => {
   cache.clearMemoized()
   return mockTar(PKG).then(tarData => {
@@ -52,8 +59,14 @@ test('prefetch by manifest if no integrity hash', t => {
     srv.get('/foo').reply(200, META)
     tnock(t, 'https://foo.bar').get('/x.tgz').reply(200, tarData)
 
-    return prefetch('foo@1.0.0', OPTS).then(() => {
+    return prefetch('foo@1.0.0', OPTS).then(info => {
       t.equal(srv.isDone(), true)
+      t.deepEqual(info, {
+        byDigest: false,
+        integrity: null, // not previously cached, so no integrity
+        manifest: BASE,
+        spec: 'foo@1.0.0'
+      }, 'fresh fetch info returned')
       return cache.ls(CACHE)
     }).then(result => {
       t.equal(Object.keys(result).length, 2)
@@ -63,7 +76,10 @@ test('prefetch by manifest if no integrity hash', t => {
 
 test('skip if no cache is provided', t => {
   cache.clearMemoized()
-  return prefetch('foo@1.0.0', {}).then(() => {
+  return prefetch('foo@1.0.0', {}).then(info => {
+    t.deepEqual(info, {
+      spec: 'foo@1.0.0'
+    }, 'no cache -> only spec returned')
     return cache.ls(CACHE)
   }).then(result => {
     t.equal(Object.keys(result).length, 0)
@@ -79,7 +95,13 @@ test('use cache content if found', t => {
   }).then(() => {
     cache.clearMemoized()
     return prefetch('foo@1.0.0', OPTS)
-  }).then(() => {
+  }).then(info => {
+    t.deepEqual(info, {
+      manifest: BASE,
+      spec: 'foo@1.0.0',
+      integrity: BASE._integrity, // if coming from cache, get integrity
+      byDigest: false
+    }, '')
     return cache.ls(CACHE)
   }).then(result => {
     t.equal(Object.keys(result).length, 2)
@@ -96,7 +118,13 @@ test('prefetch by manifest if digest provided but no cache content found', t => 
     const integrity = ssri.fromData(tarData)
     OPTS.digest = integrity
 
-    return prefetch('foo@1.0.0', OPTS).then(() => {
+    return prefetch('foo@1.0.0', OPTS).then(info => {
+      t.deepEqual(info, {
+        byDigest: false,
+        integrity: null, // not already cached, so no integrity
+        manifest: BASE,
+        spec: 'foo@1.0.0'
+      }, 'fresh fetch info returned')
       t.equal(srv.isDone(), true)
       return cache.ls(CACHE)
     }).then(result => {
