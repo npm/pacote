@@ -17,12 +17,7 @@ npmlog.level = process.env.LOGLEVEL || 'silent'
 const OPTS = {
   log: npmlog,
   registry: 'https://my.mock.registry/',
-  retry: {
-    retries: 1,
-    factor: 1,
-    minTimeout: 1,
-    maxTimeout: 10
-  }
+  retry: false
 }
 
 function BASE (tarData, registry) {
