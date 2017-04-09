@@ -56,8 +56,14 @@ test('prefetch by manifest if no integrity hash', t => {
   cache.clearMemoized()
   return mockTar(PKG).then(tarData => {
     const srv = tnock(t, OPTS.registry)
-    srv.get('/foo').reply(200, META)
-    tnock(t, 'https://foo.bar').get('/x.tgz').reply(200, tarData)
+    srv.get('/foo').reply(200, META, {
+      'Age': '200',
+      'Date': new Date().toUTCString(),
+      'cache-control': 'max-age=300'
+    })
+    tnock(t, 'https://foo.bar').get('/x.tgz').reply(200, tarData, {
+      'cache-control': 'immutable'
+    })
 
     return prefetch('foo@1.0.0', OPTS).then(info => {
       t.equal(srv.isDone(), true)
