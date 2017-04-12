@@ -48,12 +48,10 @@ test('supports directory dep manifests', t => {
   })
 })
 
-test('errors if you try to grab a tarball', t => {
+test('returns null instead of a stream for tarballs', t => {
   return mkdirp(CACHE).then(() => {
     return dirTarball({type: 'directory', spec: CACHE})
-  }).then(() => {
-    throw new Error('was supposed to fail')
-  }).catch(err => {
-    t.match(err.message, /no tarball/, 'you did a bad thing')
+  }).then(tarball => {
+    t.deepEqual(tarball, null, 'got null back')
   })
 })
