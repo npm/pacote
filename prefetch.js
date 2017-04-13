@@ -43,6 +43,7 @@ function prefetchByManifest (start, spec, opts) {
   let integrity
   return res.then(res => {
     const stream = require('./lib/handlers/' + res.type + '/tarball')(res, opts)
+    if (!stream) { return }
     stream.on('data', function () {})
     stream.on('manifest', m => { manifest = m })
     stream.on('integrity', i => { integrity = i })
