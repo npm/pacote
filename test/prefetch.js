@@ -69,7 +69,7 @@ test('prefetch by manifest if no integrity hash', t => {
       t.equal(srv.isDone(), true)
       t.deepEqual(info, {
         byDigest: false,
-        integrity: null, // not previously cached, so no integrity
+        integrity: BASE._integrity,
         manifest: BASE,
         spec: 'foo@1.0.0'
       }, 'fresh fetch info returned')
@@ -127,7 +127,7 @@ test('prefetch by manifest if digest provided but no cache content found', t => 
     return prefetch('foo@1.0.0', OPTS).then(info => {
       t.deepEqual(info, {
         byDigest: false,
-        integrity: null, // not already cached, so no integrity
+        integrity: BASE._integrity,
         manifest: BASE,
         spec: 'foo@1.0.0'
       }, 'fresh fetch info returned')

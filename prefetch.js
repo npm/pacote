@@ -50,6 +50,11 @@ function prefetchByManifest (start, spec, opts) {
     return finished(stream)
   }).then(() => {
     opts.log.verbose('prefetch', `${spec} done in ${Date.now() - start}ms`)
-    return {manifest, spec, integrity, byDigest: false}
+    return {
+      manifest,
+      spec,
+      integrity: integrity || manifest._integrity,
+      byDigest: false
+    }
   })
 }
