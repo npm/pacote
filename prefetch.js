@@ -53,7 +53,7 @@ function prefetchByManifest (start, spec, opts) {
     return {
       manifest,
       spec,
-      integrity: integrity || manifest._integrity,
+      integrity: integrity || (manifest && manifest._integrity),
       byDigest: false
     }
   })

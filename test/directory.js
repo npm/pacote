@@ -7,12 +7,12 @@ const mkdirp = BB.promisify(require('mkdirp'))
 const path = require('path')
 const test = require('tap').test
 
-const dirManifest = require('../lib/handlers/directory/manifest')
-const dirTarball = require('../lib/handlers/directory/tarball')
+// const extract = require('../extract')
+const manifest = require('../manifest')
 
 const CACHE = require('./util/test-dir')(__filename)
 
-test('supports directory dep manifests', t => {
+test('supports directory deps', t => {
   const pkg = {
     name: 'foo',
     version: '1.2.3',
@@ -23,35 +23,59 @@ test('supports directory dep manifests', t => {
   const sr = {
     name: 'foo',
     version: '1.2.3',
-    isShrinkwrap: true,
     dependencies: { bar: '3.2.1' }
   }
-  return mkdirp(path.join(CACHE, 'x')).then(() => {
+  const PKG = path.join(CACHE, 'pkg')
+  // const EXT = path.join(CACHE, 'extracted')
+  return mkdirp(path.join(PKG, 'x')).then(() => {
     return BB.join(
       fs.writeFileAsync(
-        path.join(CACHE, 'package.json'), JSON.stringify(pkg)
+        path.join(PKG, 'package.json'), JSON.stringify(pkg)
       ),
       fs.writeFileAsync(
-        path.join(CACHE, 'npm-shrinkwrap.json'), JSON.stringify(sr)
+        path.join(PKG, 'npm-shrinkwrap.json'), JSON.stringify(sr)
       ),
       fs.writeFileAsync(
-        path.join(CACHE, 'x', 'mybin'), 'console.log("hi there")'
+        path.join(PKG, 'x', 'mybin'), 'console.log("hi there")'
       )
     )
   }).then(() => {
-    return dirManifest({
-      type: 'directory',
-      spec: CACHE
-    })
+    return manifest(PKG)
   }).then(manifest => {
-    t.deepEqual(manifest, null, 'got a filled-out manifest')
-  })
-})
-
-test('returns null instead of a stream for tarballs', t => {
-  return mkdirp(CACHE).then(() => {
-    return dirTarball({type: 'directory', spec: CACHE})
-  }).then(tarball => {
-    t.deepEqual(tarball, null, 'got null back')
+    t.deepEqual(manifest, {
+      name: pkg.name,
+      version: pkg.version,
+      dependencies: pkg.dependencies,
+      optionalDependencies: {},
+      devDependencies: {},
+      bundleDependencies: false,
+      peerDependencies: {},
+      deprecated: false,
+      _resolved: path.resolve(PKG),
+      _integrity: null,
+      _shrinkwrap: sr,
+      bin: { mybin: path.join('x', 'mybin') },
+      _id: `${pkg.name}@${pkg.version}`
+    }, 'got a filled-out manifest')
+    // TODO - this is spitting out a seriously bizarre error?
+  // }).then(() => {
+  //   return extract(PKG, EXT)
+  // }).then(() => {
+  //   return BB.join(
+  //     fs.readFileAsync(
+  //       path.join(EXT, 'package.json'), 'utf8'
+  //     ),
+  //     fs.readFileAsync(
+  //       path.join(EXT, 'npm-shrinkwrap.json'), 'utf8'
+  //     ),
+  //     fs.readFileAsync(
+  //       path.join(EXT, 'x', 'mybin'), 'utf8'
+  //     ),
+  //     (xpkg, xsr, xbin) => {
+  //       t.deepEqual(JSON.parse(xpkg), pkg, 'extracted package.json')
+  //       t.deepEqual(JSON.parse(xsr), sr, 'extracted npm-shrinkwrap.json')
+  //       t.deepEqual(xbin, 'console.log("hi there")', 'extracted binary')
+  //     }
+  //   )
   })
 })
