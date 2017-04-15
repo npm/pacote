@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.0.3"></a>
+## [2.0.3](https://github.com/zkat/pacote/compare/v2.0.2...v2.0.3) (2017-04-15)
+
+
+### Bug Fixes
+
+* **manifest:** meh just shove _from in there ([4396f09](https://github.com/zkat/pacote/commit/4396f09))
+* **registry:** include CI header ([86ad911](https://github.com/zkat/pacote/commit/86ad911))
+* **registry:** include npm-scope header ([574cd93](https://github.com/zkat/pacote/commit/574cd93))
+* **registry:** make sure to send referer header ([2d3aaac](https://github.com/zkat/pacote/commit/2d3aaac))
+
+
+
 <a name="2.0.2"></a>
 ## [2.0.2](https://github.com/zkat/pacote/compare/v2.0.1...v2.0.2) (2017-04-15)
 
