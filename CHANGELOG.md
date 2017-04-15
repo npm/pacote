@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.0.2"></a>
+## [2.0.2](https://github.com/zkat/pacote/compare/v2.0.1...v2.0.2) (2017-04-15)
+
+
+### Bug Fixes
+
+* **directory:** fix default pack-dir and write a test for it ([9d9266f](https://github.com/zkat/pacote/commit/9d9266f))
+* **extract:** brainfart with extractByManifest fixed. lol. ([a1367fb](https://github.com/zkat/pacote/commit/a1367fb))
+
+
+
 <a name="2.0.1"></a>
 ## [2.0.1](https://github.com/zkat/pacote/compare/v2.0.0...v2.0.1) (2017-04-15)
 
