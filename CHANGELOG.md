@@ -2,6 +2,68 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.0.0"></a>
+# [2.0.0](https://github.com/zkat/pacote/compare/v1.0.0...v2.0.0) (2017-04-15)
+
+
+### Bug Fixes
+
+* **api:** use npa[@5](https://github.com/5) for spec parsing (#78) ([3f56298](https://github.com/zkat/pacote/commit/3f56298))
+* **deprecated:** remove underscore from manifest._deprecated ([9f4af93](https://github.com/zkat/pacote/commit/9f4af93))
+* **directory:** add _resolved to directory manifests ([1d305db](https://github.com/zkat/pacote/commit/1d305db))
+* **directory:** return null instead of throwing ([d35630d](https://github.com/zkat/pacote/commit/d35630d))
+* **finalize:** don't try to cache manifests we can't get a good key for ([8ab1758](https://github.com/zkat/pacote/commit/8ab1758))
+* **finalize:** refactored finalize-manifest code + add _integrity=false sentinel ([657b7fa](https://github.com/zkat/pacote/commit/657b7fa))
+* **git:** cleaner handling of git tarball streams when caching ([11acd0a](https://github.com/zkat/pacote/commit/11acd0a))
+* **git:** emit manifests from git tarball handler ([b139d4b](https://github.com/zkat/pacote/commit/b139d4b))
+* **git:** fix .git exclusion, set mtime = 0 to make tarballs idempotent ([9a9fa1b](https://github.com/zkat/pacote/commit/9a9fa1b))
+* **git:** fix fallback order and only fall back on hosted shortcuts ([551cb33](https://github.com/zkat/pacote/commit/551cb33))
+* **git:** fix filling-out of git manifests ([95e807c](https://github.com/zkat/pacote/commit/95e807c))
+* **git:** got dir packer option working with git ([7669b3e](https://github.com/zkat/pacote/commit/7669b3e))
+* **headers:** nudge around some headers to make things behave ([db1e0a1](https://github.com/zkat/pacote/commit/db1e0a1))
+* **manifest:** get rid of resolved-with-non-error warning ([d4d4917](https://github.com/zkat/pacote/commit/d4d4917))
+* **manifest:** stop using digest for manifests ([4ddd2f5](https://github.com/zkat/pacote/commit/4ddd2f5))
+* **opts:** bring opt-check up to date ([564419e](https://github.com/zkat/pacote/commit/564419e))
+* **opts:** rename refreshCache to preferOnline cause much clearer ([94171d6](https://github.com/zkat/pacote/commit/94171d6))
+* **prefetch:** fall back to the _integrity in the manifest if none calculated ([083ac79](https://github.com/zkat/pacote/commit/083ac79))
+* **prefetch:** if there's no stream, just skip (for directory) ([714de91](https://github.com/zkat/pacote/commit/714de91))
+* **registry:** fix error handling for registry tarballs ([e69539f](https://github.com/zkat/pacote/commit/e69539f))
+* **registry:** nudging logging stuff around a bit ([61d62cc](https://github.com/zkat/pacote/commit/61d62cc))
+* **registry:** only send auth info if tarball is hosted on the same registry ([1de5a2b](https://github.com/zkat/pacote/commit/1de5a2b))
+* **registry:** redirect tarball urls to provided registry port+protocol if same host ([f50167e](https://github.com/zkat/pacote/commit/f50167e))
+* **registry:** support memoizing packuments ([e7fff31](https://github.com/zkat/pacote/commit/e7fff31))
+* **registry:** treat registry cache as "private" -- bumps m-f-h ([6fa1503](https://github.com/zkat/pacote/commit/6fa1503))
+
+
+### Features
+
+* **directory:** implement local dir packing ([017d989](https://github.com/zkat/pacote/commit/017d989))
+* **fetch:** bump make-fetch-happen for new restarts ([cf90716](https://github.com/zkat/pacote/commit/cf90716))
+* **git:** support pulling in git submodules ([5825d33](https://github.com/zkat/pacote/commit/5825d33))
+* **integrity:** replace http client (#72) ([189cdd2](https://github.com/zkat/pacote/commit/189cdd2))
+* **prefetch:** return cache-related info on prefetch ([623b7f3](https://github.com/zkat/pacote/commit/623b7f3))
+* **registry:** allow injection of request agents ([805e5ae](https://github.com/zkat/pacote/commit/805e5ae))
+* **registry:** fast request pooling ([321f84b](https://github.com/zkat/pacote/commit/321f84b))
+* **registry:** registry requests now follow cache spec more closely, respect Age, etc ([9e47098](https://github.com/zkat/pacote/commit/9e47098))
+
+
+### BREAKING CHANGES
+
+* **api:** spec objects can no longer be realize-package-specifier objects. Pass a string or generate npa@>=5 spec objects to pass in.
+* **integrity:** This PR replaces a pretty fundamental chunk of pacote.
+
+* Caching now follows standard-ish cache rules for http-related requests.
+
+* manifest() no longer includes the `_shasum` field. It's been replaced by `_integrity`, which is a Subresource Integrity hash string containing equivalent data. These strings can be parsed and managed using https://npm.im/ssri.
+
+* Any functions that accepted `opts.digest` and/or `opts.hashAlgorithm` now expect `opts.integrity` instead.
+
+* Packuments and finalized manifests are now cached using sha512. Tarballs can start using that hash (or any other more secure hash) once registries start supporting them: `packument.dist.integrity` will be prioritized over `packument.shasum`.
+
+* If opts.offline is used, a `ENOCACHE` error will be returned.
+
+
+
 <a name="1.0.0"></a>
 # [1.0.0](https://github.com/zkat/pacote/compare/v0.1.1...v1.0.0) (2017-03-17)
 
