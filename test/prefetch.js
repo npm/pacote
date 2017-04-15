@@ -2,6 +2,7 @@
 
 const cache = require('../lib/cache')
 const mockTar = require('./util/mock-tarball')
+const npa = require('npm-package-arg')
 const npmlog = require('npmlog')
 const ssri = require('ssri')
 const test = require('tap').test
@@ -71,7 +72,7 @@ test('prefetch by manifest if no integrity hash', t => {
         byDigest: false,
         integrity: BASE._integrity,
         manifest: BASE,
-        spec: 'foo@1.0.0'
+        spec: npa('foo@1.0.0')
       }, 'fresh fetch info returned')
       return cache.ls(CACHE)
     }).then(result => {
@@ -84,7 +85,7 @@ test('skip if no cache is provided', t => {
   cache.clearMemoized()
   return prefetch('foo@1.0.0', {}).then(info => {
     t.deepEqual(info, {
-      spec: 'foo@1.0.0'
+      spec: npa('foo@1.0.0')
     }, 'no cache -> only spec returned')
     return cache.ls(CACHE)
   }).then(result => {
@@ -104,7 +105,7 @@ test('use cache content if found', t => {
   }).then(info => {
     t.deepEqual(info, {
       manifest: BASE,
-      spec: 'foo@1.0.0',
+      spec: npa('foo@1.0.0'),
       integrity: BASE._integrity, // if coming from cache, get integrity
       byDigest: false
     }, '')
@@ -129,7 +130,7 @@ test('prefetch by manifest if digest provided but no cache content found', t => 
         byDigest: false,
         integrity: BASE._integrity,
         manifest: BASE,
-        spec: 'foo@1.0.0'
+        spec: npa('foo@1.0.0')
       }, 'fresh fetch info returned')
       t.equal(srv.isDone(), true)
       return cache.ls(CACHE)

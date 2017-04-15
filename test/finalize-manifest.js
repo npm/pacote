@@ -223,7 +223,7 @@ test('uses package.json as base if passed null', t => {
   }).then(tarData => {
     tnock(t, OPTS.registry).get('/' + tarballPath).reply(200, tarData)
     return finalizeManifest(null, {
-      spec: OPTS.registry + tarballPath,
+      fetchSpec: OPTS.registry + tarballPath,
       type: 'remote'
     }, OPTS).then(manifest => {
       t.deepEqual(manifest, {
@@ -279,7 +279,7 @@ test('caches finalized manifests', t => {
             t.ok(true, 'manifest entry exists in cache: ' + k)
           }
         })
-        return Promise.all(promises)
+        return BB.all(promises)
       }).then(() => {
         return finalizeManifest(base, {
           name: base.name,

@@ -5,6 +5,7 @@ const BB = require('bluebird')
 const finished = BB.promisify(require('mississippi').finished)
 const fs = BB.promisifyAll(require('fs'))
 const mockTar = require('./util/mock-tarball')
+const npa = require('npm-package-arg')
 const npmlog = require('npmlog')
 const path = require('path')
 const test = require('tap').test
@@ -31,10 +32,7 @@ test('basic tarball streaming', function (t) {
     return fs.writeFileAsync(tarballPath, tarData).then(() => {
       let data = ''
       return finished(
-        tarball({
-          type: 'local',
-          spec: tarballPath
-        }, OPTS).on('data', d => { data += d })
+        tarball(npa(tarballPath), OPTS).on('data', d => { data += d })
       ).then(() => {
         t.equal(data, tarData, 'fetched tarball data matches one from local')
       })

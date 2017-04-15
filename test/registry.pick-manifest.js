@@ -7,7 +7,7 @@ const test = require('tap').test
 const pickManifest = require('../lib/registry/pick-manifest')
 
 function spec (selector, type) {
-  return { spec: selector, type: type || 'range' }
+  return { fetchSpec: selector, type: type || 'range' }
 }
 
 test('basic carat range selection', t => {

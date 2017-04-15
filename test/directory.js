@@ -51,7 +51,7 @@ test('supports directory deps', t => {
       bundleDependencies: false,
       peerDependencies: {},
       deprecated: false,
-      _resolved: path.resolve(PKG),
+      _resolved: path.resolve(PKG).replace(/\\/g, '/'),
       _integrity: null,
       _shrinkwrap: sr,
       bin: { mybin: path.join('x', 'mybin') },

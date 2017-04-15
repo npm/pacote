@@ -4,6 +4,7 @@ const BB = require('bluebird')
 
 const finished = BB.promisify(require('mississippi').finished)
 const mockTar = require('./util/mock-tarball')
+const npa = require('npm-package-arg')
 const npmlog = require('npmlog')
 const test = require('tap').test
 const tnock = require('./util/tnock')
@@ -38,10 +39,7 @@ test('basic tarball streaming', function (t) {
     srv.get(tarballPath).reply(200, tarData)
     let data = ''
     return finished(
-      tarball({
-        type: 'remote',
-        spec: OPTS.registry + tarballPath.slice(1)
-      }, OPTS).on('data', d => { data += d })
+      tarball(npa(OPTS.registry + tarballPath.slice(1)), OPTS).on('data', d => { data += d })
     ).then(() => {
       t.equal(data, tarData, 'fetched tarball data matches one from server')
     })

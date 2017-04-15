@@ -4,6 +4,7 @@ const BB = require('bluebird')
 
 const finished = BB.promisify(require('mississippi').finished)
 const mockTar = require('./util/mock-tarball')
+const npa = require('npm-package-arg')
 const npmlog = require('npmlog')
 const ssri = require('ssri')
 const test = require('tap').test
@@ -58,15 +59,7 @@ test('basic tarball streaming', function (t) {
     srv.get('/foo/-/foo-1.2.3.tgz').reply(200, tarData)
     let data = ''
     return finished(
-      tarball({
-        type: 'range',
-        raw: 'foo@^1.2.3',
-        name: 'foo',
-        escapedName: 'foo',
-        rawSpec: '^1.2.3',
-        spec: '>=1.2.3 <2.0.0',
-        scope: null
-      }, OPTS).on('data', d => { data += d })
+      tarball(npa('foo@^1.2.3'), OPTS).on('data', d => { data += d })
     ).then(() => {
       t.equal(data, tarData, 'fetched tarball data matches one from server')
     })
@@ -85,15 +78,7 @@ test('errors if manifest fails', t => {
     var srv = tnock(t, OPTS.registry)
     srv.get('/foo').reply(200, META(tarData))
     srv.get('/foo/-/foo-1.2.3.tgz').reply(404)
-    return finished(tarball({
-      type: 'range',
-      raw: 'foo@^1.2.3',
-      name: 'foo',
-      escapedName: 'foo',
-      rawSpec: '^1.2.3',
-      spec: '>=1.2.3 <2.0.0',
-      scope: null
-    }, OPTS).on('data', () => {})).then(() => {
+    return finished(tarball(npa('foo@^1.2.3'), OPTS).on('data', () => {})).then(() => {
       throw new Error('this was not supposed to succeed')
     }).catch(err => {
       t.ok(err, 'correctly errored')
@@ -116,15 +101,7 @@ test('tarball url updated to fit registry protocol', t => {
     srv.get('/foo/-/foo-1.2.3.tgz').reply(200, tarData)
     let data = ''
     return finished(
-      tarball({
-        type: 'range',
-        raw: 'foo@^1.2.3',
-        name: 'foo',
-        escapedName: 'foo',
-        rawSpec: '^1.2.3',
-        spec: '>=1.2.3 <2.0.0',
-        scope: null
-      }, OPTS).on('data', d => { data += d })
+      tarball(npa('foo@^1.2.3'), OPTS).on('data', d => { data += d })
     ).then(() => {
       t.equal(data, tarData, 'fetched tarball from https server')
     })
@@ -145,15 +122,7 @@ test('tarball url updated to fit registry protocol+port', t => {
     srv.get('/foo/-/foo-1.2.3.tgz').reply(200, tarData)
     let data = ''
     return finished(
-      tarball({
-        type: 'range',
-        raw: 'foo@^1.2.3',
-        name: 'foo',
-        escapedName: 'foo',
-        rawSpec: '^1.2.3',
-        spec: '>=1.2.3 <2.0.0',
-        scope: null
-      }, OPTS).on('data', d => { data += d })
+      tarball(npa('foo@^1.2.3'), OPTS).on('data', d => { data += d })
     ).then(() => {
       t.equal(data, tarData, 'fetched tarball from https server and adjusted port')
     })

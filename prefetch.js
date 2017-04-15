@@ -5,11 +5,12 @@ const BB = require('bluebird')
 const cache = require('./lib/cache')
 const finished = BB.promisify(require('mississippi').finished)
 const optCheck = require('./lib/util/opt-check')
-const rps = BB.promisify(require('realize-package-specifier'))
+const npa = require('npm-package-arg')
 
 module.exports = prefetch
 function prefetch (spec, opts) {
   opts = optCheck(opts)
+  spec = typeof spec === 'string' ? npa(spec, opts.where) : spec
   const startTime = Date.now()
   if (!opts.cache) {
     opts.log.info('prefetch', 'skipping prefetch: no cache provided')
@@ -36,20 +37,17 @@ function prefetch (spec, opts) {
 }
 
 function prefetchByManifest (start, spec, opts) {
-  const res = typeof spec === 'string'
-  ? rps(spec, opts.where)
-  : BB.resolve(spec)
   let manifest
   let integrity
-  return res.then(res => {
-    const stream = require('./lib/handlers/' + res.type + '/tarball')(res, opts)
+  return BB.resolve().then(() => {
+    const stream = require('./lib/handlers/' + spec.type + '/tarball')(spec, opts)
     if (!stream) { return }
     stream.on('data', function () {})
     stream.on('manifest', m => { manifest = m })
     stream.on('integrity', i => { integrity = i })
     return finished(stream)
   }).then(() => {
-    opts.log.verbose('prefetch', `${spec} done in ${Date.now() - start}ms`)
+    opts.log.verbose('prefetch', `${spec.name}@${spec.saveSpec || spec.fetchSpec} done in ${Date.now() - start}ms`)
     return {
       manifest,
       spec,

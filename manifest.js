@@ -1,54 +1,47 @@
 'use strict'
 
-const BB = require('bluebird')
-
 const finalizeManifest = require('./lib/finalize-manifest')
 const optCheck = require('./lib/util/opt-check')
 const pinflight = require('promise-inflight')
-const rps = BB.promisify(require('realize-package-specifier'))
+const npa = require('npm-package-arg')
 
 let handlers = {}
 
 module.exports = manifest
 function manifest (spec, opts) {
   opts = optCheck(opts)
+  spec = typeof spec === 'string' ? npa(spec, opts.where) : spec
 
-  const res = typeof spec === 'string'
-  ? rps(spec, opts.where)
-  : BB.resolve(spec)
-
-  return res.then(res => {
-    const label = [
-      res.raw,
-      res.spec,
-      res.type,
-      opts.cache,
-      opts.registry,
-      opts.scope
-    ].join(':')
-    return pinflight(label, () => {
-      const startTime = Date.now()
-      const fetcher = (
-        handlers[res.type] ||
-        (
-          handlers[res.type] =
-          require('./lib/handlers/' + res.type + '/manifest')
-        )
+  const label = [
+    spec.name,
+    spec.saveSpec || spec.fetchSpec,
+    spec.type,
+    opts.cache,
+    opts.registry,
+    opts.scope
+  ].join(':')
+  return pinflight(label, () => {
+    const startTime = Date.now()
+    const fetcher = (
+      handlers[spec.type] ||
+      (
+        handlers[spec.type] =
+        require('./lib/handlers/' + spec.type + '/manifest')
       )
-      return fetcher(res, opts).then(manifest => {
-        return finalizeManifest(manifest, res, opts)
-      }).then(manifest => {
-        // Metadata about the way this manifest was requested
-        if (opts.annotate) {
-          manifest._requested = res
-          manifest._spec = spec
-          manifest._where = opts.where
-        }
+    )
+    return fetcher(spec, opts).then(manifest => {
+      return finalizeManifest(manifest, spec, opts)
+    }).then(manifest => {
+      // Metadata about the way this manifest was requested
+      if (opts.annotate) {
+        manifest._requested = spec
+        manifest._spec = spec.raw
+        manifest._where = opts.where
+      }
 
-        const elapsedTime = Date.now() - startTime
-        opts.log.verbose('pacote', `${res.type} manifest for ${res.name}@${res.spec} fetched in ${elapsedTime}ms`)
-        return manifest
-      })
+      const elapsedTime = Date.now() - startTime
+      opts.log.verbose('pacote', `${spec.type} manifest for ${spec.name}@${spec.saveSpec || spec.fetchSpec} fetched in ${elapsedTime}ms`)
+      return manifest
     })
   })
 }

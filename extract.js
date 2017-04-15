@@ -4,18 +4,19 @@ const BB = require('bluebird')
 
 const cache = require('./lib/cache')
 const extractStream = require('./lib/extract-stream')
+const npa = require('npm-package-arg')
 const pipe = BB.promisify(require('mississippi').pipe)
 const optCheck = require('./lib/util/opt-check')
 const retry = require('promise-retry')
 const rimraf = BB.promisify(require('rimraf'))
-const rps = BB.promisify(require('realize-package-specifier'))
 
 module.exports = extract
 function extract (spec, dest, opts) {
   opts = optCheck(opts)
+  spec = typeof spec === 'string' ? npa(spec, opts.where) : spec
   const startTime = Date.now()
   if (opts.integrity && opts.cache && !opts.preferOnline) {
-    opts.log.silly('pacote', 'trying', spec, 'by hash:', opts.integrity.toString())
+    opts.log.silly('pacote', 'trying', spec.name, 'by hash:', opts.integrity.toString())
     return extractByDigest(
       startTime, spec, dest, opts
     ).catch(err => {
@@ -34,7 +35,7 @@ function extract (spec, dest, opts) {
       }
     })
   } else {
-    opts.log.silly('pacote', 'no tarball hash provided for', spec, '- extracting by manifest')
+    opts.log.silly('pacote', 'no tarball hash provided for', spec.name, '- extracting by manifest')
     return retry((tryAgain, attemptNum) => {
       return extractByManifest(
         startTime, spec, dest, opts
@@ -42,7 +43,7 @@ function extract (spec, dest, opts) {
         // We're only going to retry at this level if the local cache might
         // have gotten corrupted.
         if (err.code === 'EINTEGRITY' && opts.cache) {
-          opts.log.warn('pacote', `tarball integrity check for ${spec} failed. Clearing cache entry. ${err.message}`)
+          opts.log.warn('pacote', `tarball integrity check for ${spec.name}@${spec.saveSpec || spec.fetchSpec} failed. Clearing cache entry. ${err.message}`)
           return cleanUpCached(
             dest, opts.cache, err.sri, opts
           ).then(() => tryAgain(err))
@@ -58,20 +59,17 @@ function extractByDigest (start, spec, dest, opts) {
   const xtractor = extractStream(dest, opts)
   const cached = cache.get.stream.byDigest(opts.cache, opts.integrity, opts)
   return pipe(cached, xtractor).then(() => {
-    opts.log.verbose('pacote', `${spec} extracted to ${dest} by content address ${Date.now() - start}ms`)
+    opts.log.verbose('pacote', `${spec.name}@${spec.saveSpec || spec.fetchSpec} extracted to ${dest} by content address ${Date.now() - start}ms`)
   })
 }
 
 function extractByManifest (start, spec, dest, opts) {
-  const res = typeof spec === 'string'
-  ? rps(spec, opts.where)
-  : BB.resolve(spec)
   const xtractor = extractStream(dest, opts)
-  return res.then(res => {
-    const tarball = require('./lib/handlers/' + res.type + '/tarball')
-    return pipe(tarball(res, opts), xtractor)
+  return BB.resolve(() => {
+    const tarball = require('./lib/handlers/' + spec.type + '/tarball')
+    return pipe(tarball(spec, opts), xtractor)
   }).then(() => {
-    opts.log.verbose('pacote', `${res.name}@${res.spec} extracted in ${Date.now() - start}ms`)
+    opts.log.verbose('pacote', `${spec.name}@${spec.saveSpec || spec.fetchSpec} extracted in ${Date.now() - start}ms`)
   })
 }
 

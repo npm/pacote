@@ -2,6 +2,7 @@
 
 const BB = require('bluebird')
 
+const npa = require('npm-package-arg')
 const npmlog = require('npmlog')
 const test = require('tap').test
 const tnock = require('./util/tnock')
@@ -322,15 +323,7 @@ test('optionally annotates manifest with request-related metadata', t => {
     where: 'right here'
   }
   const annotated = new Manifest(BASE)
-  annotated._requested = {
-    escapedName: 'foo',
-    name: 'foo',
-    raw: 'foo@1.2.3',
-    rawSpec: '1.2.3',
-    scope: null,
-    spec: '1.2.3',
-    type: 'version'
-  }
+  annotated._requested = npa('foo@1.2.3')
   annotated._spec = 'foo@1.2.3'
   annotated._where = opts.where
 
