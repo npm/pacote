@@ -325,6 +325,7 @@ test('optionally annotates manifest with request-related metadata', t => {
   const annotated = new Manifest(BASE)
   annotated._requested = npa('foo@1.2.3')
   annotated._spec = 'foo@1.2.3'
+  annotated._from = 'foo@1.2.3'
   annotated._where = opts.where
 
   srv.get('/foo').reply(200, META)
