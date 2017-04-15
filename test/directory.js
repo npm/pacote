@@ -4,13 +4,16 @@ const BB = require('bluebird')
 
 const fs = BB.promisifyAll(require('fs'))
 const mkdirp = BB.promisify(require('mkdirp'))
+const npmlog = require('npmlog')
 const path = require('path')
 const test = require('tap').test
 
-// const extract = require('../extract')
+const extract = require('../extract')
 const manifest = require('../manifest')
 
 const CACHE = require('./util/test-dir')(__filename)
+
+npmlog.level = process.env.LOGLEVEL || 'silent'
 
 test('supports directory deps', t => {
   const pkg = {
@@ -26,7 +29,7 @@ test('supports directory deps', t => {
     dependencies: { bar: '3.2.1' }
   }
   const PKG = path.join(CACHE, 'pkg')
-  // const EXT = path.join(CACHE, 'extracted')
+  const EXT = path.join(CACHE, 'extracted')
   return mkdirp(path.join(PKG, 'x')).then(() => {
     return BB.join(
       fs.writeFileAsync(
@@ -57,25 +60,24 @@ test('supports directory deps', t => {
       bin: { mybin: path.join('x', 'mybin') },
       _id: `${pkg.name}@${pkg.version}`
     }, 'got a filled-out manifest')
-    // TODO - this is spitting out a seriously bizarre error?
-  // }).then(() => {
-  //   return extract(PKG, EXT)
-  // }).then(() => {
-  //   return BB.join(
-  //     fs.readFileAsync(
-  //       path.join(EXT, 'package.json'), 'utf8'
-  //     ),
-  //     fs.readFileAsync(
-  //       path.join(EXT, 'npm-shrinkwrap.json'), 'utf8'
-  //     ),
-  //     fs.readFileAsync(
-  //       path.join(EXT, 'x', 'mybin'), 'utf8'
-  //     ),
-  //     (xpkg, xsr, xbin) => {
-  //       t.deepEqual(JSON.parse(xpkg), pkg, 'extracted package.json')
-  //       t.deepEqual(JSON.parse(xsr), sr, 'extracted npm-shrinkwrap.json')
-  //       t.deepEqual(xbin, 'console.log("hi there")', 'extracted binary')
-  //     }
-  //   )
+  }).then(() => {
+    return extract(PKG, EXT, {log: npmlog})
+  }).then(() => {
+    return BB.join(
+      fs.readFileAsync(
+        path.join(EXT, 'package.json'), 'utf8'
+      ),
+      fs.readFileAsync(
+        path.join(EXT, 'npm-shrinkwrap.json'), 'utf8'
+      ),
+      fs.readFileAsync(
+        path.join(EXT, 'x', 'mybin'), 'utf8'
+      ),
+      (xpkg, xsr, xbin) => {
+        t.deepEqual(JSON.parse(xpkg), pkg, 'extracted package.json')
+        t.deepEqual(JSON.parse(xsr), sr, 'extracted npm-shrinkwrap.json')
+        t.deepEqual(xbin, 'console.log("hi there")', 'extracted binary')
+      }
+    )
   })
 })
