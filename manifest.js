@@ -36,7 +36,6 @@ function manifest (spec, opts) {
       if (opts.annotate) {
         manifest._requested = spec
         manifest._spec = spec.raw
-        manifest._from = spec.raw
         manifest._where = opts.where
       }
 
