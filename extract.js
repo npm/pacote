@@ -65,7 +65,7 @@ function extractByDigest (start, spec, dest, opts) {
 
 function extractByManifest (start, spec, dest, opts) {
   const xtractor = extractStream(dest, opts)
-  return BB.resolve(() => {
+  return BB.resolve(null).then(() => {
     const tarball = require('./lib/handlers/' + spec.type + '/tarball')
     return pipe(tarball(spec, opts), xtractor)
   }).then(() => {
