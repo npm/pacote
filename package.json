@@ -48,7 +48,6 @@
     "make-fetch-happen": "^2.2.2",
     "minimatch": "^3.0.3",
     "mississippi": "^1.2.0",
-    "normalize-git-url": "^3.0.2",
     "normalize-package-data": "^2.3.6",
     "npm-package-arg": "^5.0.0",
     "osenv": "^0.1.4",
