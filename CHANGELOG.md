@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.1.0"></a>
+# [2.1.0](https://github.com/zkat/pacote/compare/v2.0.5...v2.1.0) (2017-04-18)
+
+
+### Bug Fixes
+
+* **cache:** bump deps for cache fixes ([9596434](https://github.com/zkat/pacote/commit/9596434))
+
+
+### Features
+
+* **warn:** http warning headers now logged ([f22ce1d](https://github.com/zkat/pacote/commit/f22ce1d))
+
+
+
 <a name="2.0.5"></a>
 ## [2.0.5](https://github.com/zkat/pacote/compare/v2.0.4...v2.0.5) (2017-04-18)
 
