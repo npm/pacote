@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.0.5"></a>
+## [2.0.5](https://github.com/zkat/pacote/compare/v2.0.4...v2.0.5) (2017-04-18)
+
+
+### Bug Fixes
+
+* **file:** oops, the type for these is file ([e7a3d35](https://github.com/zkat/pacote/commit/e7a3d35))
+
+
+
 <a name="2.0.4"></a>
 ## [2.0.4](https://github.com/zkat/pacote/compare/v2.0.3...v2.0.4) (2017-04-18)
 
