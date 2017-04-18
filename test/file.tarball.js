@@ -12,7 +12,7 @@ const test = require('tap').test
 
 const CACHE = require('./util/test-dir')(__filename)
 
-const tarball = require('../lib/handlers/tarball/tarball')
+const tarball = require('../lib/handlers/file/tarball')
 
 npmlog.level = process.env.LOGLEVEL || 'silent'
 const OPTS = {
