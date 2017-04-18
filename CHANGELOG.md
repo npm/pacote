@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.0.4"></a>
+## [2.0.4](https://github.com/zkat/pacote/compare/v2.0.3...v2.0.4) (2017-04-18)
+
+
+### Bug Fixes
+
+* **deps:** remove normalize-git-url ([12d464a](https://github.com/zkat/pacote/commit/12d464a))
+* **git:** Correctly read in the HEAD ref after cloning ([dbe1b15](https://github.com/zkat/pacote/commit/dbe1b15))
+* **git:** The full clone path doesn't have _resolved set ([ddce561](https://github.com/zkat/pacote/commit/ddce561))
+* **manifest:** no _from ever ([15087c4](https://github.com/zkat/pacote/commit/15087c4))
+
+
+
 <a name="2.0.3"></a>
 ## [2.0.3](https://github.com/zkat/pacote/compare/v2.0.2...v2.0.3) (2017-04-15)
 
