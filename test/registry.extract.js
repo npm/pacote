@@ -1,5 +1,5 @@
 'use strict'
 
-var test = require('tap').test
+const test = require('tap').test
 
 test('basic registry package extraction')

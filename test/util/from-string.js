@@ -4,7 +4,7 @@ const PassThrough = require('stream')
 
 module.exports = fromString
 function fromString (str) {
-  var stream = new PassThrough()
+  const stream = new PassThrough()
   setTimeout(function () {
     stream.write(str)
     stream.end()

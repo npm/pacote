@@ -53,7 +53,7 @@ test('tarball setup', t => {
 })
 
 test('fetches shrinkwrap data if missing + required', t => {
-  var srv = tnock(t, OPTS.registry)
+  const srv = tnock(t, OPTS.registry)
 
   srv.get('/foo').reply(200, META)
   srv.get('/foo/-/foo-1.2.3.tgz').reply(200, TARBALL)

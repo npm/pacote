@@ -67,7 +67,7 @@ test('basic tarball streaming', function (t) {
 })
 
 test('errors if manifest fails', t => {
-  var pkg = {
+  const pkg = {
     'package.json': JSON.stringify({
       name: 'foo',
       version: '1.2.3'
@@ -75,7 +75,7 @@ test('errors if manifest fails', t => {
     'index.js': 'console.log("hello world!")'
   }
   return mockTar(pkg).then(tarData => {
-    var srv = tnock(t, OPTS.registry)
+    const srv = tnock(t, OPTS.registry)
     srv.get('/foo').reply(200, META(tarData))
     srv.get('/foo/-/foo-1.2.3.tgz').reply(404)
     return finished(tarball(npa('foo@^1.2.3'), OPTS).on('data', () => {})).then(() => {
