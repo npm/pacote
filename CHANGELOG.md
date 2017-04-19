@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.1.1"></a>
+## [2.1.1](https://github.com/zkat/pacote/compare/v2.1.0...v2.1.1) (2017-04-19)
+
+
+### Bug Fixes
+
+* **git:** use sshurl instead of ssh for ssh clones ([ff20803](https://github.com/zkat/pacote/commit/ff20803))
+* **notice:** only log npm-notice if the packument came from network ([eeeb411](https://github.com/zkat/pacote/commit/eeeb411))
+* **registry:** improve 404 error messages ([6a5cbdb](https://github.com/zkat/pacote/commit/6a5cbdb))
+
+
+
 <a name="2.1.0"></a>
 # [2.1.0](https://github.com/zkat/pacote/compare/v2.0.5...v2.1.0) (2017-04-18)
 
