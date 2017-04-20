@@ -23,16 +23,16 @@ function extract (spec, dest, opts) {
       if (err.code === 'ENOENT') {
         opts.log.silly('pacote', `data for ${opts.integrity} not present. Using manifest.`)
         return extractByManifest(startTime, spec, dest, opts)
-      } else if (err.code === 'EINTEGRITY') {
-        opts.log.warn('pacote', `cached data for ${opts.integrity} failed integrity check. Refreshing cache.`)
-        return cleanUpCached(
-          dest, opts.cache, opts.integrity, opts
-        ).then(() => {
-          return extractByManifest(startTime, spec, dest, opts)
-        })
-      } else {
-        throw err
       }
+
+      if (err.code === 'EINTEGRITY' || err.code === 'Z_DATA_ERROR') {
+        opts.log.warn('pacote', `cached data for ${spec} (${opts.integrity}) seems to be corrupted. Refreshing cache.`)
+      }
+      return cleanUpCached(
+        dest, opts.cache, opts.integrity, opts
+      ).then(() => {
+        return extractByManifest(startTime, spec, dest, opts)
+      })
     })
   } else {
     opts.log.silly('pacote', 'no tarball hash provided for', spec.name, '- extracting by manifest')
@@ -40,10 +40,13 @@ function extract (spec, dest, opts) {
       return extractByManifest(
         startTime, spec, dest, opts
       ).catch(err => {
-        // We're only going to retry at this level if the local cache might
-        // have gotten corrupted.
-        if (err.code === 'EINTEGRITY' && opts.cache) {
-          opts.log.warn('pacote', `tarball integrity check for ${spec.name}@${spec.saveSpec || spec.fetchSpec} failed. Clearing cache entry. ${err.message}`)
+        // Retry once if we have a cache, to clear up any weird conditions.
+        // Don't retry network errors, though -- make-fetch-happen has already
+        // taken care of making sure we're all set on that front.
+        if (opts.cache && !err.code.match(/^E\d{3}$/)) {
+          if (err.code === 'EINTEGRITY' || err.code === 'Z_DATA_ERROR') {
+            opts.log.warn('pacote', `tarball data for ${spec} (${opts.integrity}) seems to be corrupted. Trying one more time.`)
+          }
           return cleanUpCached(
             dest, opts.cache, err.sri, opts
           ).then(() => tryAgain(err))
