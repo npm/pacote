@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.2.0"></a>
+# [2.2.0](https://github.com/zkat/pacote/compare/v2.1.2...v2.2.0) (2017-04-22)
+
+
+### Bug Fixes
+
+* **git:** fix shortcut fallback order again ([5759d40](https://github.com/zkat/pacote/commit/5759d40))
+* **registry:** fix infinite manifetch loop ([6c6a62b](https://github.com/zkat/pacote/commit/6c6a62b))
+
+
+### Features
+
+* **manifest:** opts.fullMetadata to get unfiltered manifests ([ff2945b](https://github.com/zkat/pacote/commit/ff2945b))
+
+
+
 <a name="2.1.2"></a>
 ## [2.1.2](https://github.com/zkat/pacote/compare/v2.1.1...v2.1.2) (2017-04-20)
 
