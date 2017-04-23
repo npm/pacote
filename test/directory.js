@@ -48,6 +48,9 @@ test('supports directory deps', t => {
     t.deepEqual(manifest, {
       name: pkg.name,
       version: pkg.version,
+      cpu: null,
+      engines: null,
+      os: null,
       dependencies: pkg.dependencies,
       optionalDependencies: {},
       devDependencies: {},

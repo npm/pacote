@@ -31,6 +31,9 @@ test('returns a manifest with the right fields', t => {
   const base = {
     name: 'testing',
     version: '1.2.3',
+    cpu: 'x64',
+    os: 'win32',
+    engines: {node: '^4'},
     dependencies: { x: '3.2.1' },
     devDependencies: {},
     optionalDependencies: {},
@@ -46,6 +49,9 @@ test('returns a manifest with the right fields', t => {
     t.deepEqual(manifest, {
       name: 'testing',
       version: '1.2.3',
+      cpu: 'x64',
+      os: 'win32',
+      engines: {node: '^4'},
       dependencies: { x: '3.2.1' },
       devDependencies: {},
       optionalDependencies: {},
@@ -75,6 +81,9 @@ test('defaults all field to expected types + values', t => {
     t.deepEqual(manifest, {
       name: base.name,
       version: base.version,
+      cpu: null,
+      os: null,
+      engines: null,
       dependencies: {},
       devDependencies: {},
       optionalDependencies: {},
@@ -209,6 +218,7 @@ test('uses package.json as base if passed null', t => {
   const base = {
     name: 'testing',
     version: '1.2.3',
+    cpu: 'x64',
     dependencies: { foo: '1' },
     directories: { bin: 'foo' }
   }
@@ -229,6 +239,9 @@ test('uses package.json as base if passed null', t => {
       t.deepEqual(manifest, {
         name: base.name,
         version: base.version,
+        cpu: 'x64',
+        os: null,
+        engines: null,
         dependencies: base.dependencies,
         optionalDependencies: {},
         devDependencies: {},
