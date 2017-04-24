@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.2.2"></a>
+## [2.2.2](https://github.com/zkat/pacote/compare/v2.2.1...v2.2.2) (2017-04-24)
+
+
+### Bug Fixes
+
+* **prefetch:** pull in new cacache + fix prefetch hasContent call ([9f476b8](https://github.com/zkat/pacote/commit/9f476b8))
+
+
+
 <a name="2.2.1"></a>
 ## [2.2.1](https://github.com/zkat/pacote/compare/v2.2.0...v2.2.1) (2017-04-23)
 
