@@ -2,7 +2,7 @@
 
 const BB = require('bluebird')
 
-const cache = require('../lib/cache')
+const cacache = require('cacache')
 const npmlog = require('npmlog')
 const path = require('path')
 const ssri = require('ssri')
@@ -259,7 +259,7 @@ test('uses package.json as base if passed null', t => {
 })
 
 test('caches finalized manifests', t => {
-  cache.clearMemoized()
+  cacache.clearMemoized()
   const tarballPath = 'testing/tarball-1.2.3.tgz'
   const base = {
     name: 'testing',
@@ -283,11 +283,11 @@ test('caches finalized manifests', t => {
       type: 'range'
     }, opts).then(manifest1 => {
       base._integrity = manifest1._integrity
-      return cache.ls(CACHE, opts).then(entries => {
+      return cacache.ls(CACHE, opts).then(entries => {
         const promises = []
         Object.keys(entries).forEach(k => {
           if (!k.match(/^pacote:range-manifest/)) {
-            promises.push(cache.put(CACHE, k, '', opts))
+            promises.push(cacache.put(CACHE, k, '', opts))
           } else {
             t.ok(true, 'manifest entry exists in cache: ' + k)
           }

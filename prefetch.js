@@ -2,7 +2,7 @@
 
 const BB = require('bluebird')
 
-const cache = require('./lib/cache')
+const cacache = require('cacache')
 const finished = BB.promisify(require('mississippi').finished)
 const optCheck = require('./lib/util/opt-check')
 const npa = require('npm-package-arg')
@@ -18,7 +18,7 @@ function prefetch (spec, opts) {
   }
   if (opts.integrity && !opts.preferOnline) {
     opts.log.silly('prefetch', 'checking if', opts.integrity, 'is already cached')
-    return cache.get.hasContent(opts.cache, opts.integrity).then(info => {
+    return cacache.get.hasContent(opts.cache, opts.integrity).then(info => {
       if (info) {
         opts.log.silly('prefetch', 'content already exists for', spec.raw, `(${Date.now() - startTime}ms)`)
         return {

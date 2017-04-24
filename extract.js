@@ -2,7 +2,7 @@
 
 const BB = require('bluebird')
 
-const cache = require('./lib/cache')
+const cacache = require('cacache')
 const extractStream = require('./lib/extract-stream')
 const npa = require('npm-package-arg')
 const pipe = BB.promisify(require('mississippi').pipe)
@@ -60,7 +60,7 @@ function extract (spec, dest, opts) {
 
 function extractByDigest (start, spec, dest, opts) {
   const xtractor = extractStream(dest, opts)
-  const cached = cache.get.stream.byDigest(opts.cache, opts.integrity, opts)
+  const cached = cacache.get.stream.byDigest(opts.cache, opts.integrity, opts)
   return pipe(cached, xtractor).then(() => {
     opts.log.verbose('pacote', `${spec.name}@${spec.saveSpec || spec.fetchSpec} extracted to ${dest} by content address ${Date.now() - start}ms`)
   })
@@ -82,6 +82,6 @@ function extractByManifest (start, spec, dest, opts) {
 function cleanUpCached (dest, cachePath, integrity, opts) {
   return BB.join(
     rimraf(dest),
-    cache.rm.content(cachePath, integrity, opts)
+    cacache.rm.content(cachePath, integrity, opts)
   )
 }

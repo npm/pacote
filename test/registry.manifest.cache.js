@@ -2,7 +2,7 @@
 
 const BB = require('bluebird')
 
-const cache = require('../lib/cache')
+const cacache = require('cacache')
 const npmlog = require('npmlog')
 const test = require('tap').test
 const testDir = require('./util/test-dir')
@@ -59,7 +59,7 @@ const HEADERS = {
 }
 
 test('inflights concurrent requests', t => {
-  cache.clearMemoized()
+  cacache.clearMemoized()
   const srv = tnock(t, OPTS.registry)
 
   srv.get('/foo').once().reply(200, META, HEADERS)
@@ -74,10 +74,10 @@ test('inflights concurrent requests', t => {
 })
 
 test('supports fetching from an optional cache', t => {
-  cache.clearMemoized()
+  cacache.clearMemoized()
   tnock(t, OPTS.registry).get('/foo').once().reply(200, META, HEADERS)
   return manifest('foo@1.2.3', OPTS).then(() => {
-    cache.clearMemoized()
+    cacache.clearMemoized()
     return manifest('foo@1.2.3', OPTS).then(pkg => {
       t.deepEqual(pkg, PKG)
     })
@@ -85,7 +85,7 @@ test('supports fetching from an optional cache', t => {
 })
 
 test('falls back to registry if cache entry missing', t => {
-  cache.clearMemoized()
+  cacache.clearMemoized()
   const opts = {
     registry: OPTS.registry,
     log: OPTS.log,
@@ -100,7 +100,7 @@ test('falls back to registry if cache entry missing', t => {
 })
 
 test('tries again if cached data is missing target', t => {
-  cache.clearMemoized()
+  cacache.clearMemoized()
   const srv = tnock(t, OPTS.registry)
   srv.get('/foo').reply(() => {
     srv.get('/foo').reply(200, META, HEADERS)
@@ -112,7 +112,7 @@ test('tries again if cached data is missing target', t => {
   })
   return manifest('foo@1.1.2', OPTS).then(pkg => {
     t.deepEqual(pkg, PKG, 'got expected package from network')
-    cache.clearMemoized()
+    cacache.clearMemoized()
     return manifest('foo@1.2.3', OPTS).then(pkg => {
       t.deepEqual(pkg, PKG, 'got updated package in spite of cache')
     })

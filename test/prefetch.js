@@ -1,6 +1,6 @@
 'use strict'
 
-const cache = require('../lib/cache')
+const cacache = require('cacache')
 const mockTar = require('./util/mock-tarball')
 const npa = require('npm-package-arg')
 const npmlog = require('npmlog')
@@ -54,7 +54,7 @@ test('setup integrity', t => {
 })
 
 test('prefetch by manifest if no integrity hash', t => {
-  cache.clearMemoized()
+  cacache.clearMemoized()
   return mockTar(PKG).then(tarData => {
     const srv = tnock(t, OPTS.registry)
     srv.get('/foo').reply(200, META, {
@@ -74,7 +74,7 @@ test('prefetch by manifest if no integrity hash', t => {
         manifest: BASE,
         spec: npa('foo@1.0.0')
       }, 'fresh fetch info returned')
-      return cache.ls(CACHE)
+      return cacache.ls(CACHE)
     }).then(result => {
       t.equal(Object.keys(result).length, 2)
     })
@@ -82,25 +82,25 @@ test('prefetch by manifest if no integrity hash', t => {
 })
 
 test('skip if no cache is provided', t => {
-  cache.clearMemoized()
+  cacache.clearMemoized()
   return prefetch('foo@1.0.0', {}).then(info => {
     t.deepEqual(info, {
       spec: npa('foo@1.0.0')
     }, 'no cache -> only spec returned')
-    return cache.ls(CACHE)
+    return cacache.ls(CACHE)
   }).then(result => {
     t.equal(Object.keys(result).length, 0)
   })
 })
 
 test('use cache content if found', t => {
-  cache.clearMemoized()
+  cacache.clearMemoized()
   tnock(t, OPTS.registry).get('/foo').reply(200, META)
   return mockTar(PKG).then(tarData => {
     tnock(t, 'https://foo.bar').get('/x.tgz').reply(200, tarData)
     return prefetch('foo@1.0.0', OPTS)
   }).then(() => {
-    cache.clearMemoized()
+    cacache.clearMemoized()
     return prefetch('foo@1.0.0', OPTS)
   }).then(info => {
     t.deepEqual(info, {
@@ -109,14 +109,14 @@ test('use cache content if found', t => {
       integrity: BASE._integrity, // if coming from cache, get integrity
       byDigest: false
     }, '')
-    return cache.ls(CACHE)
+    return cacache.ls(CACHE)
   }).then(result => {
     t.equal(Object.keys(result).length, 2)
   })
 })
 
 test('prefetch by manifest if digest provided but no cache content found', t => {
-  cache.clearMemoized()
+  cacache.clearMemoized()
   return mockTar(PKG).then(tarData => {
     const srv = tnock(t, OPTS.registry)
     srv.get('/foo').reply(200, META)
@@ -133,7 +133,7 @@ test('prefetch by manifest if digest provided but no cache content found', t => 
         spec: npa('foo@1.0.0')
       }, 'fresh fetch info returned')
       t.equal(srv.isDone(), true)
-      return cache.ls(CACHE)
+      return cacache.ls(CACHE)
     }).then(result => {
       t.equal(Object.keys(result).length, 2)
     })
