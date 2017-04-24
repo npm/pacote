@@ -37,11 +37,15 @@ function prefetch (spec, opts) {
   }
 }
 
+let fetch
 function prefetchByManifest (start, spec, opts) {
   let manifest
   let integrity
   return BB.resolve().then(() => {
-    const stream = require('./lib/handlers/' + spec.type + '/tarball')(spec, opts)
+    if (!fetch) {
+      fetch = require('./lib/fetch')
+    }
+    const stream = fetch.tarball(spec, opts)
     if (!stream) { return }
     stream.on('data', function () {})
     stream.on('manifest', m => { manifest = m })

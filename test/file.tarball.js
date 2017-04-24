@@ -12,7 +12,7 @@ const test = require('tap').test
 
 const CACHE = require('./util/test-dir')(__filename)
 
-const tarball = require('../lib/handlers/file/tarball')
+const fetch = require('../lib/fetch')
 
 npmlog.level = process.env.LOGLEVEL || 'silent'
 const OPTS = {
@@ -32,7 +32,9 @@ test('basic tarball streaming', function (t) {
     return fs.writeFileAsync(tarballPath, tarData).then(() => {
       let data = ''
       return finished(
-        tarball(npa(tarballPath), OPTS).on('data', d => { data += d })
+        fetch.tarball(npa(tarballPath), OPTS).on('data', d => {
+          data += d
+        })
       ).then(() => {
         t.equal(data, tarData, 'fetched tarball data matches one from local')
       })

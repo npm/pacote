@@ -12,7 +12,7 @@ const tnock = require('./util/tnock')
 
 require('./util/test-dir')(__filename)
 
-const tarball = require('../lib/registry/tarball')
+const fetch = require('../lib/fetch')
 
 npmlog.level = process.env.LOGLEVEL || 'silent'
 const OPTS = {
@@ -59,7 +59,7 @@ test('basic tarball streaming', function (t) {
     srv.get('/foo/-/foo-1.2.3.tgz').reply(200, tarData)
     let data = ''
     return finished(
-      tarball(npa('foo@^1.2.3'), OPTS).on('data', d => { data += d })
+      fetch.tarball(npa('foo@^1.2.3'), OPTS).on('data', d => { data += d })
     ).then(() => {
       t.equal(data, tarData, 'fetched tarball data matches one from server')
     })
@@ -78,7 +78,7 @@ test('errors if manifest fails', t => {
     const srv = tnock(t, OPTS.registry)
     srv.get('/foo').reply(200, META(tarData))
     srv.get('/foo/-/foo-1.2.3.tgz').reply(404)
-    return finished(tarball(npa('foo@^1.2.3'), OPTS).on('data', () => {})).then(() => {
+    return finished(fetch.tarball(npa('foo@^1.2.3'), OPTS).on('data', () => {})).then(() => {
       throw new Error('this was not supposed to succeed')
     }).catch(err => {
       t.ok(err, 'correctly errored')
@@ -101,7 +101,7 @@ test('tarball url updated to fit registry protocol', t => {
     srv.get('/foo/-/foo-1.2.3.tgz').reply(200, tarData)
     let data = ''
     return finished(
-      tarball(npa('foo@^1.2.3'), OPTS).on('data', d => { data += d })
+      fetch.tarball(npa('foo@^1.2.3'), OPTS).on('data', d => { data += d })
     ).then(() => {
       t.equal(data, tarData, 'fetched tarball from https server')
     })
@@ -122,7 +122,7 @@ test('tarball url updated to fit registry protocol+port', t => {
     srv.get('/foo/-/foo-1.2.3.tgz').reply(200, tarData)
     let data = ''
     return finished(
-      tarball(npa('foo@^1.2.3'), OPTS).on('data', d => { data += d })
+      fetch.tarball(npa('foo@^1.2.3'), OPTS).on('data', d => { data += d })
     ).then(() => {
       t.equal(data, tarData, 'fetched tarball from https server and adjusted port')
     })

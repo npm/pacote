@@ -11,7 +11,7 @@ const tnock = require('./util/tnock')
 
 require('./util/test-dir')(__filename)
 
-const tarball = require('../lib/handlers/remote/tarball')
+const fetch = require('../lib/fetch')
 
 npmlog.level = process.env.LOGLEVEL || 'silent'
 const OPTS = {
@@ -39,7 +39,7 @@ test('basic tarball streaming', function (t) {
     srv.get(tarballPath).reply(200, tarData)
     let data = ''
     return finished(
-      tarball(npa(OPTS.registry + tarballPath.slice(1)), OPTS).on('data', d => { data += d })
+      fetch.tarball(npa(OPTS.registry + tarballPath.slice(1)), OPTS).on('data', d => { data += d })
     ).then(() => {
       t.equal(data, tarData, 'fetched tarball data matches one from server')
     })

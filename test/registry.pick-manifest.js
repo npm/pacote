@@ -4,7 +4,7 @@ const BB = require('bluebird')
 
 const test = require('tap').test
 
-const pickManifest = require('../lib/registry/pick-manifest')
+const pickManifest = require('../lib/fetchers/registry/pick-manifest')
 
 function spec (selector, type) {
   return { fetchSpec: selector, type: type || 'range' }

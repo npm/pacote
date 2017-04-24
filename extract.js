@@ -66,11 +66,14 @@ function extractByDigest (start, spec, dest, opts) {
   })
 }
 
+let fetch
 function extractByManifest (start, spec, dest, opts) {
   const xtractor = extractStream(dest, opts)
   return BB.resolve(null).then(() => {
-    const tarball = require('./lib/handlers/' + spec.type + '/tarball')
-    return pipe(tarball(spec, opts), xtractor)
+    if (!fetch) {
+      fetch = require('./lib/fetch')
+    }
+    return pipe(fetch.tarball(spec, opts), xtractor)
   }).then(() => {
     opts.log.verbose('pacote', `${spec.name}@${spec.saveSpec || spec.fetchSpec} extracted in ${Date.now() - start}ms`)
   })
