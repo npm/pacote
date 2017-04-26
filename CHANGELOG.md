@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.3.2"></a>
+## [2.3.2](https://github.com/zkat/pacote/compare/v2.3.1...v2.3.2) (2017-04-26)
+
+
+### Bug Fixes
+
+* **deps:** reduce deps size with m-f-h upgrade ([ba75461](https://github.com/zkat/pacote/commit/ba75461))
+
+
+
 <a name="2.3.1"></a>
 ## [2.3.1](https://github.com/zkat/pacote/compare/v2.3.0...v2.3.1) (2017-04-26)
 
