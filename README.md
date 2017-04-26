@@ -22,6 +22,7 @@ needed to reduce excess operations, using [`cacache`](https://npm.im/cacache).
   * [`extract`](#extract)
   * [`prefetch`](#prefetch)
   * [`options`](#options)
+  * [`clearMemoized`](#clear-memoized)
 
 ### Example
 
@@ -118,6 +119,17 @@ up the local package cache (with `opts.cache`). It does not return anything.
 pacote.prefetch('pacote@1.0.0', { cache: './my-cache' }).then(() => {
   // ./my-cache now has both the manifest and tarball for `pacote@1.0.0`.
 })
+```
+
+#### <a name="clearMemoized"></a> `> pacote.clearMemoized()`
+
+This utility function can be used to force pacote to release its references
+to any memoized data in its various internal caches. It might help free
+some memory.
+
+```javascript
+pacote.manifest(...).then(() => pacote.clearMemoized)
+
 ```
 
 #### <a name="options"></a> `> options`

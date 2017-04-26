@@ -44,7 +44,7 @@ test('all toplevel api calls are documented', t => {
     apiFns.forEach(fn => {
       t.match(
         readme,
-        new RegExp(`#### <a name="[^"]+"></a> \`> pacote.${fn}\\([^)]+\\)\``, 'g'),
+        new RegExp(`#### <a name="[^"]+"></a> \`> pacote.${fn}\\([^)]*\\)\``, 'g'),
         `pacote.${fn} has a docs entry`
       )
     })

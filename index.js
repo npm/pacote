@@ -3,5 +3,6 @@
 module.exports = {
   extract: require('./extract'),
   manifest: require('./manifest'),
-  prefetch: require('./prefetch')
+  prefetch: require('./prefetch'),
+  clearMemoized: require('./lib/fetch').clearMemoized
 }

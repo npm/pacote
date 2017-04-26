@@ -1,6 +1,7 @@
 'use strict'
 
 const cacache = require('cacache')
+const clearMemoized = require('..').clearMemoized
 const mockTar = require('./util/mock-tarball')
 const npa = require('npm-package-arg')
 const npmlog = require('npmlog')
@@ -54,7 +55,7 @@ test('setup integrity', t => {
 })
 
 test('prefetch by manifest if no integrity hash', t => {
-  cacache.clearMemoized()
+  clearMemoized()
   return mockTar(PKG).then(tarData => {
     const srv = tnock(t, OPTS.registry)
     srv.get('/foo').reply(200, META, {
@@ -82,7 +83,7 @@ test('prefetch by manifest if no integrity hash', t => {
 })
 
 test('skip if no cache is provided', t => {
-  cacache.clearMemoized()
+  clearMemoized()
   return prefetch('foo@1.0.0', {}).then(info => {
     t.deepEqual(info, {
       spec: npa('foo@1.0.0')
@@ -94,13 +95,13 @@ test('skip if no cache is provided', t => {
 })
 
 test('use cache content if found', t => {
-  cacache.clearMemoized()
+  clearMemoized()
   tnock(t, OPTS.registry).get('/foo').reply(200, META)
   return mockTar(PKG).then(tarData => {
     tnock(t, 'https://foo.bar').get('/x.tgz').reply(200, tarData)
     return prefetch('foo@1.0.0', OPTS)
   }).then(() => {
-    cacache.clearMemoized()
+    clearMemoized()
     return prefetch('foo@1.0.0', OPTS)
   }).then(info => {
     t.deepEqual(info, {
@@ -111,12 +112,12 @@ test('use cache content if found', t => {
     }, '')
     return cacache.ls(CACHE)
   }).then(result => {
-    t.equal(Object.keys(result).length, 2)
+    t.equal(Object.keys(result).length, 2, 'both entries in the cache')
   })
 })
 
 test('prefetch by manifest if digest provided but no cache content found', t => {
-  cacache.clearMemoized()
+  clearMemoized()
   return mockTar(PKG).then(tarData => {
     const srv = tnock(t, OPTS.registry)
     srv.get('/foo').reply(200, META)
