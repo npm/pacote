@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.3.0"></a>
+# [2.3.0](https://github.com/zkat/pacote/compare/v2.2.2...v2.3.0) (2017-04-26)
+
+
+### Bug Fixes
+
+* **git:** had ENOTSUP error on windows ([ee17c35](https://github.com/zkat/pacote/commit/ee17c35))
+* **memoization:** actually memoize package metadata ([e2078c0](https://github.com/zkat/pacote/commit/e2078c0))
+
+
+### Features
+
+* **memoization:** better packument memoization + pacote.clearMemoized() ([eb1bd4f](https://github.com/zkat/pacote/commit/eb1bd4f))
+
+
+
 <a name="2.2.2"></a>
 ## [2.2.2](https://github.com/zkat/pacote/compare/v2.2.1...v2.2.2) (2017-04-24)
 
