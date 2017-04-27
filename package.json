@@ -55,6 +55,7 @@
     "promise-inflight": "^1.0.1",
     "promise-retry": "^1.1.1",
     "protoduck": "^4.0.0",
+    "safe-buffer": "^5.0.1",
     "semver": "^5.3.0",
     "ssri": "^4.1.2",
     "tar-fs": "^1.15.1",
