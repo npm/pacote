@@ -1416,9 +1416,9 @@
       "integrity": "sha1-HRdnnAac2l0ECZGgnbwsDbN35V4="
     },
     "make-fetch-happen": {
-      "version": "2.2.6",
-      "resolved": "https://registry.npmjs.org/make-fetch-happen/-/make-fetch-happen-2.2.6.tgz",
-      "integrity": "sha1-TQ/a6+t2lgfRCYxOY9nl4mLjIdI="
+      "version": "2.3.0",
+      "resolved": "https://registry.npmjs.org/make-fetch-happen/-/make-fetch-happen-2.3.0.tgz",
+      "integrity": "sha1-iZWG22tMiCk45PWM0e3D7kgPToM="
     },
     "map-obj": {
       "version": "1.0.1",
