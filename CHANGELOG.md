@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.4.0"></a>
+# [2.4.0](https://github.com/zkat/pacote/compare/v2.3.2...v2.4.0) (2017-04-27)
+
+
+### Bug Fixes
+
+* **tests:** nicer error message on registry 404 ([e8e71c8](https://github.com/zkat/pacote/commit/e8e71c8))
+
+
+### Features
+
+* **auth:** added basic auth and always-auth support ([548aeb5](https://github.com/zkat/pacote/commit/548aeb5))
+* **proxy:** proxy support for registry and remote deps ([3766bbb](https://github.com/zkat/pacote/commit/3766bbb))
+
+
+
 <a name="2.3.2"></a>
 ## [2.3.2](https://github.com/zkat/pacote/compare/v2.3.1...v2.3.2) (2017-04-26)
 
