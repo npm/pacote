@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.5.0"></a>
+# [2.5.0](https://github.com/zkat/pacote/compare/v2.4.0...v2.5.0) (2017-04-28)
+
+
+### Bug Fixes
+
+* **registry:** JSON text is not a valid header value ([78951ea](https://github.com/zkat/pacote/commit/78951ea))
+
+
+### Features
+
+* **memoization:** allow injection and control of memoizers ([d8a2be7](https://github.com/zkat/pacote/commit/d8a2be7))
+
+
+
 <a name="2.4.0"></a>
 # [2.4.0](https://github.com/zkat/pacote/compare/v2.3.2...v2.4.0) (2017-04-27)
 
