@@ -323,6 +323,7 @@ test('optionally annotates manifest with request-related metadata', t => {
     where: 'right here'
   }
   const annotated = new Manifest(BASE)
+  annotated._from = 'foo@1.2.3'
   annotated._requested = npa('foo@1.2.3')
   annotated._spec = 'foo@1.2.3'
   annotated._where = opts.where

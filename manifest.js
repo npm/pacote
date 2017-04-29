@@ -25,6 +25,7 @@ function manifest (spec, opts) {
       return finalizeManifest(rawManifest, spec, opts)
     }).then(manifest => {
       if (opts.annotate) {
+        manifest._from = spec.saveSpec || spec.raw
         manifest._requested = spec
         manifest._spec = spec.raw
         manifest._where = opts.where
