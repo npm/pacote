@@ -29,6 +29,7 @@ const PKG = new Manifest({
   name: 'foo',
   version: '1.2.3',
   _hasShrinkwrap: false,
+  _shasum: BASE.dist.shasum,
   _integrity: BASE.dist.integrity,
   _resolved: BASE.dist.tarball
 })

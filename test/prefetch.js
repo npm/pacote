@@ -49,7 +49,9 @@ const PKG = {
 
 test('setup integrity', t => {
   return mockTar(PKG).then(tarData => {
-    BASE.dist.integrity = BASE._integrity = ssri.fromData(tarData, {algorithms: ['sha1']}).toString()
+    const integrity = ssri.fromData(tarData, {algorithms: ['sha1']})
+    BASE.dist.integrity = BASE._integrity = integrity.toString()
+    BASE.dist.shasum = BASE._shasum = integrity.hexDigest()
     return 'lol ok'
   })
 })

@@ -42,6 +42,7 @@ test('returns a manifest with the right fields', t => {
     bin: './foo.js',
     _resolved: 'resolved.to.this',
     _integrity: 'sha1-deadbeefc0ffeebad1dea',
+    _shasum: 'deadbeef1',
     _hasShrinkwrap: false,
     deprecated: 'foo'
   }
@@ -60,6 +61,7 @@ test('returns a manifest with the right fields', t => {
       bin: {
         testing: './foo.js'
       },
+      _shasum: 'deadbeef1',
       _resolved: 'resolved.to.this',
       _integrity: 'sha1-deadbeefc0ffeebad1dea',
       _shrinkwrap: null,
@@ -73,6 +75,7 @@ test('defaults all field to expected types + values', t => {
   const base = {
     name: 'testing',
     version: '1.2.3',
+    _shasum: 'deadbeef',
     _resolved: 'resolved.to.this',
     _integrity: 'sha1-deadbeefc0ffeebad1dea',
     _hasShrinkwrap: false
@@ -92,6 +95,7 @@ test('defaults all field to expected types + values', t => {
       bin: null,
       _resolved: base._resolved,
       _integrity: base._integrity,
+      _shasum: base._shasum,
       _shrinkwrap: null,
       deprecated: false,
       _id: 'testing@1.2.3'
@@ -250,6 +254,7 @@ test('uses package.json as base if passed null', t => {
         _resolved: OPTS.registry + tarballPath,
         deprecated: false,
         _integrity: ssri.fromData(tarData, {algorithms: ['sha1']}).toString(),
+        _shasum: null, // shasums are only when provided
         _shrinkwrap: sr,
         bin: { 'x': path.join('foo', 'x') },
         _id: 'testing@1.2.3'
