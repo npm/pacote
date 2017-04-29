@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.6.0"></a>
+# [2.6.0](https://github.com/zkat/pacote/compare/v2.5.0...v2.6.0) (2017-04-29)
+
+
+### Features
+
+* **manifest:** annotate manifests with _from ([e45e968](https://github.com/zkat/pacote/commit/e45e968))
+
+
+
 <a name="2.5.0"></a>
 # [2.5.0](https://github.com/zkat/pacote/compare/v2.4.0...v2.5.0) (2017-04-28)
 
