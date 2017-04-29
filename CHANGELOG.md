@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.7.0"></a>
+# [2.7.0](https://github.com/zkat/pacote/compare/v2.6.0...v2.7.0) (2017-04-29)
+
+
+### Bug Fixes
+
+* **registry:** stop using integrity hashes for metadata. again. ([4595ab2](https://github.com/zkat/pacote/commit/4595ab2))
+
+
+### Features
+
+* **manifest:** include _shasum for legacy compat ([b3a7eed](https://github.com/zkat/pacote/commit/b3a7eed))
+
+
+
 <a name="2.6.0"></a>
 # [2.6.0](https://github.com/zkat/pacote/compare/v2.5.0...v2.6.0) (2017-04-29)
 
