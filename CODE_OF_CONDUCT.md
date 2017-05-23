@@ -31,6 +31,8 @@ Examples of behavior that contributes to creating a positive environment include
 Examples of unacceptable behavior by participants include:
 
   * The use of sexualized language or imagery and unwelcome sexual attention or advances, including when simulated online. The only exception to sexual topics is channels/spaces specifically for topics of sexual identity.
+  * Casual mention of slavery or indentured servitude and/or false comparisons of one's occupation or situation to slavery. Please consider using or asking about alternate terminology when referring to such metaphors in technology.
+  * Making light of/making mocking comments about trigger warnings and content warnings.
   * Trolling, insulting/derogatory comments, and personal or political attacks.
   * Public or private harassment, deliberate intimidation, or threats.
   * Publishing others' private information, such as a physical or electronic address, without explicit permission. This includes any sort of "outing" of any aspect of someone's identity without their consent.
