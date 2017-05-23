@@ -42,11 +42,11 @@
   "license": "CC0-1.0",
   "dependencies": {
     "bluebird": "^3.5.0",
-    "cacache": "^9.0.0",
-    "glob": "^7.1.1",
+    "cacache": "^9.2.2",
+    "glob": "^7.1.2",
     "lru-cache": "^4.0.2",
-    "make-fetch-happen": "^2.4.3",
-    "minimatch": "^3.0.3",
+    "make-fetch-happen": "^2.4.4",
+    "minimatch": "^3.0.4",
     "mississippi": "^1.2.0",
     "normalize-package-data": "^2.3.6",
     "npm-package-arg": "^5.0.0",
@@ -59,22 +59,22 @@
     "semver": "^5.3.0",
     "ssri": "^4.1.2",
     "tar-fs": "^1.15.1",
-    "tar-stream": "^1.5.2",
+    "tar-stream": "^1.5.4",
     "unique-filename": "^1.1.0",
     "which": "^1.2.12"
   },
   "devDependencies": {
     "mkdirp": "^0.5.1",
     "nock": "^9.0.13",
-    "npmlog": "^4.0.1",
-    "nyc": "^10.0.0",
+    "npmlog": "^4.1.0",
+    "nyc": "^10.3.2",
     "require-inject": "^1.4.0",
     "rimraf": "^2.5.4",
     "standard": "^10.0.1",
     "standard-version": "^4.0.0",
     "tacks": "^1.2.6",
     "tap": "^10.2.0",
-    "weallbehave": "^1.0.0",
+    "weallbehave": "^1.2.0",
     "weallcontribute": "^1.0.7"
   }
 }
