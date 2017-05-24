@@ -45,7 +45,7 @@
     "cacache": "^9.2.2",
     "glob": "^7.1.2",
     "lru-cache": "^4.0.2",
-    "make-fetch-happen": "^2.4.4",
+    "make-fetch-happen": "^2.4.5",
     "minimatch": "^3.0.4",
     "mississippi": "^1.2.0",
     "normalize-package-data": "^2.3.6",
