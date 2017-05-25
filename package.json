@@ -42,7 +42,7 @@
   "license": "CC0-1.0",
   "dependencies": {
     "bluebird": "^3.5.0",
-    "cacache": "^9.2.4",
+    "cacache": "^9.2.5",
     "glob": "^7.1.2",
     "lru-cache": "^4.0.2",
     "make-fetch-happen": "^2.4.7",
