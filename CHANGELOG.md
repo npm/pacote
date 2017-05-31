@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.7.25"></a>
+## [2.7.25](https://github.com/zkat/pacote/compare/v2.7.24...v2.7.25) (2017-05-31)
+
+
+### Bug Fixes
+
+* **git:** git deps were getting _resolved without shasums ([96f0675](https://github.com/zkat/pacote/commit/96f0675))
+
+
+
 <a name="2.7.24"></a>
 ## [2.7.24](https://github.com/zkat/pacote/compare/v2.7.23...v2.7.24) (2017-05-31)
 
