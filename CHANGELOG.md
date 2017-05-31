@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.7.22"></a>
+## [2.7.22](https://github.com/zkat/pacote/compare/v2.7.21...v2.7.22) (2017-05-31)
+
+
+### Bug Fixes
+
+* **git:** accept shortened git hashes (#91) ([4466388](https://github.com/zkat/pacote/commit/4466388))
+
+
+
 <a name="2.7.21"></a>
 ## [2.7.21](https://github.com/zkat/pacote/compare/v2.7.20...v2.7.21) (2017-05-25)
 
