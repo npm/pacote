@@ -234,6 +234,48 @@ test('supports scoped auth', t => {
   })
 })
 
+test('sends auth token if passed in global opts', t => {
+  const TOKEN = 'deadbeef'
+  const opts = {
+    registry: OPTS.registry,
+    auth: {
+      alwaysAuth: true,
+      token: TOKEN
+    }
+  }
+
+  const srv = tnock(t, OPTS.registry)
+  srv.get(
+    '/foo'
+  ).matchHeader(
+    'authorization', 'Bearer ' + TOKEN
+  ).reply(200, META)
+  return manifest('foo@1.2.3', opts).then(pkg => {
+    t.deepEqual(pkg, PKG, 'got manifest from version')
+  })
+})
+
+test('sends basic authorization if alwaysAuth and _auth', t => {
+  const TOKEN = 'deadbeef'
+  const opts = {
+    registry: OPTS.registry,
+    auth: {
+      alwaysAuth: true,
+      _auth: TOKEN
+    }
+  }
+
+  const srv = tnock(t, OPTS.registry)
+  srv.get(
+    '/foo'
+  ).matchHeader(
+    'authorization', 'Basic ' + TOKEN
+  ).reply(200, META)
+  return manifest('foo@1.2.3', opts).then(pkg => {
+    t.deepEqual(pkg, PKG, 'got manifest from version')
+  })
+})
+
 test('package requests are case-sensitive', t => {
   const srv = tnock(t, OPTS.registry)
 
