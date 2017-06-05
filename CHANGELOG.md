@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.7.29"></a>
+## [2.7.29](https://github.com/zkat/pacote/compare/v2.7.28...v2.7.29) (2017-06-05)
+
+
+### Bug Fixes
+
+* **registry:** use cert instead of certfile opt ([a45880d](https://github.com/zkat/pacote/commit/a45880d))
+
+
+
 <a name="2.7.28"></a>
 ## [2.7.28](https://github.com/zkat/pacote/compare/v2.7.27...v2.7.28) (2017-06-05)
 
