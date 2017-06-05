@@ -375,3 +375,22 @@ test('optionally annotates manifest with request-related metadata', t => {
     t.deepEqual(pkg, annotated, 'additional data was added to pkg')
   })
 })
+
+test('sends npm-session header if passed in opts', t => {
+  const SESSION_ID = 'deadbeef'
+  const opts = {
+    log: OPTS.log,
+    registry: OPTS.registry,
+    npmSession: SESSION_ID
+  }
+
+  const srv = tnock(t, OPTS.registry)
+  srv.get(
+    '/foo'
+  ).matchHeader(
+    'npm-session', SESSION_ID
+  ).reply(200, META)
+  return manifest('foo@1.2.3', opts).then(pkg => {
+    t.deepEqual(pkg, PKG, 'npm-session header was sent')
+  })
+})
