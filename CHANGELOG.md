@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.7.28"></a>
+## [2.7.28](https://github.com/zkat/pacote/compare/v2.7.27...v2.7.28) (2017-06-05)
+
+
+### Bug Fixes
+
+* **git:** limit ls-remote output to heads/tags (#97) ([c1e3dcd](https://github.com/zkat/pacote/commit/c1e3dcd))
+* **proxy:** send certificate authority, key and other options (#95) ([c4b6128](https://github.com/zkat/pacote/commit/c4b6128))
+* **registry:** add support for global auth and _auth token (#96) ([7919fb7](https://github.com/zkat/pacote/commit/7919fb7))
+* **registry:** emit npm-session header (#98) ([9816b18](https://github.com/zkat/pacote/commit/9816b18))
+
+
+
 <a name="2.7.27"></a>
 ## [2.7.27](https://github.com/zkat/pacote/compare/v2.7.26...v2.7.27) (2017-06-01)
 
