@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.7.30"></a>
+## [2.7.30](https://github.com/zkat/pacote/compare/v2.7.29...v2.7.30) (2017-06-05)
+
+
+### Bug Fixes
+
+* **ssri:** bump ssri for bugfix ([70a859c](https://github.com/zkat/pacote/commit/70a859c))
+
+
+
 <a name="2.7.29"></a>
 ## [2.7.29](https://github.com/zkat/pacote/compare/v2.7.28...v2.7.29) (2017-06-05)
 
