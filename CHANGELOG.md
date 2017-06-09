@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.7.35"></a>
+## [2.7.35](https://github.com/zkat/pacote/compare/v2.7.34...v2.7.35) (2017-06-09)
+
+
+### Bug Fixes
+
+* **registry:** only print one 199 warning (#100) ([b395138](https://github.com/zkat/pacote/commit/b395138))
+
+
+
 <a name="2.7.34"></a>
 ## [2.7.34](https://github.com/zkat/pacote/compare/v2.7.33...v2.7.34) (2017-06-09)
 
