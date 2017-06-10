@@ -5,6 +5,7 @@ const BB = require('bluebird')
 const fs = BB.promisifyAll(require('fs'))
 const mockTar = require('./util/mock-tarball')
 const npmlog = require('npmlog')
+const path = require('path')
 const pipe = BB.promisify(require('mississippi').pipe)
 const test = require('tap').test
 
@@ -241,3 +242,42 @@ test('accepts dmode/fmode/umask opts', {
     )
   })
 })
+
+test('extracts filenames with special characters', {
+  skip: process.platform !== 'win32'
+}, t => {
+  const tarStream = fs.createReadStream('../../fixtures/special-characters.tgz');
+  const workingDir = './special-characters/'
+  return pipe(tarStream, extractStream(workingDir))
+    .then(() => {
+      const fileNamesUnderTest = [
+        'filename:with:colons',
+        'filename<with<less<than<signs',
+        'filename>with>more>than>signs',
+        'filename|with|pipes',
+        'filename?with?question?marks'
+      ].map(fileName => {
+        return {
+          rawFileName: fileName,
+          expectedFileName: fileName.replace(/[:?<>|]/g, '_'),
+          expectedContent: fileName
+        }
+      })
+
+      return BB.all(fileNamesUnderTest.map(fileNameUnderTest => {
+        return fs.readFileAsync(path.join(workingDir, fileNameUnderTest.expectedFileName), 'utf8')
+          .then(data => {
+            t.equal(data.trim(), fileNameUnderTest.expectedContent, 'Filename "' + fileNameUnderTest.rawFileName + '" was sanitized and content left intact')
+          })
+          .catch(err => {
+            return BB.reject(new Error('Filename "' + fileNameUnderTest.rawFileName + '" was not extracted: ' + err))
+          })
+      }))
+    })
+    .catch(err => {
+      if (err.code === 'ENOENT') {
+        return BB.reject(new Error('Unable to extract the tarball with special characters in filenames.'))
+      }
+      return BB.reject(err)
+    })
+});
