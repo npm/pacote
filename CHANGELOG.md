@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.0.0"></a>
+# [4.0.0](https://github.com/zkat/pacote/compare/v3.0.0...v4.0.0) (2017-06-29)
+
+
+### Bug Fixes
+
+* **extract:** revert uid/gid change ([41852e0](https://github.com/zkat/pacote/commit/41852e0))
+
+
+### BREAKING CHANGES
+
+* **extract:** behavior for setting uid/gid on extracted contents was restored to what it was in pacote@2
+
+
+
 <a name="3.0.0"></a>
 # [3.0.0](https://github.com/zkat/pacote/compare/v2.7.38...v3.0.0) (2017-06-29)
 
