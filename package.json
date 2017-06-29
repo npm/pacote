@@ -50,7 +50,7 @@
     "mississippi": "^1.2.0",
     "normalize-package-data": "^2.4.0",
     "npm-package-arg": "^5.1.2",
-    "npm-pick-manifest": "^1.0.3",
+    "npm-pick-manifest": "^1.0.4",
     "osenv": "^0.1.4",
     "promise-inflight": "^1.0.1",
     "promise-retry": "^1.1.1",
