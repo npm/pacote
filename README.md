@@ -22,7 +22,7 @@ needed to reduce excess operations, using [`cacache`](https://npm.im/cacache).
   * [`extract`](#extract)
   * [`prefetch`](#prefetch)
   * [`options`](#options)
-  * [`clearMemoized`](#clear-memoized)
+  * [`clearMemoized`](#clearMemoized)
 
 ### Example
 
