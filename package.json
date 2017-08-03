@@ -39,7 +39,7 @@
       "email": "me@re-becca.org"
     }
   ],
-  "license": "CC0-1.0",
+  "license": "MIT",
   "dependencies": {
     "bluebird": "^3.5.1",
     "cacache": "^10.0.0",
