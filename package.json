@@ -65,15 +65,15 @@
   },
   "devDependencies": {
     "mkdirp": "^0.5.1",
-    "nock": "^9.0.13",
+    "nock": "^9.0.14",
     "npmlog": "^4.1.2",
-    "nyc": "^11.0.3",
+    "nyc": "^11.1.0",
     "require-inject": "^1.4.2",
     "rimraf": "^2.5.4",
-    "standard": "^10.0.1",
+    "standard": "^10.0.3",
     "standard-version": "^4.2.0",
     "tacks": "^1.2.6",
-    "tap": "^10.7.0",
+    "tap": "^10.7.2",
     "weallbehave": "^1.2.0",
     "weallcontribute": "^1.0.7"
   }
