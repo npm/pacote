@@ -151,6 +151,7 @@ directly for matching contents before performing any other operations.
 ##### `opts.@somescope:registry`
 ##### `opts.auth`
 ##### `opts.log`
+##### `opts.maxSockets`
 
 Default: `silentNpmLog`
 
