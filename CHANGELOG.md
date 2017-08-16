@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="5.0.0"></a>
+# [5.0.0](https://github.com/zkat/pacote/compare/v4.0.0...v5.0.0) (2017-08-16)
+
+
+### Bug Fixes
+
+* **registry:** Pass maxSockets options down (#110) ([3f05b79](https://github.com/zkat/pacote/commit/3f05b79))
+
+
+### Features
+
+* **deps:** replace tar-fs/tar-stream with tar[@3](https://github.com/3) ([28c80a9](https://github.com/zkat/pacote/commit/28c80a9))
+* **tar:** switch to tarv3 ([53899c7](https://github.com/zkat/pacote/commit/53899c7))
+
+
+### BREAKING CHANGES
+
+* **tar:** this changes the underlying tar library, and thus may introduce some subtle low-level incompatibility. Also:
+
+* The tarball packer built into pacote works much closer to how the one npm injects does.
+* Special characters on Windows will now be escaped the way tar(1) usually does: by replacing them with the `0xf000` masked character on the way out.
+* Directories won't be chowned.
+
+
+
 <a name="4.0.0"></a>
 # [4.0.0](https://github.com/zkat/pacote/compare/v3.0.0...v4.0.0) (2017-06-29)
 
