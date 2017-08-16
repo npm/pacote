@@ -4,7 +4,7 @@ const BB = require('bluebird')
 
 const pipe = BB.promisify(require('mississippi').pipe)
 const Tacks = require('tacks')
-const tar = require('tar-stream')
+const tar = require('tar')
 const test = require('tap').test
 const through = require('mississippi').through
 
@@ -26,19 +26,17 @@ test('packs a directory into a valid tarball', t => {
   fixture.create(CACHE)
   let entries = {}
   const target = through()
-  const extractor = tar.extract()
-  extractor.on('entry', (header, stream, next) => {
+  const extractor = tar.t()
+  extractor.on('entry', (entry) => {
     let data = ''
-    stream.on('data', d => { data += d })
-    stream.on('end', () => {
-      entries[header.name] = data
-      next()
+    entry.on('data', d => { data += d })
+    entry.on('end', () => {
+      entries[entry.path] = data
     })
   })
   const pack = packDir(manifest, CACHE, CACHE, target)
   return BB.join(pipe(target, extractor), pack, () => {
     t.deepEqual(entries, {
-      'package/.': '',
       'package/package.json': JSON.stringify(manifest),
       'package/index.js': 'true === false\n'
     })

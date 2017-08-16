@@ -92,8 +92,8 @@ test('excludes symlinks', t => {
       version: '1.0.0'
     }),
     'index.js': 'console.log("hello world!")',
-    'linky': { type: 'link', linkname: '/usr/local/bin/linky' },
-    'symmylinky': { type: 'symlink', linkname: '../nowhere' }
+    'linky': { type: 'Link', linkname: '/usr/local/bin/linky' },
+    'symmylinky': { type: 'SymbolicLink', linkname: '../nowhere' }
   }
   return mockTar(pkg, {stream: true}).then(tarStream => {
     return pipe(tarStream, extractStream('./', OPTS))
@@ -103,7 +103,7 @@ test('excludes symlinks', t => {
         t.deepEqual(data, pkg['package.json'], 'package.json still there')
       }),
       fs.statAsync('./linky').then(
-        () => { throw new Error('this was supposed to error') },
+        stat => { throw new Error('this was supposed to error' + JSON.stringify(stat)) },
         err => {
           t.equal(err.code, 'ENOENT', 'hard link excluded!')
         }
@@ -116,82 +116,6 @@ test('excludes symlinks', t => {
       )
     )
   })
-})
-
-// Yes, this logic is terrible and seriously confusing, but
-// I'm pretty sure this is exactly what npm is doing.
-// ...we should really deprecate this cluster.
-test('renames .gitignore to .npmignore if not present', t => {
-  return BB.join(
-    mockTar({
-      'package.json': JSON.stringify({
-        name: 'foo',
-        version: '1.0.0'
-      }),
-      'index.js': 'console.log("hello world!")',
-      '.gitignore': 'tada!'
-    }, {stream: true}).then(tarStream => {
-      return pipe(tarStream, extractStream('./no-npmignore', OPTS))
-    }).then(() => {
-      return fs.readFileAsync(
-        './no-npmignore/.npmignore', 'utf8'
-      ).then(data => {
-        t.deepEqual(data, 'tada!', '.gitignore renamed to .npmignore')
-      })
-    }),
-    mockTar({
-      'package.json': JSON.stringify({
-        name: 'foo',
-        version: '1.0.0'
-      }),
-      'index.js': 'console.log("hello world!")',
-      '.gitignore': 'git!',
-      '.npmignore': 'npm!'
-    }, {stream: true}).then(tarStream => {
-      return pipe(tarStream, extractStream('./has-npmignore1', OPTS))
-    }).then(() => {
-      return BB.join(
-        fs.readFileAsync(
-          './has-npmignore1/.npmignore', 'utf8'
-        ).then(data => {
-          t.deepEqual(data, 'npm!', '.npmignore left intact if present')
-        }),
-        fs.readFileAsync(
-          './has-npmignore1/.gitignore', 'utf8'
-        ).then(
-          () => { throw new Error('expected an error') },
-          err => {
-            t.ok(err, 'got expected error on reading .gitignore')
-            t.equal(err.code, 'ENOENT', '.gitignore missing')
-          }
-        )
-      )
-    }),
-    mockTar({
-      'package.json': JSON.stringify({
-        name: 'foo',
-        version: '1.0.0'
-      }),
-      'index.js': 'console.log("hello world!")',
-      '.npmignore': 'npm!',
-      '.gitignore': 'git!'
-    }, {stream: true}).then(tarStream => {
-      return pipe(tarStream, extractStream('./has-npmignore2', OPTS))
-    }).then(() => {
-      return BB.join(
-        fs.readFileAsync(
-          './has-npmignore2/.npmignore', 'utf8'
-        ).then(data => {
-          t.deepEqual(data, 'npm!', '.npmignore left intact if present')
-        }),
-        fs.readFileAsync(
-          './has-npmignore2/.gitignore', 'utf8'
-        ).then(data => {
-          t.deepEqual(data, 'git!', '.gitignore intact if we previously had an .npmignore')
-        })
-      )
-    })
-  )
 })
 
 test('accepts dmode/fmode/umask opts', {
@@ -212,7 +136,7 @@ test('accepts dmode/fmode/umask opts', {
   return mockTar(pkg, {stream: true}).then(tarStream => {
     return pipe(tarStream, extractStream('./', {
       dmode: parseInt('555', 8),
-      fmode: parseInt('644', 8),
+      fmode: parseInt('444', 8),
       umask: parseInt('266', 8)
     }))
   }).then(() => {
@@ -244,40 +168,36 @@ test('accepts dmode/fmode/umask opts', {
 })
 
 test('extracts filenames with special characters', {
-  skip: process.platform !== 'win32'
+  skip: process.platform !== 'win32' &&
+  'special character conversion is only needed on Windows'
 }, t => {
-  const tarStream = fs.createReadStream('../../fixtures/special-characters.tgz');
-  const workingDir = './special-characters/'
-  return pipe(tarStream, extractStream(workingDir))
-    .then(() => {
-      const fileNamesUnderTest = [
-        'filename:with:colons',
-        'filename<with<less<than<signs',
-        'filename>with>more>than>signs',
-        'filename|with|pipes',
-        'filename?with?question?marks'
-      ].map(fileName => {
-        return {
-          rawFileName: fileName,
-          expectedFileName: fileName.replace(/[:?<>|]/g, '_'),
-          expectedContent: fileName
-        }
-      })
+  const tarStream = fs.createReadStream('../../fixtures/special-characters.tgz')
+  return pipe(tarStream, extractStream('.')).then(() => {
+    const fileNamesUnderTest = [
+      'filename:with:colons',
+      'filename<with<less<than<signs',
+      'filename>with>more>than>signs',
+      'filename|with|pipes',
+      'filename?with?question?marks'
+    ].map(fileName => ({
+      rawFileName: fileName,
+      expectedFileName: ':<>|?'.split('').reduce((s, c) => {
+        return s.split(c).join(String.fromCharCode(0xf000 + c.charCodeAt(0)))
+      }, fileName),
+      expectedContent: fileName
+    }))
 
-      return BB.all(fileNamesUnderTest.map(fileNameUnderTest => {
-        return fs.readFileAsync(path.join(workingDir, fileNameUnderTest.expectedFileName), 'utf8')
-          .then(data => {
-            t.equal(data.trim(), fileNameUnderTest.expectedContent, 'Filename "' + fileNameUnderTest.rawFileName + '" was sanitized and content left intact')
-          })
-          .catch(err => {
-            return BB.reject(new Error('Filename "' + fileNameUnderTest.rawFileName + '" was not extracted: ' + err))
-          })
-      }))
-    })
-    .catch(err => {
-      if (err.code === 'ENOENT') {
-        return BB.reject(new Error('Unable to extract the tarball with special characters in filenames.'))
-      }
-      return BB.reject(err)
-    })
-});
+    return BB.all(fileNamesUnderTest.map(fileNameUnderTest => {
+      const filePath = fileNameUnderTest.expectedFileName
+      return fs.readFileAsync(filePath, 'utf8').then(data => {
+        t.equal(
+          data.trim(),
+          fileNameUnderTest.expectedContent,
+          `Filename "${
+            fileNameUnderTest.rawFileName
+          }" was sanitized and content left intact`
+        )
+      })
+    }))
+  })
+})
