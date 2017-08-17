@@ -55,6 +55,8 @@ test('accepts gid and uid opts', {skip: !process.getuid}, t => {
     }))
   }).then(() => {
     t.deepEqual(updatedPaths, [
+      'target',
+      'target/foo',
       'target/package.json',
       'target/foo/index.js'
     ], 'extracted files had correct uid/gid set')
