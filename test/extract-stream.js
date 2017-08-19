@@ -3,6 +3,7 @@
 const BB = require('bluebird')
 
 const fs = BB.promisifyAll(require('fs'))
+const mkdirp = BB.promisify(require('mkdirp'))
 const mockTar = require('./util/mock-tarball')
 const npmlog = require('npmlog')
 const path = require('path')
@@ -115,6 +116,88 @@ test('excludes symlinks', t => {
         }
       )
     )
+  })
+})
+
+// Yes, this logic is terrible and seriously confusing, but
+// I'm pretty sure this is exactly what npm is doing.
+// ...we should really deprecate this cluster.
+test('renames .gitignore to .npmignore if not present', t => {
+  return mkdirp('./no-npmignore').then(() => {
+    return mockTar({
+      'package.json': JSON.stringify({
+        name: 'foo',
+        version: '1.0.0'
+      }),
+      'index.js': 'console.log("hello world!")',
+      '.gitignore': 'tada!'
+    }, {stream: true}).then(tarStream => {
+      return pipe(tarStream, extractStream('./no-npmignore', OPTS))
+    }).then(() => {
+      return fs.readFileAsync(
+        './no-npmignore/.npmignore', 'utf8'
+      ).then(data => {
+        t.deepEqual(data, 'tada!', '.gitignore renamed to .npmignore')
+      })
+    })
+  }).then(() => {
+    return mkdirp('./has-npmignore1')
+  }).then(() => {
+    return mockTar({
+      'package.json': JSON.stringify({
+        name: 'foo',
+        version: '1.0.0'
+      }),
+      'index.js': 'console.log("hello world!")',
+      '.gitignore': 'git!',
+      '.npmignore': 'npm!'
+    }, {stream: true}).then(tarStream => {
+      return pipe(tarStream, extractStream('./has-npmignore1', OPTS))
+    }).then(() => {
+      return BB.join(
+        fs.readFileAsync(
+          './has-npmignore1/.npmignore', 'utf8'
+        ).then(data => {
+          t.deepEqual(data, 'npm!', '.npmignore left intact if present')
+        }),
+        fs.readFileAsync(
+          './has-npmignore1/.gitignore', 'utf8'
+        ).then(
+          () => { throw new Error('expected an error') },
+          err => {
+            t.ok(err, 'got expected error on reading .gitignore')
+            t.equal(err.code, 'ENOENT', '.gitignore missing')
+          }
+        )
+      )
+    })
+  }).then(() => {
+    return mkdirp('./has-npmignore2')
+  }).then(() => {
+    return mockTar({
+      'package.json': JSON.stringify({
+        name: 'foo',
+        version: '1.0.0'
+      }),
+      'index.js': 'console.log("hello world!")',
+      '.npmignore': 'npm!',
+      '.gitignore': 'git!'
+    }, {stream: true}).then(tarStream => {
+      return pipe(tarStream, extractStream('./has-npmignore2', OPTS))
+    }).then(() => {
+      return BB.join(
+        fs.readFileAsync(
+          './has-npmignore2/.npmignore', 'utf8'
+        ).then(data => {
+          t.deepEqual(data, 'npm!', '.npmignore left intact if present')
+        }),
+        fs.readFileAsync(
+          './has-npmignore2/.gitignore', 'utf8'
+        ).then(data => {
+          t.deepEqual(data, 'git!', '.gitignore intact if we previously had an .npmignore')
+        })
+      )
+    })
   })
 })
 
