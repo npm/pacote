@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.0.0"></a>
+# [6.0.0](https://github.com/zkat/pacote/compare/v5.0.1...v6.0.0) (2017-08-19)
+
+
+### Bug Fixes
+
+* **tar:** bring back the .gitignore -> .npmignore logic (#113) ([0dd518e](https://github.com/zkat/pacote/commit/0dd518e))
+
+
+### BREAKING CHANGES
+
+* **tar:** this reverts a previous change to disable this feature.
+
+
+
 <a name="5.0.1"></a>
 ## [5.0.1](https://github.com/zkat/pacote/compare/v5.0.0...v5.0.1) (2017-08-17)
 
