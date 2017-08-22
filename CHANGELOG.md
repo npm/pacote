@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.0.1"></a>
+## [6.0.1](https://github.com/zkat/pacote/compare/v6.0.0...v6.0.1) (2017-08-22)
+
+
+### Bug Fixes
+
+* **finalize:** insist on getting a package.json ([f72ee91](https://github.com/zkat/pacote/commit/f72ee91))
+
+
+
 <a name="6.0.0"></a>
 # [6.0.0](https://github.com/zkat/pacote/compare/v5.0.1...v6.0.0) (2017-08-19)
 
