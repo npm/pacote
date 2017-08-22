@@ -263,6 +263,35 @@ test('uses package.json as base if passed null', t => {
   })
 })
 
+test('errors if unable to get a valid default package.json', t => {
+  const tarballPath = 'testing/tarball-1.2.3.tgz'
+  const base = {
+    name: 'testing',
+    version: '1.2.3',
+    cpu: 'x64',
+    dependencies: { foo: '1' },
+    directories: { bin: 'foo' }
+  }
+  const sr = {
+    name: base.name,
+    version: base.version
+  }
+  return makeTarball({
+    'npm-shrinkwrap.json': sr,
+    'foo/x': 'x()'
+  }).then(tarData => {
+    tnock(t, OPTS.registry).get('/' + tarballPath).reply(200, tarData)
+    return finalizeManifest(null, {
+      fetchSpec: OPTS.registry + tarballPath,
+      type: 'remote'
+    }, OPTS).then(manifest => {
+      throw new Error(`Was not supposed to succeed: ${JSON.stringify(manifest)}`)
+    }, err => {
+      t.equal(err.code, 'ENOPACKAGEJSON')
+    })
+  })
+})
+
 test('caches finalized manifests', t => {
   cacache.clearMemoized()
   const tarballPath = 'testing/tarball-1.2.3.tgz'
