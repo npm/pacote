@@ -54,11 +54,11 @@ test('accepts gid and uid opts', {skip: !process.getuid}, t => {
       log: npmlog
     }))
   }).then(() => {
-    t.deepEqual(updatedPaths, [
+    t.deepEqual(updatedPaths.sort(), [
       'target',
       'target/foo',
       'target/package.json',
       'target/foo/index.js'
-    ], 'extracted files had correct uid/gid set')
+    ].sort(), 'extracted files had correct uid/gid set')
   })
 })
