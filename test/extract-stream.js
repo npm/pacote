@@ -211,29 +211,29 @@ test('accepts dmode/fmode/umask opts', {
         version: '1.0.0'
       }),
       // has a mode
-      mode: parseInt('644', 8)
+      mode: 0o644
     },
     // will use fmode
     'foo/index.js': 'console.log("hello world!")',
     'bin/cli.js': {
       data: 'console.log("hello world!")',
       // executable
-      mode: parseInt('755', 8)
+      mode: 0o755
     }
   }
   return mockTar(pkg, {stream: true}).then(tarStream => {
     return pipe(tarStream, extractStream('./', {
-      dmode: parseInt('644', 8),
-      fmode: parseInt('666', 8),
-      umask: parseInt('022', 8)
+      dmode: 0o644,
+      fmode: 0o666,
+      umask: 0o022
     }))
   }).then(() => {
     return BB.join(
       fs.statAsync('./package.json').then(stat => {
         t.equal(
           // 0644 & ~umask(266) => 400
-          stat.mode & parseInt('000777', 8),
-          parseInt('644', 8),
+          stat.mode & 0o777,
+          0o644,
           'fmode set as expected'
         )
       }),
@@ -241,22 +241,22 @@ test('accepts dmode/fmode/umask opts', {
       // our provided dmode (555) and umask (0266) on the extractor
       fs.stat('./foo', function (err, stat) {
         t.equal(
-          stat.mode & parseInt('000777', 8),
-          parseInt('755', 8),
+          stat.mode & 0o777,
+          0o755,
           'mode set as expected'
         )
       }),
       fs.statAsync('./foo/index.js').then(stat => {
         t.equal(
-          stat.mode & parseInt('000777', 8),
-          parseInt('644', 8),
+          stat.mode & 0o777,
+          0o644,
           'fmode set as expected'
         )
       }),
       fs.statAsync('./bin/cli.js').then(stat => {
         t.equal(
-          stat.mode & parseInt('000777', 8),
-          parseInt('755', 8),
+          stat.mode & 0o777,
+          0o755,
           'preserved execute bit as expected'
         )
       })
