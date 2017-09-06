@@ -210,40 +210,54 @@ test('accepts dmode/fmode/umask opts', {
         name: 'foo',
         version: '1.0.0'
       }),
-      fmode: parseInt('777', 8),
-      dmode: parseInt('777', 8),
-      umask: parseInt('777', 8)
+      // has a mode
+      mode: parseInt('644', 8)
     },
-    'foo/index.js': 'console.log("hello world!")'
+    // will use fmode
+    'foo/index.js': 'console.log("hello world!")',
+    'bin/cli.js': {
+      data: 'console.log("hello world!")',
+      // executable
+      mode: parseInt('755', 8)
+    }
   }
   return mockTar(pkg, {stream: true}).then(tarStream => {
     return pipe(tarStream, extractStream('./', {
-      dmode: parseInt('555', 8),
-      fmode: parseInt('444', 8),
-      umask: parseInt('266', 8)
+      dmode: parseInt('644', 8),
+      fmode: parseInt('666', 8),
+      umask: parseInt('022', 8)
     }))
   }).then(() => {
     return BB.join(
       fs.statAsync('./package.json').then(stat => {
         t.equal(
+          // 0644 & ~umask(266) => 400
           stat.mode & parseInt('000777', 8),
-          parseInt('400', 8),
+          parseInt('644', 8),
           'fmode set as expected'
         )
       }),
-      // TODO - I don't understand why this one is always 755
-      // fs.stat('./foo', function (err, stat) {
-      //   t.equal(
-      //     stat.mode & parseInt('000777', 8),
-      //     parseInt('411', 8),
-      //     'dmode set as expected'
-      //   )
-      // })
+      // no entry in tarball, so mode is default from node-tar (0700) mixed with
+      // our provided dmode (555) and umask (0266) on the extractor
+      fs.stat('./foo', function (err, stat) {
+        t.equal(
+          stat.mode & parseInt('000777', 8),
+          parseInt('755', 8),
+          'mode set as expected'
+        )
+      }),
       fs.statAsync('./foo/index.js').then(stat => {
         t.equal(
           stat.mode & parseInt('000777', 8),
-          parseInt('400', 8),
+          parseInt('644', 8),
           'fmode set as expected'
+        )
+      }),
+      fs.statAsync('./bin/cli.js').then(stat => {
+        t.equal(
+          stat.mode & parseInt('000777', 8),
+          parseInt('755', 8),
+          'preserved execute bit as expected'
         )
       })
     )
