@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.0.4"></a>
+## [6.0.4](https://github.com/zkat/pacote/compare/v6.0.3...v6.0.4) (2017-10-05)
+
+
+### Bug Fixes
+
+* **file:** include integrity hash for streamed tarballs too ([030cee7](https://github.com/zkat/pacote/commit/030cee7))
+
+
+
 <a name="6.0.3"></a>
 ## [6.0.3](https://github.com/zkat/pacote/compare/v6.0.2...v6.0.3) (2017-10-05)
 
