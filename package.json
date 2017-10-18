@@ -49,7 +49,7 @@
     "minimatch": "^3.0.4",
     "mississippi": "^1.2.0",
     "normalize-package-data": "^2.4.0",
-    "npm-package-arg": "^5.1.2",
+    "npm-package-arg": "^6.0.0",
     "npm-packlist": "^1.1.9",
     "npm-pick-manifest": "^1.0.4",
     "osenv": "^0.1.4",
