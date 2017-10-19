@@ -40,7 +40,26 @@ const META = {
     },
     '2.0.4': {
       name: 'foo',
-      version: '2.0.4'
+      version: '2.0.4',
+      _hasShrinkwrap: false,
+      _integrity: 'sha1-deadbeef',
+      _resolved: 'https://foo.bar/x.tgz',
+      dist: {
+        integrity: 'sha1-deadbeef',
+        tarball: 'https://foo.bar/x.tgz'
+      }
+    },
+    '2.0.5': {
+      name: 'foo',
+      version: '2.0.5',
+      deprecated: 'yes. yes it is.',
+      _hasShrinkwrap: false,
+      _integrity: 'sha1-deadbeef',
+      _resolved: 'https://foo.bar/x.tgz',
+      dist: {
+        integrity: 'sha1-deadbeef',
+        tarball: 'https://foo.bar/x.tgz'
+      }
     },
     '1.2.1': {
       name: 'foo',
@@ -123,6 +142,20 @@ test('fetches manifest from scoped registry by range', t => {
   srv.get('/@usr%2ffoo').reply(200, META)
   return manifest('@usr/foo@^1.2.0', OPTS).then(pkg => {
     t.deepEqual(pkg, new Manifest(META.versions['1.2.3']), 'got scoped manifest from version')
+  })
+})
+
+test('supports opts.includeDeprecated', t => {
+  const srv = tnock(t, OPTS.registry)
+
+  srv.get('/foo').reply(200, META)
+  return manifest('foo@^2', OPTS).then(pkg => {
+    t.deepEqual(pkg, new Manifest(META.versions['2.0.5']), 'got deprecated')
+    return manifest('foo@^2.0', Object.assign({
+      includeDeprecated: false
+    }, OPTS))
+  }).then(pkg => {
+    t.deepEqual(pkg, new Manifest(META.versions['2.0.4']), 'non-deprecated')
   })
 })
 
