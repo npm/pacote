@@ -27,7 +27,9 @@ const OPTS = {
   }
 }
 
-test('get manifest from package.json in git clone', t => {
+test('get manifest from package.json in git clone', {
+  skip: process.platform === 'win32' && 'git daemon does not close on windows'
+}, t => {
   const fixture = new Tacks(Dir({
     'foo': Dir({
       'package.json': File({
@@ -53,4 +55,4 @@ test('get manifest from package.json in git clone', t => {
   })
 })
 
-test('cleanup?', t => rimraf(testDir))
+test('cleanup?', {skip: process.platform === 'win32'}, () => rimraf(testDir))
