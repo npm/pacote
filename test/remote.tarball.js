@@ -1,8 +1,6 @@
 'use strict'
 
-const BB = require('bluebird')
-
-const finished = BB.promisify(require('mississippi').finished)
+const getBuff = require('get-stream').buffer
 const mockTar = require('./util/mock-tarball')
 const npa = require('npm-package-arg')
 const npmlog = require('npmlog')
@@ -37,11 +35,9 @@ test('basic tarball streaming', function (t) {
     const tarballPath = '/foo/hosted/plexus/foo-1.2.3.tgz'
     const srv = tnock(t, OPTS.registry)
     srv.get(tarballPath).reply(200, tarData)
-    let data = ''
-    return finished(
-      fetch.tarball(npa(OPTS.registry + tarballPath.slice(1)), OPTS).on('data', d => { data += d })
-    ).then(() => {
-      t.equal(data, tarData, 'fetched tarball data matches one from server')
+    const spec = npa(OPTS.registry + tarballPath.slice(1))
+    return getBuff(fetch.tarball(spec, OPTS)).then(data => {
+      t.deepEqual(data, tarData, 'fetched tarball data matches')
     })
   })
 })

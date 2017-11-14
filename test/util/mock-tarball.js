@@ -1,7 +1,9 @@
 'use strict'
 
 const BB = require('bluebird')
+const Buffer = require('safe-buffer').Buffer
 
+const getStream = require('get-stream')
 const pipeline = require('mississippi').pipeline
 const tar = require('tar-stream')
 const zlib = require('zlib')
@@ -28,20 +30,17 @@ function makeTarball (files, opts) {
     : files[filename].data)
   })
   pack.finalize()
-  return BB.fromNode(cb => {
+  return BB.try(() => {
     if (opts.stream && opts.gzip) {
-      return cb(null, pipeline(pack, zlib.createGzip()))
+      return pipeline(pack, zlib.createGzip())
     } else if (opts.stream) {
-      return cb(null, pack)
+      return pack
     } else {
-      let tarData = ''
-      pack.on('data', function (d) { tarData += d })
-      pack.on('error', cb)
-      pack.on('end', function () {
+      return getStream.buffer(pack).then(ret => {
         if (opts.gzip) {
-          zlib.gzip(tarData, cb)
+          return BB.fromNode(cb => zlib.gzip(ret, cb))
         } else {
-          cb(null, tarData)
+          return ret
         }
       })
     }

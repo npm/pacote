@@ -1,8 +1,6 @@
 'use strict'
 
-const BB = require('bluebird')
-
-const finished = BB.promisify(require('mississippi').finished)
+const getBuff = require('get-stream').buffer
 const mockTar = require('./util/mock-tarball')
 const npa = require('npm-package-arg')
 const npmlog = require('npmlog')
@@ -57,11 +55,8 @@ test('basic tarball streaming', function (t) {
     const srv = tnock(t, OPTS.registry)
     srv.get('/foo').reply(200, META(tarData))
     srv.get('/foo/-/foo-1.2.3.tgz').reply(200, tarData)
-    let data = ''
-    return finished(
-      fetch.tarball(npa('foo@^1.2.3'), OPTS).on('data', d => { data += d })
-    ).then(() => {
-      t.equal(data, tarData, 'fetched tarball data matches one from server')
+    return getBuff(fetch.tarball(npa('foo@^1.2.3'), OPTS)).then(data => {
+      t.deepEqual(data, tarData, 'fetched tarball data matches')
     })
   })
 })
@@ -78,8 +73,8 @@ test('errors if manifest fails', t => {
     const srv = tnock(t, OPTS.registry)
     srv.get('/foo').reply(200, META(tarData))
     srv.get('/foo/-/foo-1.2.3.tgz').reply(404)
-    return finished(fetch.tarball(npa('foo@^1.2.3'), OPTS).on('data', () => {})).then(() => {
-      throw new Error('this was not supposed to succeed')
+    return getBuff(fetch.tarball(npa('foo@^1.2.3'), OPTS)).then(data => {
+      throw new Error('this was not supposed to succeed' + data.length + data.toString('utf8'))
     }).catch(err => {
       t.ok(err, 'correctly errored')
       t.equal(err.code, 'E404', 'got a 404 back')
@@ -99,11 +94,8 @@ test('tarball url updated to fit registry protocol', t => {
     const srv = tnock(t, OPTS.registry)
     srv.get('/foo').reply(200, META(tarData, 'http://my.mock.registry/'))
     srv.get('/foo/-/foo-1.2.3.tgz').reply(200, tarData)
-    let data = ''
-    return finished(
-      fetch.tarball(npa('foo@^1.2.3'), OPTS).on('data', d => { data += d })
-    ).then(() => {
-      t.equal(data, tarData, 'fetched tarball from https server')
+    return getBuff(fetch.tarball(npa('foo@^1.2.3'), OPTS)).then(data => {
+      t.deepEqual(data, tarData, 'fetched tarball from https server')
     })
   })
 })
@@ -120,11 +112,8 @@ test('tarball url updated to fit registry protocol+port', t => {
     const srv = tnock(t, OPTS.registry)
     srv.get('/foo').reply(200, META(tarData, 'http://my.mock.registry:567/'))
     srv.get('/foo/-/foo-1.2.3.tgz').reply(200, tarData)
-    let data = ''
-    return finished(
-      fetch.tarball(npa('foo@^1.2.3'), OPTS).on('data', d => { data += d })
-    ).then(() => {
-      t.equal(data, tarData, 'fetched tarball from https server and adjusted port')
+    return getBuff(fetch.tarball(npa('foo@^1.2.3'), OPTS)).then(data => {
+      t.deepEqual(data, tarData, 'fetched tarball from https server and adjusted port')
     })
   })
 })
