@@ -110,6 +110,8 @@ pacote.extract('pacote@1.0.0', './woot', {
 
 #### <a name="prefetch"></a> `> pacote.prefetch(spec, [opts])`
 
+##### THIS API IS DEPRECATED. USE `pacote.tarball()` INSTEAD
+
 Fetches package data identified by `<spec>`, usually for the purpose of warming
 up the local package cache (with `opts.cache`). It does not return anything.
 
