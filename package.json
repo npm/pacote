@@ -43,6 +43,7 @@
   "dependencies": {
     "bluebird": "^3.5.1",
     "cacache": "^10.0.0",
+    "get-stream": "^3.0.0",
     "glob": "^7.1.2",
     "lru-cache": "^4.1.1",
     "make-fetch-happen": "^2.5.0",
