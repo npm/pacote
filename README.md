@@ -20,6 +20,9 @@ needed to reduce excess operations, using [`cacache`](https://npm.im/cacache).
 * [API](#api)
   * [`manifest`](#manifest)
   * [`extract`](#extract)
+  * [`tarball`](#tarball)
+  * [`tarball.stream`](#tarball-stream)
+  * [`tarball.toFile`](#tarball-to-file)
   * [`prefetch`](#prefetch)
   * [`options`](#options)
   * [`clearMemoized`](#clearMemoized)
@@ -106,6 +109,46 @@ pacote.extract('pacote@1.0.0', './woot', {
   // Succeeds as long as `pacote@1.0.0` still exists somewhere. Network and
   // other operations are bypassed entirely if `digest` is present in the cache.
 })
+```
+
+#### <a name="tarball"></a> `> pacote.tarball(spec, [opts])`
+
+Fetches package data identified by `<spec>` and returns the data as a buffer.
+
+This API has two variants:
+
+* `pacote.tarball.stream(spec, [opts])` - Same as `pacote.tarball`, except it returns a stream instead of a Promise.
+* `pacote.tarball.toFile(spec, dest, [opts])` - Instead of returning data directly, data will be written directly to `dest`, and create any required directories along the way.
+
+##### Example
+
+```javascript
+pacote.tarball('pacote@1.0.0', { cache: './my-cache' }).then(data => {
+  // data is the tarball data for pacote@1.0.0
+})
+```
+
+#### <a name="tarball-stream"></a> `> pacote.tarball.stream(spec, [opts])`
+
+Same as `pacote.tarball`, except it returns a stream instead of a Promise.
+
+##### Example
+
+```javascript
+pacote.tarball.stream('pacote@1.0.0')
+.pipe(fs.createWriteStream('./pacote-1.0.0.tgz'))
+```
+
+#### <a name="tarball-to-file"></a> `> pacote.tarball.toFile(spec, dest, [opts])`
+
+Like `pacote.tarball`, but instead of returning data directly, data will be
+written directly to `dest`, and create any required directories along the way.
+
+##### Example
+
+```javascript
+pacote.tarball.toFile('pacote@1.0.0', './pacote-1.0.0.tgz')
+.then(() => /* pacote tarball written directly to ./pacote-1.0.0.tgz */)
 ```
 
 #### <a name="prefetch"></a> `> pacote.prefetch(spec, [opts])`
