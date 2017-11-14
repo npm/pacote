@@ -145,7 +145,7 @@ test('fills in integrity hash if missing', t => {
     'package.json': base,
     'npm-shrinkwrap.json': sr
   }).then(tarData => {
-    const integrity = ssri.fromData(tarData, {algorithms: ['sha1']}).toString()
+    const integrity = ssri.fromData(tarData, {algorithms: ['sha512']}).toString()
     tnock(t, OPTS.registry).get('/' + tarballPath).reply(200, tarData)
     return finalizeManifest(base, {
       name: base.name,
@@ -253,7 +253,7 @@ test('uses package.json as base if passed null', t => {
         peerDependencies: {},
         _resolved: OPTS.registry + tarballPath,
         deprecated: false,
-        _integrity: ssri.fromData(tarData, {algorithms: ['sha1']}).toString(),
+        _integrity: ssri.fromData(tarData, {algorithms: ['sha512']}).toString(),
         _shasum: null, // shasums are only when provided
         _shrinkwrap: sr,
         bin: { 'x': path.join('foo', 'x') },
