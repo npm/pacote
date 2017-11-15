@@ -1,8 +1,5 @@
 # pacote [![npm version](https://img.shields.io/npm/v/pacote.svg)](https://npm.im/pacote) [![license](https://img.shields.io/npm/l/pacote.svg)](https://npm.im/pacote) [![Travis](https://img.shields.io/travis/zkat/pacote.svg)](https://travis-ci.org/zkat/pacote) [![AppVeyor](https://ci.appveyor.com/api/projects/status/github/zkat/pacote?svg=true)](https://ci.appveyor.com/project/zkat/pacote) [![Coverage Status](https://coveralls.io/repos/github/zkat/pacote/badge.svg?branch=latest)](https://coveralls.io/github/zkat/pacote?branch=latest)
 
-
-**NOTE: this package is still under heavy development. Please don't use it yet**
-
 [`pacote`](https://github.com/zkat/pacote) is a Node.js library for downloading
 [npm](https://npmjs.org)-compatible packages. It supports all package specifier
 syntax that `npm install` and its ilk support. It transparently caches anything
