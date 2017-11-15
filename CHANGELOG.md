@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="7.0.1"></a>
+## [7.0.1](https://github.com/zkat/pacote/compare/v7.0.0...v7.0.1) (2017-11-15)
+
+
+### Bug Fixes
+
+* **git:** use resolved ref if available when doing a full clone (#125) ([46ca45a](https://github.com/zkat/pacote/commit/46ca45a)), closes [#125](https://github.com/zkat/pacote/issues/125)
+* **move:** bump cacache for some cross-platform move fixes ([eebdcda](https://github.com/zkat/pacote/commit/eebdcda))
+* **test:** missed a spot converting tests to promises ([c43caed](https://github.com/zkat/pacote/commit/c43caed))
+
+
+
 <a name="7.0.0"></a>
 # [7.0.0](https://github.com/zkat/pacote/compare/v6.1.0...v7.0.0) (2017-11-15)
 
