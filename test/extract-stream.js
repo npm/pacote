@@ -6,7 +6,6 @@ const fs = BB.promisifyAll(require('fs'))
 const mkdirp = BB.promisify(require('mkdirp'))
 const mockTar = require('./util/mock-tarball')
 const npmlog = require('npmlog')
-const path = require('path')
 const pipe = BB.promisify(require('mississippi').pipe)
 const test = require('tap').test
 
@@ -264,37 +263,3 @@ test('accepts dmode/fmode/umask opts', {
   })
 })
 
-test('extracts filenames with special characters', {
-  skip: process.platform !== 'win32' &&
-  'special character conversion is only needed on Windows'
-}, t => {
-  const tarStream = fs.createReadStream('../../fixtures/special-characters.tgz')
-  return pipe(tarStream, extractStream('.')).then(() => {
-    const fileNamesUnderTest = [
-      'filename:with:colons',
-      'filename<with<less<than<signs',
-      'filename>with>more>than>signs',
-      'filename|with|pipes',
-      'filename?with?question?marks'
-    ].map(fileName => ({
-      rawFileName: fileName,
-      expectedFileName: ':<>|?'.split('').reduce((s, c) => {
-        return s.split(c).join(String.fromCharCode(0xf000 + c.charCodeAt(0)))
-      }, fileName),
-      expectedContent: fileName
-    }))
-
-    return BB.all(fileNamesUnderTest.map(fileNameUnderTest => {
-      const filePath = fileNameUnderTest.expectedFileName
-      return fs.readFileAsync(filePath, 'utf8').then(data => {
-        t.equal(
-          data.trim(),
-          fileNameUnderTest.expectedContent,
-          `Filename "${
-            fileNameUnderTest.rawFileName
-          }" was sanitized and content left intact`
-        )
-      })
-    }))
-  })
-})
