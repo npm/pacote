@@ -238,7 +238,7 @@ test('accepts dmode/fmode/umask opts', {
       }),
       // no entry in tarball, so mode is default from node-tar (0700) mixed with
       // our provided dmode (555) and umask (0266) on the extractor
-      fs.stat('./foo', function (err, stat) {
+      fs.statAsync('./foo').then(stat => {
         t.equal(
           stat.mode & 0o777,
           0o755,
@@ -262,4 +262,3 @@ test('accepts dmode/fmode/umask opts', {
     )
   })
 })
-
