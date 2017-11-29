@@ -31,6 +31,19 @@ test('accepts gid and uid opts', {skip: !process.getuid}, t => {
   const updatedPaths = []
   const fsClone = Object.create(fs)
   fsClone.utimes = (_1, _2, _3, cb) => cb()
+  const openedFds = {}
+  fsClone.open = (path, flags, mode, cb) => {
+    if (!cb) { cb = mode; mode = null }
+    fs.open(path, flags, mode, (err, fd) => {
+      openedFds[fd] = path
+      cb(err, fd)
+    })
+  }
+  fsClone.fchown = (fd, uid, gid, cb) => {
+    process.nextTick(() => {
+      fsClone.chown(openedFds[fd], uid, gid, cb)
+    })
+  }
   fsClone.chown = (p, uid, gid, cb) => {
     process.nextTick(() => {
       t.deepEqual({
