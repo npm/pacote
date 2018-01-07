@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="7.1.0"></a>
+# [7.1.0](https://github.com/zkat/pacote/compare/v7.0.2...v7.1.0) (2018-01-07)
+
+
+### Bug Fixes
+
+* **security:** deep-update debug due to vulnerabilities ([ff16da7](https://github.com/zkat/pacote/commit/ff16da7))
+
+
+### Features
+
+* **resolved:** add opts.resolved for cache stuff ([#131](https://github.com/zkat/pacote/issues/131)) ([149a4b5](https://github.com/zkat/pacote/commit/149a4b5))
+
+
+
 <a name="7.0.2"></a>
 ## [7.0.2](https://github.com/zkat/pacote/compare/v7.0.1...v7.0.2) (2017-11-28)
 
