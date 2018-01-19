@@ -70,6 +70,11 @@ function extractByDigest (start, spec, dest, opts) {
     })
   }).then(() => {
     opts.log.silly('pacote', `${spec} extracted to ${dest} by content address ${Date.now() - start}ms`)
+  }).catch(err => {
+    if (err.code === 'EINTEGRITY') {
+      err.message = `Verification failed while extracting ${spec}:\n${err.message}`
+    }
+    throw err
   })
 }
 
@@ -89,6 +94,11 @@ function extractByManifest (start, spec, dest, opts) {
     })
   }).then(() => {
     opts.log.silly('pacote', `${spec} extracted in ${Date.now() - start}ms`)
+  }).catch(err => {
+    if (err.code === 'EINTEGRITY') {
+      err.message = `Verification failed while extracting ${spec}:\n${err.message}`
+    }
+    throw err
   })
 }
 
