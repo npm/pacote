@@ -2,7 +2,6 @@
 
 const BB = require('bluebird')
 
-const finished = BB.promisify(require('mississippi').finished)
 const fs = BB.promisifyAll(require('fs'))
 const getBuff = require('get-stream').buffer
 const mockTar = require('./util/mock-tarball')

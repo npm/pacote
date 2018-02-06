@@ -2,7 +2,6 @@
 
 const BB = require('bluebird')
 
-const cacache = require('cacache')
 const clearMemoized = require('..').clearMemoized
 const npmlog = require('npmlog')
 const test = require('tap').test

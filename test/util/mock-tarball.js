@@ -1,7 +1,6 @@
 'use strict'
 
 const BB = require('bluebird')
-const Buffer = require('safe-buffer').Buffer
 
 const getStream = require('get-stream')
 const pipeline = require('mississippi').pipeline
