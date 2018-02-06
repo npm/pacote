@@ -78,7 +78,7 @@ test('supports directory deps', t => {
         path.join(EXT, 'x', 'mybin'), 'utf8'
       ),
       (xpkg, xsr, xbin) => {
-        t.deepEqual(JSON.parse(xpkg), pkg, 'extracted package.json')
+        t.similar(JSON.parse(xpkg), pkg, 'extracted package.json')
         t.deepEqual(JSON.parse(xsr), sr, 'extracted npm-shrinkwrap.json')
         t.deepEqual(xbin, 'console.log("hi there")', 'extracted binary')
       }

@@ -61,7 +61,7 @@ test('accepts gid and uid opts', {skip: !process.getuid}, t => {
     fs: fsClone
   })
   return mockTar(pkg, {stream: true}).then(tarStream => {
-    return pipe(tarStream, extractStream('.', {
+    return pipe(tarStream, extractStream('foo@1', '.', {
       uid: NEWUID,
       gid: NEWGID,
       log: npmlog
