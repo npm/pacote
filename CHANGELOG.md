@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="7.3.0"></a>
+# [7.3.0](https://github.com/zkat/pacote/compare/v7.2.0...v7.3.0) (2018-02-07)
+
+
+### Bug Fixes
+
+* **git:** fix resolution of prerelease versions ([#130](https://github.com/zkat/pacote/issues/130)) ([83be46b](https://github.com/zkat/pacote/commit/83be46b)), closes [#129](https://github.com/zkat/pacote/issues/129)
+
+
+### Features
+
+* **extract:** append _resolved and _integrity automatically ([#134](https://github.com/zkat/pacote/issues/134)) ([6886b65](https://github.com/zkat/pacote/commit/6886b65))
+
+
+
 <a name="7.2.0"></a>
 # [7.2.0](https://github.com/zkat/pacote/compare/v7.1.1...v7.2.0) (2018-01-19)
 
