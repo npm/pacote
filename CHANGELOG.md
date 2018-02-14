@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="7.3.1"></a>
+## [7.3.1](https://github.com/zkat/pacote/compare/v7.3.0...v7.3.1) (2018-02-14)
+
+
+### Bug Fixes
+
+* **tarball:** stop using mississippi.pipe() in tarball.js and extract.js ([f5c1da9](https://github.com/zkat/pacote/commit/f5c1da9))
+
+
+
 <a name="7.3.0"></a>
 # [7.3.0](https://github.com/zkat/pacote/compare/v7.2.0...v7.3.0) (2018-02-07)
 
