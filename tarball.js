@@ -10,7 +10,6 @@ const npa = require('npm-package-arg')
 const optCheck = require('./lib/util/opt-check')
 const PassThrough = require('stream').PassThrough
 const path = require('path')
-const pipe = BB.promisify(require('mississippi').pipe)
 const pipeline = require('mississippi').pipeline
 const ssri = require('ssri')
 const url = require('url')
@@ -106,12 +105,16 @@ function tarballStream (spec, opts) {
       }
     })
     .then(
-      tarStream => pipe(tarStream, stream),
+      tarStream => tarStream
+      .on('error', err => stream.emit('error', err))
+      .pipe(stream),
       err => stream.emit('error', err)
     )
   } else {
     opts.log.silly('tarball', `no integrity hash provided for ${spec} - fetching by manifest`)
-    pipe(tarballByManifest(startTime, spec, opts), stream)
+    tarballByManifest(startTime, spec, opts)
+    .on('error', err => stream.emit('error', err))
+    .pipe(stream)
   }
   return stream
 }
@@ -129,20 +132,28 @@ function tarballToFile (spec, dest, opts) {
         opts.log.silly('tarball', `cached content for ${spec} copied (${Date.now() - startTime}ms)`)
       }, err => {
         if (err.code === 'ENOENT') {
-          return pipe(
-            tarballByManifest(startTime, spec, opts),
-            fs.createWriteStream(dest)
-          )
+          return new BB((resolve, reject) => {
+            const tardata = tarballByManifest(startTime, spec, opts)
+            const writer = fs.createWriteStream(dest)
+            tardata.on('error', reject)
+            writer.on('error', reject)
+            writer.on('close', resolve)
+            tardata.pipe(writer)
+          })
         } else {
           throw err
         }
       })
     } else {
       opts.log.silly('tarball', `no integrity hash provided for ${spec} - fetching by manifest`)
-      return pipe(
-        tarballByManifest(startTime, spec, opts),
-        fs.createWriteStream(dest)
-      )
+      return new BB((resolve, reject) => {
+        const tardata = tarballByManifest(startTime, spec, opts)
+        const writer = fs.createWriteStream(dest)
+        tardata.on('error', reject)
+        writer.on('error', reject)
+        writer.on('close', resolve)
+        tardata.pipe(writer)
+      })
     }
   })
 }
