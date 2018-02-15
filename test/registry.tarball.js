@@ -153,7 +153,6 @@ test('can use opts.resolved instead of manifest._resolved', t => {
     const opts = Object.assign({}, OPTS, {
       resolved: `${OPTS.registry}foo/-/foo-is-here.tgz`
     })
-    srv.get('/foo').reply(200, META(tarData))
     srv.get('/foo/-/foo-is-here.tgz').reply(200, tarData)
     return getBuff(fetch.tarball(npa('foo@^1.2.3'), opts)).then(data => {
       t.deepEqual(data, tarData, 'fetched tarball from passed-in resolved')
