@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="7.3.3"></a>
+## [7.3.3](https://github.com/zkat/pacote/compare/v7.3.2...v7.3.3) (2018-02-15)
+
+
+### Bug Fixes
+
+* **tarball:** another attempt at fixing opts.resolved ([aff3b6a](https://github.com/zkat/pacote/commit/aff3b6a))
+
+
+
 <a name="7.3.2"></a>
 ## [7.3.2](https://github.com/zkat/pacote/compare/v7.3.1...v7.3.2) (2018-02-15)
 
