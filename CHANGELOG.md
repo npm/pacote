@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="7.3.2"></a>
+## [7.3.2](https://github.com/zkat/pacote/compare/v7.3.1...v7.3.2) (2018-02-15)
+
+
+### Bug Fixes
+
+* **tarball:** opts.resolved impl was triggering extra registry lookups ([0a4729d](https://github.com/zkat/pacote/commit/0a4729d))
+
+
+
 <a name="7.3.1"></a>
 ## [7.3.1](https://github.com/zkat/pacote/compare/v7.3.0...v7.3.1) (2018-02-14)
 
