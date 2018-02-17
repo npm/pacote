@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="7.4.0"></a>
+# [7.4.0](https://github.com/zkat/pacote/compare/v7.3.3...v7.4.0) (2018-02-17)
+
+
+### Features
+
+* **tarball:** support file: opts.resolved shortcut ([a6cf279](https://github.com/zkat/pacote/commit/a6cf279))
+
+
+
 <a name="7.3.3"></a>
 ## [7.3.3](https://github.com/zkat/pacote/compare/v7.3.2...v7.3.3) (2018-02-15)
 
