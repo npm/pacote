@@ -42,7 +42,7 @@
   "license": "MIT",
   "dependencies": {
     "bluebird": "^3.5.1",
-    "cacache": "^10.0.2",
+    "cacache": "^10.0.4",
     "get-stream": "^3.0.0",
     "glob": "^7.1.2",
     "lru-cache": "^4.1.1",
@@ -59,7 +59,7 @@
     "protoduck": "^5.0.0",
     "safe-buffer": "^5.1.1",
     "semver": "^5.5.0",
-    "ssri": "^5.2.2",
+    "ssri": "^5.2.4",
     "tar": "^4.3.3",
     "unique-filename": "^1.1.0",
     "which": "^1.3.0"
