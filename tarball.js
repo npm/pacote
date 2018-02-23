@@ -33,9 +33,9 @@ function tarballStream (spec, opts) {
       throw new Error('abort, abort!')
     } else {
       return new BB((resolve, reject) => {
+        stream.on('error', reject)
         output.on('error', reject)
         output.on('error', () => { hasTouchedOutput = true })
-        stream.on('error', err => output.emit('error', err))
         output.on('finish', resolve)
         stream.pipe(output)
         stream.once('data', () => { hasTouchedOutput = true })
