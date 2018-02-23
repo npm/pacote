@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="7.4.1"></a>
+## [7.4.1](https://github.com/zkat/pacote/compare/v7.4.0...v7.4.1) (2018-02-23)
+
+
+### Bug Fixes
+
+* **tarball:** fix spurious errors from tarball.stream() ([0286ba5](https://github.com/zkat/pacote/commit/0286ba5))
+
+
+
 <a name="7.4.0"></a>
 # [7.4.0](https://github.com/zkat/pacote/compare/v7.3.3...v7.4.0) (2018-02-17)
 
