@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="7.4.2"></a>
+## [7.4.2](https://github.com/zkat/pacote/compare/v7.4.1...v7.4.2) (2018-02-23)
+
+
+### Bug Fixes
+
+* **deps:** move mkdirp and rimraf to dependencies ([#140](https://github.com/zkat/pacote/issues/140)) ([bba20c8](https://github.com/zkat/pacote/commit/bba20c8)), closes [#128](https://github.com/zkat/pacote/issues/128)
+
+
+
 <a name="7.4.1"></a>
 ## [7.4.1](https://github.com/zkat/pacote/compare/v7.4.0...v7.4.1) (2018-02-23)
 
