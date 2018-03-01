@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="7.5.0"></a>
+# [7.5.0](https://github.com/zkat/pacote/compare/v7.4.2...v7.5.0) (2018-03-01)
+
+
+### Features
+
+* **logging:** let users know when file: resolved packages fail integrity check ([0fb8037](https://github.com/zkat/pacote/commit/0fb8037))
+
+
+
 <a name="7.4.2"></a>
 ## [7.4.2](https://github.com/zkat/pacote/compare/v7.4.1...v7.4.2) (2018-02-23)
 
