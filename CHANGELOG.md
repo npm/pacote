@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="7.5.3"></a>
+## [7.5.3](https://github.com/zkat/pacote/compare/v7.5.2...v7.5.3) (2018-03-02)
+
+
+### Bug Fixes
+
+* **tarball:** stop dropping stream errors on the floor ([3db03c2](https://github.com/zkat/pacote/commit/3db03c2))
+
+
+
 <a name="7.5.2"></a>
 ## [7.5.2](https://github.com/zkat/pacote/compare/v7.5.1...v7.5.2) (2018-03-02)
 
