@@ -45,6 +45,7 @@ function tarballStream (spec, opts) {
       })
     }
   })
+  .catch(err => output.emit('error', err))
   return output
 }
 
