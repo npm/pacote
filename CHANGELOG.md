@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="7.5.2"></a>
+## [7.5.2](https://github.com/zkat/pacote/compare/v7.5.1...v7.5.2) (2018-03-02)
+
+
+### Bug Fixes
+
+* **console:** remove spurious debugging console.log :< ([5b8b509](https://github.com/zkat/pacote/commit/5b8b509))
+
+
+
 <a name="7.5.1"></a>
 ## [7.5.1](https://github.com/zkat/pacote/compare/v7.5.0...v7.5.1) (2018-03-01)
 
