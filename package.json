@@ -48,7 +48,7 @@
     "lru-cache": "^4.1.1",
     "make-fetch-happen": "^2.6.0",
     "minimatch": "^3.0.4",
-    "mississippi": "^2.0.0",
+    "mississippi": "^3.0.0",
     "mkdirp": "^0.5.1",
     "normalize-package-data": "^2.4.0",
     "npm-package-arg": "^6.0.0",
@@ -62,7 +62,7 @@
     "safe-buffer": "^5.1.1",
     "semver": "^5.5.0",
     "ssri": "^5.2.4",
-    "tar": "^4.3.3",
+    "tar": "^4.4.0",
     "unique-filename": "^1.1.0",
     "which": "^1.3.0"
   },
