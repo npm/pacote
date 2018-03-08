@@ -1,6 +1,6 @@
 {
   "name": "pacote",
-  "version": "7.5.3",
+  "version": "7.6.0",
   "description": "JavaScript package downloader",
   "main": "index.js",
   "files": [

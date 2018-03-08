@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="7.6.0"></a>
+# [7.6.0](https://github.com/zkat/pacote/compare/v7.5.3...v7.6.0) (2018-03-08)
+
+
+### Features
+
+* **git:** added retry logic for all git operations. ([#136](https://github.com/zkat/pacote/issues/136)) ([425c58d](https://github.com/zkat/pacote/commit/425c58d))
+
+
+
 <a name="7.5.3"></a>
 ## [7.5.3](https://github.com/zkat/pacote/compare/v7.5.2...v7.5.3) (2018-03-02)
 
