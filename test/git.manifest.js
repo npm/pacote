@@ -42,16 +42,16 @@ test('get manifest from package.json in git clone', {
   fixture.create(testDir)
   return BB.using(gitMock({cwd: path.join(testDir, 'foo')}), srv => {
     return manifest(`bar@git://127.0.0.1:${srv.port}/`, OPTS)
-    .then(mani => {
-      t.similar(mani, {
-        name: 'foo',
-        version: '1.2.3',
-        _resolved: new RegExp(`git://127.0.0.1:${srv.port}/#[a-f0-9]{40}$`),
-        _shasum: null,
-        _shrinkwrap: null,
-        _id: 'foo@1.2.3'
-      }, 'manifest fetched correctly')
-    })
+      .then(mani => {
+        t.similar(mani, {
+          name: 'foo',
+          version: '1.2.3',
+          _resolved: new RegExp(`git://127.0.0.1:${srv.port}/#[a-f0-9]{40}$`),
+          _shasum: null,
+          _shrinkwrap: null,
+          _id: 'foo@1.2.3'
+        }, 'manifest fetched correctly')
+      })
   })
 })
 

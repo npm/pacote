@@ -253,51 +253,51 @@ test('(toFile) tarball by manifest if digest provided but no cache content found
 test('opts.resolved shortcut for `file:` skips metadata and cache', t => {
   clearMemoized()
   return mockTar(PKG)
-  .then(tarData => {
-    const fixture = new Tacks(Dir({
-      resolved: Dir({
-        'foo.tgz': File(tarData)
+    .then(tarData => {
+      const fixture = new Tacks(Dir({
+        resolved: Dir({
+          'foo.tgz': File(tarData)
+        })
+      }))
+      fixture.create(CACHE)
+      const opts = Object.assign({}, OPTS, {
+        integrity: BASE.dist.integrity,
+        resolved: 'file:' + path.join(CACHE, 'resolved', 'foo.tgz')
       })
-    }))
-    fixture.create(CACHE)
-    const opts = Object.assign({}, OPTS, {
-      integrity: BASE.dist.integrity,
-      resolved: 'file:' + path.join(CACHE, 'resolved', 'foo.tgz')
+      return tarball('foo@1.0.0', opts)
+        .then(data => {
+          t.deepEqual(data, tarData, 'fetched from locally-resolved file')
+        })
+        .then(() => tarball('bar@git://github.com/foo/bar', opts))
+        .then(data => {
+          t.deepEqual(data, tarData, 'non-registry types use opts.resolved too')
+        })
     })
-    return tarball('foo@1.0.0', opts)
-    .then(data => {
-      t.deepEqual(data, tarData, 'fetched from locally-resolved file')
-    })
-    .then(() => tarball('bar@git://github.com/foo/bar', opts))
-    .then(data => {
-      t.deepEqual(data, tarData, 'non-registry types use opts.resolved too')
-    })
-  })
 })
 
 test('(stream) opts.resolved shortcut for `file:`', t => {
   clearMemoized()
   return mockTar(PKG)
-  .then(tarData => {
-    const fixture = new Tacks(Dir({
-      resolved: Dir({
-        'foo.tgz': File(tarData)
+    .then(tarData => {
+      const fixture = new Tacks(Dir({
+        resolved: Dir({
+          'foo.tgz': File(tarData)
+        })
+      }))
+      fixture.create(CACHE)
+      const opts = Object.assign({}, OPTS, {
+        integrity: BASE.dist.integrity,
+        resolved: 'file:' + path.join(CACHE, 'resolved', 'foo.tgz')
       })
-    }))
-    fixture.create(CACHE)
-    const opts = Object.assign({}, OPTS, {
-      integrity: BASE.dist.integrity,
-      resolved: 'file:' + path.join(CACHE, 'resolved', 'foo.tgz')
+      return getStream.buffer(tarball.stream('foo@1.0.0', opts))
+        .then(data => {
+          t.deepEqual(data, tarData, 'fetched from locally-resolved file')
+        })
+        .then(() => getStream.buffer(
+          tarball.stream('bar@git://github.com/foo/bar', opts))
+        )
+        .then(data => {
+          t.deepEqual(data, tarData, 'non-registry types use opts.resolved too')
+        })
     })
-    return getStream.buffer(tarball.stream('foo@1.0.0', opts))
-    .then(data => {
-      t.deepEqual(data, tarData, 'fetched from locally-resolved file')
-    })
-    .then(() => getStream.buffer(
-      tarball.stream('bar@git://github.com/foo/bar', opts))
-    )
-    .then(data => {
-      t.deepEqual(data, tarData, 'non-registry types use opts.resolved too')
-    })
-  })
 })

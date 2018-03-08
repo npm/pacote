@@ -25,8 +25,8 @@ function makeTarball (files, opts) {
       uname: entry.uname,
       gname: entry.gname
     }, typeof files[filename] === 'string'
-    ? files[filename]
-    : files[filename].data)
+      ? files[filename]
+      : files[filename].data)
   })
   pack.finalize()
   return BB.try(() => {

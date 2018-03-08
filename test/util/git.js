@@ -56,19 +56,19 @@ function daemon (opts) {
       srv.once('exit', cb)
       srv.once('error', cb)
     })
-    .then(srv => {
-      return srv
-    }, e => {
-      if (stderr.match(/already in use/i)) {
-        return tryAgain(e)
-      } else {
-        throw e
-      }
-    })
+      .then(srv => {
+        return srv
+      }, e => {
+        if (stderr.match(/already in use/i)) {
+          return tryAgain(e)
+        } else {
+          throw e
+        }
+      })
   }, { factor: 1, minTimeout: 100 }))
-  .disposer(srv => BB.fromNode(cb => {
-    srv.on('error', cb)
-    srv.on('close', cb)
-    srv.kill()
-  }))
+    .disposer(srv => BB.fromNode(cb => {
+      srv.on('error', cb)
+      srv.on('close', cb)
+      srv.kill()
+    }))
 }
