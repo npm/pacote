@@ -56,6 +56,7 @@
     "npm-package-arg": "^6.1.0",
     "npm-packlist": "^1.1.10",
     "npm-pick-manifest": "^2.1.0",
+    "npm-registry-fetch": "^3.0.0",
     "osenv": "^0.1.5",
     "promise-inflight": "^1.0.1",
     "promise-retry": "^1.1.1",
