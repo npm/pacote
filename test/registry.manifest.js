@@ -155,7 +155,9 @@ test('supports opts.includeDeprecated', t => {
   const srv = tnock(t, OPTS.registry)
 
   srv.get('/foo').reply(200, META)
-  return manifest('foo@^2', OPTS).then(pkg => {
+  return manifest('foo@^2', Object.assign({
+    includeDeprecated: true
+  }, OPTS)).then(pkg => {
     t.deepEqual(pkg, new Manifest(META.versions['2.0.5']), 'got deprecated')
     return manifest('foo@^2.0', Object.assign({
       includeDeprecated: false
@@ -170,11 +172,7 @@ test('sends auth token if passed in opts', t => {
   const opts = {
     log: OPTS.log,
     registry: OPTS.registry,
-    auth: {
-      '//mock.reg/': {
-        token: TOKEN
-      }
-    }
+    '//mock.reg/:_authToken': TOKEN
   }
 
   const srv = tnock(t, OPTS.registry)
@@ -199,9 +197,7 @@ test('treats options as optional', t => {
 
 test('uses scope from spec for registry lookup', t => {
   const opts = {
-    scopeTargets: {
-      '@myscope': OPTS.registry
-    },
+    '@myscope:registry': OPTS.registry,
     // package scope takes priority
     scope: '@otherscope'
   }
@@ -220,9 +216,7 @@ test('uses scope opt for registry lookup', t => {
 
   return BB.join(
     manifest('foo@1.2.3', {
-      scopeTargets: {
-        '@myscope': OPTS.registry
-      },
+      '@myscope:registry': OPTS.registry,
       scope: '@myscope',
       // scope option takes priority
       registry: 'nope'
@@ -230,9 +224,7 @@ test('uses scope opt for registry lookup', t => {
       t.deepEqual(pkg, PKG, 'used scope to pick registry')
     }),
     manifest('bar@latest', {
-      scopeTargets: {
-        '@myscope': OPTS.registry
-      },
+      '@myscope:registry': OPTS.registry,
       scope: 'myscope' // @ auto-inserted
     }).then(pkg => {
       t.deepEqual(pkg, PKG, 'scope @ was auto-inserted')
@@ -253,14 +245,8 @@ test('supports scoped auth', t => {
   const TOKEN = 'deadbeef'
   const opts = {
     scope: 'myscope',
-    scopeTargets: {
-      '@myscope': OPTS.registry
-    },
-    auth: {
-      '//mock.reg/': {
-        token: TOKEN
-      }
-    }
+    '@myscope:registry': OPTS.registry,
+    '//mock.reg/:_authToken': TOKEN
   }
   const srv = tnock(t, OPTS.registry)
   srv.get(
@@ -277,10 +263,8 @@ test('sends auth token if passed in global opts', t => {
   const TOKEN = 'deadbeef'
   const opts = {
     registry: OPTS.registry,
-    auth: {
-      alwaysAuth: true,
-      token: TOKEN
-    }
+    'always-auth': true,
+    token: TOKEN
   }
 
   const srv = tnock(t, OPTS.registry)
@@ -298,10 +282,8 @@ test('sends basic authorization if alwaysAuth and _auth', t => {
   const TOKEN = 'deadbeef'
   const opts = {
     registry: OPTS.registry,
-    auth: {
-      alwaysAuth: true,
-      _auth: TOKEN
-    }
+    alwaysAuth: true,
+    _auth: TOKEN
   }
 
   const srv = tnock(t, OPTS.registry)
