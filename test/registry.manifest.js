@@ -142,11 +142,30 @@ test('fetches manifest from registry by range', t => {
   })
 })
 
+test('fetches manifest from registry by alias', t => {
+  const srv = tnock(t, OPTS.registry)
+
+  srv.get('/foo').reply(200, META)
+  return manifest('bar@npm:foo@^1.2.0', OPTS).then(pkg => {
+    // Not 1.2.4 because 1.2.3 is `latest`
+    t.deepEqual(pkg, new Manifest(META.versions['1.2.3']), 'picked right manifest')
+  })
+})
+
 test('fetches manifest from scoped registry by range', t => {
   const srv = tnock(t, OPTS.registry)
 
   srv.get('/@usr%2ffoo').reply(200, META)
   return manifest('@usr/foo@^1.2.0', OPTS).then(pkg => {
+    t.deepEqual(pkg, new Manifest(META.versions['1.2.3']), 'got scoped manifest from version')
+  })
+})
+
+test('fetches scoped manifest from registry by alias', t => {
+  const srv = tnock(t, OPTS.registry)
+
+  srv.get('/@usr%2ffoo').reply(200, META)
+  return manifest('bar@npm:@usr/foo@^1.2.0', OPTS).then(pkg => {
     t.deepEqual(pkg, new Manifest(META.versions['1.2.3']), 'got scoped manifest from version')
   })
 })

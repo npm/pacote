@@ -61,6 +61,26 @@ test('basic tarball streaming', function (t) {
   })
 })
 
+test('aliased tarball streaming', t => {
+  const pkg = {
+    'package.json': JSON.stringify({
+      name: 'foo',
+      version: '1.2.3'
+    }),
+    'index.js': 'console.log("hello world!")'
+  }
+  return mockTar(pkg).then(tarData => {
+    const srv = tnock(t, OPTS.registry)
+    srv.get('/foo').reply(200, META(tarData))
+    srv.get('/foo/-/foo-1.2.3.tgz').reply(200, tarData)
+    return getBuff(
+      fetch.tarball(npa('bar@npm:foo@^1.2.3'), OPTS)
+    ).then(data => {
+      t.deepEqual(data, tarData, 'fetched tarball data matches')
+    })
+  })
+})
+
 test('errors if manifest fails', t => {
   const pkg = {
     'package.json': JSON.stringify({
