@@ -15,9 +15,11 @@ const BASE = {
   version: '1.2.3',
   _hasShrinkwrap: false,
   _integrity: 'sha1-deadbeef',
+  _shasum: '75e69d6de79f',
   _resolved: 'https://foo.bar/x.tgz',
   dist: {
     integrity: 'sha1-deadbeef',
+    shasum: '75e69d6de79f',
     tarball: 'https://foo.bar/x.tgz'
   }
 }
@@ -43,9 +45,11 @@ const META = {
       version: '2.0.4',
       _hasShrinkwrap: false,
       _integrity: 'sha1-deadbeef',
+      _shasum: '75e69d6de79f',
       _resolved: 'https://foo.bar/x.tgz',
       dist: {
         integrity: 'sha1-deadbeef',
+        shasum: '75e69d6de79f',
         tarball: 'https://foo.bar/x.tgz'
       }
     },
@@ -55,9 +59,11 @@ const META = {
       deprecated: 'yes. yes it is.',
       _hasShrinkwrap: false,
       _integrity: 'sha1-deadbeef',
+      _shasum: '75e69d6de79f',
       _resolved: 'https://foo.bar/x.tgz',
       dist: {
         integrity: 'sha1-deadbeef',
+        shasum: '75e69d6de79f',
         tarball: 'https://foo.bar/x.tgz'
       }
     },
@@ -317,9 +323,11 @@ test('package requests are case-sensitive', t => {
     version: '1.2.3',
     _hasShrinkwrap: false,
     _integrity: 'sha1-foobarbaz',
+    _shasum: '75e69d6de79f',
     _resolved: 'https://foo.bar/x.tgz',
     dist: {
       integrity: 'sha1-foobarbaz',
+      shasum: '75e69d6de79f',
       tarball: 'https://foo.bar/x.tgz'
     }
   }

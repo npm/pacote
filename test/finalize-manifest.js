@@ -156,6 +156,33 @@ test('fills in integrity hash if missing', t => {
   })
 })
 
+test('fills in shasum if missing', t => {
+  const tarballPath = 'testing/tarball-1.2.3.tgz'
+  const base = {
+    name: 'testing',
+    version: '1.2.3',
+    _resolved: OPTS.registry + tarballPath,
+    _hasShrinkwrap: false
+  }
+  const sr = {
+    name: base.name,
+    version: base.version
+  }
+  return makeTarball({
+    'package.json': base,
+    'npm-shrinkwrap.json': sr
+  }).then(tarData => {
+    const shasum = ssri.fromData(tarData, {algorithms: ['sha1']}).hexDigest()
+    tnock(t, OPTS.registry).get('/' + tarballPath).reply(200, tarData)
+    return finalizeManifest(base, {
+      name: base.name,
+      type: 'range'
+    }, OPTS).then(manifest => {
+      t.deepEqual(manifest._shasum, shasum, 'shasum successfully added')
+    })
+  })
+})
+
 test('fills in `bin` if `directories.bin` string', t => {
   const tarballPath = 'testing/tarball-1.2.3.tgz'
   const base = {
@@ -203,6 +230,7 @@ test('fills in `bin` if original was an array', t => {
       bin: 'foo'
     },
     _integrity: 'sha1-deadbeefc0ffeebad1dea',
+    _shasum: '75e69d6de79f7347df79e6da77575e',
     _resolved: OPTS.registry + tarballPath,
     _hasShrinkwrap: false
   }
@@ -254,7 +282,7 @@ test('uses package.json as base if passed null', t => {
         _resolved: OPTS.registry + tarballPath,
         deprecated: false,
         _integrity: ssri.fromData(tarData, {algorithms: ['sha512']}).toString(),
-        _shasum: null, // shasums are only when provided
+        _shasum: ssri.fromData(tarData, {algorithms: ['sha1']}).hexDigest(),
         _shrinkwrap: sr,
         bin: { 'x': path.join('foo', 'x') },
         _id: 'testing@1.2.3'
