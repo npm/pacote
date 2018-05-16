@@ -48,6 +48,7 @@
     "lru-cache": "^4.1.2",
     "make-fetch-happen": "^4.0.1",
     "minimatch": "^3.0.4",
+    "minipass": "^2.3.0",
     "mississippi": "^3.0.0",
     "mkdirp": "^0.5.1",
     "normalize-package-data": "^2.4.0",
