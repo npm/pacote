@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="8.1.2"></a>
+## [8.1.2](https://github.com/zkat/pacote/compare/v8.1.1...v8.1.2) (2018-05-16)
+
+
+### Bug Fixes
+
+* **extract-stream:** nudge things to stop write-after-end heisenbug, hopefully ([a398715](https://github.com/zkat/pacote/commit/a398715))
+
+
+
 <a name="8.1.1"></a>
 ## [8.1.1](https://github.com/zkat/pacote/compare/v8.1.0...v8.1.1) (2018-04-24)
 
