@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="8.1.3"></a>
+## [8.1.3](https://github.com/zkat/pacote/compare/v8.1.2...v8.1.3) (2018-05-20)
+
+
+### Bug Fixes
+
+* **deps:** try reverting tar ([574ecff](https://github.com/zkat/pacote/commit/574ecff))
+* **extract-stream:** address "write after end" issue ([#151](https://github.com/zkat/pacote/issues/151)) ([50ed408](https://github.com/zkat/pacote/commit/50ed408)), closes [#142](https://github.com/zkat/pacote/issues/142)
+
+
+
 <a name="8.1.2"></a>
 ## [8.1.2](https://github.com/zkat/pacote/compare/v8.1.1...v8.1.2) (2018-05-16)
 
