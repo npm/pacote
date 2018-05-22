@@ -29,10 +29,10 @@ test('packs a directory into a valid tarball', t => {
   const extractor = tar.t()
   extractor.on('entry', (entry) => {
     let data = ''
-    entry.on('data', d => { data += d })
     entry.on('end', () => {
       entries[entry.path] = data
     })
+    entry.on('data', d => { data += d })
   })
   const pack = packDir(manifest, CACHE, CACHE, target)
   return BB.join(pipe(target, extractor), pack, () => {

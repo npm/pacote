@@ -16,7 +16,7 @@ function mockRepo (opts) {
   }).then(() => {
     return git._exec(['add', '.'], {cwd})
   }).then(() => {
-    return git._exec(['commit', '-m', '"initial commit"'], {cwd})
+    return git._exec(['commit', '-m', 'initial commit', '--no-gpg-sign'], {cwd})
   }).then(() => {
     return daemon(opts)
   })

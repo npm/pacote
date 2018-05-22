@@ -380,8 +380,8 @@ function makeTarball (files) {
   })
   pack.finalize()
   return BB.fromNode(cb => {
-    pack.on('data', function (d) { tarData += d })
     pack.on('error', cb)
     pack.on('end', function () { cb(null, tarData) })
+    pack.on('data', function (d) { tarData += d })
   })
 }

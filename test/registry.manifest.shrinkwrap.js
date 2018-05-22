@@ -47,9 +47,9 @@ test('tarball setup', t => {
   pack.entry({ name: 'package/npm-shrinkwrap.json' }, JSON.stringify(SHRINKWRAP))
   pack.entry({ name: 'package/package.json' }, JSON.stringify(PKG))
   pack.finalize()
-  pack.on('data', function (d) { TARBALL += d })
   pack.on('error', function (e) { throw e })
   pack.on('end', function () { t.end() })
+  pack.on('data', function (d) { TARBALL += d })
 })
 
 test('fetches shrinkwrap data if missing + required', t => {
