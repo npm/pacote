@@ -73,7 +73,7 @@
     "nyc": "^11.8.0",
     "require-inject": "^1.4.3",
     "standard": "^11.0.1",
-    "standard-version": "^4.3.0",
+    "standard-version": "^4.4.0",
     "tacks": "^1.2.6",
     "tap": "^12.0.1",
     "tar-stream": "^1.6.1",
