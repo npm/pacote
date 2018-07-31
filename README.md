@@ -16,6 +16,7 @@ needed to reduce excess operations, using [`cacache`](https://npm.im/cacache).
 * [Contributing](#contributing)
 * [API](#api)
   * [`manifest`](#manifest)
+  * [`packument`](#packument)
   * [`extract`](#extract)
   * [`tarball`](#tarball)
   * [`tarball.stream`](#tarball-stream)
@@ -85,6 +86,43 @@ appended by the registry.
 ```javascript
 pacote.manifest('pacote@1.0.0').then(pkgJson => {
   // fetched `package.json` data from the registry
+})
+```
+
+#### <a name="packument"></a> `> pacote.packument(spec, [opts])`
+
+Fetches the *packument* for a package. Packument objects are general metadata
+about a project corresponding to registry metadata, and include version and
+`dist-tag` information about a package's available versions, rather than a
+specific version. It may include additional metadata not usually available
+through the individual package metadata objects.
+
+It generally looks something like this:
+
+```javascript
+{
+  "name": PkgName,
+  "dist-tags": {
+    'latest': VersionString,
+    [TagName]: VersionString,
+    ...
+  },
+  "versions": {
+    [VersionString]: Manifest,
+    ...
+  }
+}
+```
+
+Note that depending on the spec type, some additional fields might be present.
+For example, packages from `registry.npmjs.org` have additional metadata
+appended by the registry.
+
+##### Example
+
+```javascript
+pacote.packument('pacote').then(pkgJson => {
+  // fetched package versions metadata from the registry
 })
 ```
 
