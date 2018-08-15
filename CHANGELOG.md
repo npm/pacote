@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="9.1.0"></a>
+# [9.1.0](https://github.com/zkat/pacote/compare/v9.0.0...v9.1.0) (2018-08-15)
+
+
+### Bug Fixes
+
+* **docs:** tweaking ToC ([1eeb8a0](https://github.com/zkat/pacote/commit/1eeb8a0))
+* **packument:** take accept header into account when memoizing ([3c637e8](https://github.com/zkat/pacote/commit/3c637e8))
+
+
+### Features
+
+* **aliases:** add support for registry alias specs ([b173f26](https://github.com/zkat/pacote/commit/b173f26))
+* **packument:** add packument api ([97888d9](https://github.com/zkat/pacote/commit/97888d9))
+
+
+
 <a name="9.0.0"></a>
 # [9.0.0](https://github.com/zkat/pacote/compare/v8.1.6...v9.0.0) (2018-07-31)
 
