@@ -21,9 +21,9 @@ needed to reduce excess operations, using [`cacache`](https://npm.im/cacache).
   * [`tarball`](#tarball)
   * [`tarball.stream`](#tarball-stream)
   * [`tarball.toFile`](#tarball-to-file)
-  * [`prefetch`](#prefetch)
-  * [`options`](#options)
+  * ~~[`prefetch`](#prefetch)~~ (deprecated)
   * [`clearMemoized`](#clearMemoized)
+  * [`options`](#options)
 
 ### Example
 
