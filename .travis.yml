@@ -1,5 +1,4 @@
 language: node_js
-sudo: false
 before_install:
   npm i -g npm@latest
 install:
@@ -9,3 +8,6 @@ node_js:
   - "9"
   - "8"
   - "6"
+os:
+  - linux
+  - windows
