@@ -42,7 +42,7 @@
   "license": "MIT",
   "dependencies": {
     "bluebird": "^3.5.2",
-    "cacache": "^11.0.2",
+    "cacache": "^11.2.0",
     "figgy-pudding": "^3.5.1",
     "get-stream": "^4.1.0",
     "glob": "^7.1.3",
