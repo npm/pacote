@@ -40,7 +40,7 @@ test('get manifest from package.json in git clone', {
     })
   }))
   fixture.create(testDir)
-  return BB.using(gitMock({cwd: path.join(testDir, 'foo')}), srv => {
+  return BB.using(gitMock({ cwd: path.join(testDir, 'foo') }), srv => {
     return manifest(`bar@git://127.0.0.1:${srv.port}/`, OPTS)
       .then(mani => {
         t.similar(mani, {
@@ -55,4 +55,4 @@ test('get manifest from package.json in git clone', {
   })
 })
 
-test('cleanup?', {skip: process.platform === 'win32'}, () => rimraf(testDir))
+test('cleanup?', { skip: process.platform === 'win32' }, () => rimraf(testDir))

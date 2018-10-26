@@ -34,7 +34,7 @@ test('returns a manifest with the right fields', t => {
     version: '1.2.3',
     cpu: 'x64',
     os: 'win32',
-    engines: {node: '^4'},
+    engines: { node: '^4' },
     dependencies: { x: '3.2.1' },
     devDependencies: {},
     optionalDependencies: {},
@@ -53,7 +53,7 @@ test('returns a manifest with the right fields', t => {
       version: '1.2.3',
       cpu: 'x64',
       os: 'win32',
-      engines: {node: '^4'},
+      engines: { node: '^4' },
       dependencies: { x: '3.2.1' },
       devDependencies: {},
       optionalDependencies: {},
@@ -143,7 +143,7 @@ test('fills in integrity hash if missing', t => {
     'package.json': base,
     'npm-shrinkwrap.json': sr
   }).then(tarData => {
-    const integrity = ssri.fromData(tarData, {algorithms: ['sha512']}).toString()
+    const integrity = ssri.fromData(tarData, { algorithms: ['sha512'] }).toString()
     tnock(t, OPTS.registry).get('/' + tarballPath).reply(200, tarData)
     return finalizeManifest(base, npa(base.name), OPTS).then(manifest => {
       t.deepEqual(manifest._integrity, integrity, 'integrity hash successfully added')
@@ -167,7 +167,7 @@ test('fills in shasum if missing', t => {
     'package.json': base,
     'npm-shrinkwrap.json': sr
   }).then(tarData => {
-    const shasum = ssri.fromData(tarData, {algorithms: ['sha1']}).hexDigest()
+    const shasum = ssri.fromData(tarData, { algorithms: ['sha1'] }).hexDigest()
     tnock(t, OPTS.registry).get('/' + tarballPath).reply(200, tarData)
     return finalizeManifest(base, npa(base.name), OPTS).then(manifest => {
       t.deepEqual(manifest._shasum, shasum, 'shasum successfully added')
@@ -266,8 +266,8 @@ test('uses package.json as base if passed null', t => {
         peerDependencies: {},
         _resolved: OPTS.registry + tarballPath,
         deprecated: false,
-        _integrity: ssri.fromData(tarData, {algorithms: ['sha512']}).toString(),
-        _shasum: ssri.fromData(tarData, {algorithms: ['sha1']}).hexDigest(),
+        _integrity: ssri.fromData(tarData, { algorithms: ['sha512'] }).toString(),
+        _shasum: ssri.fromData(tarData, { algorithms: ['sha1'] }).hexDigest(),
         _shrinkwrap: sr,
         bin: { 'x': path.join('foo', 'x') },
         _id: 'testing@1.2.3'

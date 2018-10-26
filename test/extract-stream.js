@@ -27,7 +27,7 @@ test('basic extraction', t => {
     'index.js': 'console.log("hello world!")'
   }
   t.plan(2)
-  return mockTar(pkg, {stream: true}).then(tarStream => {
+  return mockTar(pkg, { stream: true }).then(tarStream => {
     return pipe(tarStream, extractStream('foo@1', './'))
   }).then(() => {
     return fs.readFileAsync('./package.json', 'utf8')
@@ -47,7 +47,7 @@ test('adds metadata fields if resolved/integrity are present', t => {
     }),
     'index.js': 'console.log("hello world!")'
   }
-  return mockTar(pkg, {stream: true}).then(tarStream => {
+  return mockTar(pkg, { stream: true }).then(tarStream => {
     return pipe(tarStream, extractStream('foo@1', './', {
       resolved: 'https://stuff.is.here',
       integrity: 'sha1-deadbeef'
@@ -73,7 +73,7 @@ test('automatically handles gzipped tarballs', t => {
     }),
     'index.js': 'console.log("hello world!")'
   }
-  return mockTar(pkg, {gzip: true, stream: true}).then(tarStream => {
+  return mockTar(pkg, { gzip: true, stream: true }).then(tarStream => {
     return pipe(tarStream, extractStream('foo@1', './', OPTS))
   }).then(() => {
     return BB.join(
@@ -95,7 +95,7 @@ test('strips first item in path, even if not `package/`', t => {
     }),
     'something-else/index.js': 'console.log("hello world!")'
   }
-  return mockTar(pkg, {noPrefix: true, stream: true}).then(tarStream => {
+  return mockTar(pkg, { noPrefix: true, stream: true }).then(tarStream => {
     return pipe(tarStream, extractStream('foo@1', './', OPTS))
   }).then(() => {
     return BB.join(
@@ -121,7 +121,7 @@ test('excludes symlinks', t => {
     'linky': { type: 'Link', linkname: '/usr/local/bin/linky' },
     'symmylinky': { type: 'SymbolicLink', linkname: '../nowhere' }
   }
-  return mockTar(pkg, {stream: true}).then(tarStream => {
+  return mockTar(pkg, { stream: true }).then(tarStream => {
     return pipe(tarStream, extractStream('foo@1', './', OPTS))
   }).then(() => {
     return BB.join(
@@ -156,7 +156,7 @@ test('renames .gitignore to .npmignore if not present', t => {
       }),
       'index.js': 'console.log("hello world!")',
       '.gitignore': 'tada!'
-    }, {stream: true}).then(tarStream => {
+    }, { stream: true }).then(tarStream => {
       return pipe(tarStream, extractStream('foo@1', './no-npmignore', OPTS))
     }).then(() => {
       return fs.readFileAsync(
@@ -176,7 +176,7 @@ test('renames .gitignore to .npmignore if not present', t => {
       'index.js': 'console.log("hello world!")',
       '.gitignore': 'git!',
       '.npmignore': 'npm!'
-    }, {stream: true}).then(tarStream => {
+    }, { stream: true }).then(tarStream => {
       return pipe(tarStream, extractStream('foo@1', './has-npmignore1', OPTS))
     }).then(() => {
       return BB.join(
@@ -207,7 +207,7 @@ test('renames .gitignore to .npmignore if not present', t => {
       'index.js': 'console.log("hello world!")',
       '.npmignore': 'npm!',
       '.gitignore': 'git!'
-    }, {stream: true}).then(tarStream => {
+    }, { stream: true }).then(tarStream => {
       return pipe(tarStream, extractStream('foo@1', './has-npmignore2', OPTS))
     }).then(() => {
       return BB.join(
@@ -246,7 +246,7 @@ test('accepts dmode/fmode/umask opts', {
       mode: 0o755
     }
   }
-  return mockTar(pkg, {stream: true}).then(tarStream => {
+  return mockTar(pkg, { stream: true }).then(tarStream => {
     return pipe(tarStream, extractStream('foo@1', './', {
       dmode: 0o644,
       fmode: 0o666,

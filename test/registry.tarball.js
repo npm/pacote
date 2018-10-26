@@ -26,7 +26,7 @@ function BASE (tarData, registry) {
     version: '1.2.3',
     _hasShrinkwrap: false,
     dist: {
-      integrity: ssri.fromData(tarData, {algorithms: ['sha1']}).toString(),
+      integrity: ssri.fromData(tarData, { algorithms: ['sha1'] }).toString(),
       tarball: `${registry}foo/-/foo-1.2.3.tgz`
     }
   }

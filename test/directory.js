@@ -65,7 +65,7 @@ test('supports directory deps', t => {
       _id: `${pkg.name}@${pkg.version}`
     }, 'got a filled-out manifest')
   }).then(() => {
-    return extract(PKG, EXT, {log: npmlog})
+    return extract(PKG, EXT, { log: npmlog })
   }).then(() => {
     return BB.join(
       fs.readFileAsync(

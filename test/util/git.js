@@ -12,11 +12,11 @@ function mockRepo (opts) {
   opts = opts || {}
   const cwd = opts.cwd || process.cwd()
   return mkdirp(cwd).then(() => {
-    return git._exec(['init'], {cwd})
+    return git._exec(['init'], { cwd })
   }).then(() => {
-    return git._exec(['add', '.'], {cwd})
+    return git._exec(['add', '.'], { cwd })
   }).then(() => {
-    return git._exec(['commit', '-m', 'initial commit', '--no-gpg-sign'], {cwd})
+    return git._exec(['commit', '-m', 'initial commit', '--no-gpg-sign'], { cwd })
   }).then(() => {
     return daemon(opts)
   })

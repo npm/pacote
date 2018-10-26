@@ -14,7 +14,7 @@ require('./util/test-dir')(__filename)
 
 npmlog.level = process.env.LOGLEVEL || 'silent'
 
-test('accepts gid and uid opts', {skip: !process.getuid}, t => {
+test('accepts gid and uid opts', { skip: !process.getuid }, t => {
   const pkg = {
     'target/package.json': {
       data: JSON.stringify({
@@ -60,7 +60,7 @@ test('accepts gid and uid opts', {skip: !process.getuid}, t => {
   const extractStream = requireInject('../lib/extract-stream', {
     fs: fsClone
   })
-  return mockTar(pkg, {stream: true}).then(tarStream => {
+  return mockTar(pkg, { stream: true }).then(tarStream => {
     return pipe(tarStream, extractStream('foo@1', '.', {
       uid: NEWUID,
       gid: NEWGID,
