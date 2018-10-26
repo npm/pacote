@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="9.1.1"></a>
+## [9.1.1](https://github.com/zkat/pacote/compare/v9.1.0...v9.1.1) (2018-10-26)
+
+
+### Bug Fixes
+
+* **deps:** bump protoduck to remove CC0-1.0 license in dep ([3d9d9a6](https://github.com/zkat/pacote/commit/3d9d9a6))
+* **git:** Fix temp directory permissions for git fetcher ([#159](https://github.com/zkat/pacote/issues/159)) ([97c3aeb](https://github.com/zkat/pacote/commit/97c3aeb))
+* **packument:** group together all registry specs in silly log ([2333a17](https://github.com/zkat/pacote/commit/2333a17))
+* **standard:** standard --fix ([0ecb188](https://github.com/zkat/pacote/commit/0ecb188))
+
+
+
 <a name="9.1.0"></a>
 # [9.1.0](https://github.com/zkat/pacote/compare/v9.0.0...v9.1.0) (2018-08-15)
 
