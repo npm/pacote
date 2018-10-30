@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="9.2.0"></a>
+# [9.2.0](https://github.com/zkat/pacote/compare/v9.1.1...v9.2.0) (2018-10-30)
+
+
+### Features
+
+* **enjoyBy:** add opts.enjoy-by option ([7df399c](https://github.com/zkat/pacote/commit/7df399c))
+
+
+
 <a name="9.1.1"></a>
 ## [9.1.1](https://github.com/zkat/pacote/compare/v9.1.0...v9.1.1) (2018-10-26)
 
