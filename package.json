@@ -55,7 +55,7 @@
     "normalize-package-data": "^2.4.0",
     "npm-package-arg": "^6.1.0",
     "npm-packlist": "^1.1.12",
-    "npm-pick-manifest": "^2.2.2",
+    "npm-pick-manifest": "^2.2.3",
     "npm-registry-fetch": "^3.8.0",
     "osenv": "^0.1.5",
     "promise-inflight": "^1.0.1",
