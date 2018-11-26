@@ -15,3 +15,13 @@ test('executes git binary', {
     t.match(stdout, /^git version/, 'successfully ran git')
   })
 })
+
+const systemNode = which.sync('node')
+
+test('acknowledges git option', t => {
+  return git._exec(['--version'], null, {
+    git: systemNode
+  }).spread(stdout => {
+    t.equals(stdout.trim(), process.version)
+  })
+})
