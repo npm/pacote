@@ -44,6 +44,9 @@ test('accepts gid and uid opts', { skip: !process.getuid }, t => {
       fsClone.chown(openedFds[fd], uid, gid, cb)
     })
   }
+  fsClone.lchown = (p, uid, gid, cb) => {
+    fsClone.chown(p, uid, gid, cb)
+  }
   fsClone.chown = (p, uid, gid, cb) => {
     process.nextTick(() => {
       t.deepEqual({
