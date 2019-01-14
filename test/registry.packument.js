@@ -113,6 +113,31 @@ test('fetches packument from scoped registry', t => {
   })
 })
 
+test('fetches corgi by default', t => {
+  const srv = tnock(t, OPTS.registry)
+
+  srv.get('/foo').matchHeader(
+    'accept', 'application/vnd.npm.install-v1+json; q=1.0, application/json; q=0.8, */*'
+  ).reply(200, META)
+  return packument('foo', OPTS).then(meta => {
+    t.deepEqual(meta, META, 'got packument')
+  })
+})
+
+test('falls back to fullfat if corgi fails', t => {
+  const srv = tnock(t, OPTS.registry)
+
+  srv.get('/foo').matchHeader(
+    'accept', 'application/vnd.npm.install-v1+json; q=1.0, application/json; q=0.8, */*'
+  ).reply(404)
+  srv.get('/foo').matchHeader(
+    'accept', 'application/json'
+  ).reply(200, META)
+  return packument('foo', OPTS).then(meta => {
+    t.deepEqual(meta, META, 'got packument')
+  })
+})
+
 test('sends auth token if passed in opts', t => {
   const TOKEN = 'deadbeef'
   const opts = {

@@ -91,7 +91,7 @@ test('errors if manifest fails', t => {
   }
   return mockTar(pkg).then(tarData => {
     const srv = tnock(t, OPTS.registry)
-    srv.get('/foo').reply(404)
+    srv.get('/foo').times(2).reply(404)
     return getBuff(fetch.tarball(npa('foo@^1.2.3'), OPTS)).then(data => {
       throw new Error('this was not supposed to succeed ' + data.length + data.toString('utf8'))
     }).catch(err => {
