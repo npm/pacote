@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="9.5.3"></a>
+## [9.5.3](https://github.com/zkat/pacote/compare/v9.5.2...v9.5.3) (2019-07-16)
+
+
+
 <a name="9.5.2"></a>
 ## [9.5.2](https://github.com/zkat/pacote/compare/v9.5.1...v9.5.2) (2019-07-12)
 
