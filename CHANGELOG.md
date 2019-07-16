@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="9.5.4"></a>
+## [9.5.4](https://github.com/npm/pacote/compare/v9.5.3...v9.5.4) (2019-07-16)
+
+
+### Bug Fixes
+
+* **git:** ensure stream failures are reported ([7f07b5d](https://github.com/npm/pacote/commit/7f07b5d)), closes [#1](https://github.com/npm/pacote/issues/1)
+
+
+
 <a name="9.5.3"></a>
 ## [9.5.3](https://github.com/npm/pacote/compare/v9.5.2...v9.5.3) (2019-07-16)
 
