@@ -42,10 +42,11 @@
   "license": "MIT",
   "dependencies": {
     "bluebird": "^3.5.3",
-    "cacache": "^12.0.0",
+    "cacache": "^12.0.2",
     "figgy-pudding": "^3.5.1",
     "get-stream": "^4.1.0",
     "glob": "^7.1.3",
+    "infer-owner": "^1.0.4",
     "lru-cache": "^5.1.1",
     "make-fetch-happen": "^5.0.0",
     "minimatch": "^3.0.4",
