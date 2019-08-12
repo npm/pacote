@@ -30,6 +30,12 @@ module.exports = extract
 function extract (spec, dest, opts) {
   opts = optCheck(opts)
   spec = npa(spec, opts.where)
+  if (spec.type === 'git' && !opts.cache) {
+    throw new TypeError('Extracting git packages requires a cache folder')
+  }
+  if (typeof dest !== 'string') {
+    throw new TypeError('Extract requires a destination')
+  }
   const startTime = Date.now()
   return inferOwner(dest).then(({ uid, gid }) => {
     opts = opts.concat({ uid, gid })

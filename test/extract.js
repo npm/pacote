@@ -27,6 +27,14 @@ test('looks up the manifest for the given spec')
 test('extracts given spec to a target directory')
 test('skips manifest fetching of opts.digest in cache')
 
+test('validates dest and cache args', t => {
+  t.throws(() => extract('foo'),
+    TypeError('Extract requires a destination'))
+  t.throws(() => extract('github:person/repo', '/tmp', {}),
+    TypeError('Extracting git packages requires a cache folder'))
+  t.end()
+})
+
 test('opts.resolved `file:` specs bypass further resolution', t => {
   const pkg = {
     'package.json': JSON.stringify({
