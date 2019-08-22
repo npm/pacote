@@ -1,7 +1,5 @@
 'use strict'
 
-const BB = require('bluebird')
-
 const clearMemoized = require('..').clearMemoized
 const npmlog = require('npmlog')
 const test = require('tap').test
@@ -64,14 +62,14 @@ test('inflights concurrent requests', t => {
   const srv = tnock(t, OPTS.registry)
 
   srv.get('/foo').once().reply(200, META, HEADERS)
-  return BB.join(
+  return Promise.all([
     manifest('foo@1.2.3', OPTS).then(pkg => {
       t.deepEqual(pkg, PKG, 'got a manifest')
     }),
     manifest('foo@1.2.3', OPTS).then(pkg => {
       t.deepEqual(pkg, PKG, 'got a manifest')
     })
-  )
+  ])
 })
 
 test('supports fetching from an optional cache', t => {

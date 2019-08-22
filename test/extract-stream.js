@@ -76,14 +76,13 @@ test('automatically handles gzipped tarballs', t => {
   return mockTar(pkg, { gzip: true, stream: true }).then(tarStream => {
     return pipe(tarStream, extractStream('foo@1', './', OPTS))
   }).then(() => {
-    return BB.join(
+    return Promise.all([
       fs.readFileAsync('./package.json', 'utf8'),
-      fs.readFileAsync('./index.js', 'utf8'),
-      (json, indexjs) => {
-        t.deepEqual(json, pkg['package.json'], 'got gunzipped package.json')
-        t.equal(indexjs, pkg['index.js'], 'got gunzipped index.js')
-      }
-    )
+      fs.readFileAsync('./index.js', 'utf8')
+    ]).then(([json, indexjs]) => {
+      t.deepEqual(json, pkg['package.json'], 'got gunzipped package.json')
+      t.equal(indexjs, pkg['index.js'], 'got gunzipped index.js')
+    })
   })
 })
 
@@ -98,16 +97,15 @@ test('strips first item in path, even if not `package/`', t => {
   return mockTar(pkg, { noPrefix: true, stream: true }).then(tarStream => {
     return pipe(tarStream, extractStream('foo@1', './', OPTS))
   }).then(() => {
-    return BB.join(
+    return Promise.all([
       fs.readFileAsync('./package.json', 'utf8'),
-      fs.readFileAsync('./index.js', 'utf8'),
-      (json, indexjs) => {
-        t.deepEqual(
-          json, pkg['package/package.json'], 'flattened package.json')
-        t.equal(
-          indexjs, pkg['something-else/index.js'], 'flattened index.js')
-      }
-    )
+      fs.readFileAsync('./index.js', 'utf8')
+    ]).then(([json, indexjs]) => {
+      t.deepEqual(
+        json, pkg['package/package.json'], 'flattened package.json')
+      t.equal(
+        indexjs, pkg['something-else/index.js'], 'flattened index.js')
+    })
   })
 })
 
@@ -124,7 +122,7 @@ test('excludes symlinks', t => {
   return mockTar(pkg, { stream: true }).then(tarStream => {
     return pipe(tarStream, extractStream('foo@1', './', OPTS))
   }).then(() => {
-    return BB.join(
+    return Promise.all([
       fs.readFileAsync('./package.json', 'utf8').then(data => {
         t.deepEqual(data, pkg['package.json'], 'package.json still there')
       }),
@@ -140,7 +138,7 @@ test('excludes symlinks', t => {
           t.equal(err.code, 'ENOENT', 'symlink excluded!')
         }
       )
-    )
+    ])
   })
 })
 
@@ -179,7 +177,7 @@ test('renames .gitignore to .npmignore if not present', t => {
     }, { stream: true }).then(tarStream => {
       return pipe(tarStream, extractStream('foo@1', './has-npmignore1', OPTS))
     }).then(() => {
-      return BB.join(
+      return Promise.all([
         fs.readFileAsync(
           './has-npmignore1/.npmignore', 'utf8'
         ).then(data => {
@@ -194,7 +192,7 @@ test('renames .gitignore to .npmignore if not present', t => {
             t.equal(err.code, 'ENOENT', '.gitignore missing')
           }
         )
-      )
+      ])
     })
   }).then(() => {
     return mkdirp('./has-npmignore2')
@@ -210,7 +208,7 @@ test('renames .gitignore to .npmignore if not present', t => {
     }, { stream: true }).then(tarStream => {
       return pipe(tarStream, extractStream('foo@1', './has-npmignore2', OPTS))
     }).then(() => {
-      return BB.join(
+      return Promise.all([
         fs.readFileAsync(
           './has-npmignore2/.npmignore', 'utf8'
         ).then(data => {
@@ -221,7 +219,7 @@ test('renames .gitignore to .npmignore if not present', t => {
         ).then(data => {
           t.deepEqual(data, 'git!', '.gitignore intact if we previously had an .npmignore')
         })
-      )
+      ])
     })
   })
 })
@@ -253,7 +251,7 @@ test('accepts dmode/fmode/umask opts', {
       umask: 0o022
     }))
   }).then(() => {
-    return BB.join(
+    return Promise.all([
       fs.statAsync('./package.json').then(stat => {
         t.equal(
           // 0644 & ~umask(266) => 400
@@ -285,6 +283,6 @@ test('accepts dmode/fmode/umask opts', {
           'preserved execute bit as expected'
         )
       })
-    )
+    ])
   })
 })

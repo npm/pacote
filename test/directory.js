@@ -31,7 +31,7 @@ test('supports directory deps', t => {
   const PKG = path.join(CACHE, 'pkg')
   const EXT = path.join(CACHE, 'extracted')
   return mkdirp(path.join(PKG, 'x')).then(() => {
-    return BB.join(
+    return Promise.all([
       fs.writeFileAsync(
         path.join(PKG, 'package.json'), JSON.stringify(pkg)
       ),
@@ -40,8 +40,7 @@ test('supports directory deps', t => {
       ),
       fs.writeFileAsync(
         path.join(PKG, 'x', 'mybin'), 'console.log("hi there")'
-      )
-    )
+      )])
   }).then(() => {
     return manifest(PKG)
   }).then(manifest => {
@@ -67,7 +66,7 @@ test('supports directory deps', t => {
   }).then(() => {
     return extract(PKG, EXT, { log: npmlog })
   }).then(() => {
-    return BB.join(
+    return Promise.all([
       fs.readFileAsync(
         path.join(EXT, 'package.json'), 'utf8'
       ),
@@ -76,12 +75,11 @@ test('supports directory deps', t => {
       ),
       fs.readFileAsync(
         path.join(EXT, 'x', 'mybin'), 'utf8'
-      ),
-      (xpkg, xsr, xbin) => {
-        t.similar(JSON.parse(xpkg), pkg, 'extracted package.json')
-        t.deepEqual(JSON.parse(xsr), sr, 'extracted npm-shrinkwrap.json')
-        t.deepEqual(xbin, 'console.log("hi there")', 'extracted binary')
-      }
-    )
+      )
+    ]).then(([xpkg, xsr, xbin]) => {
+      t.similar(JSON.parse(xpkg), pkg, 'extracted package.json')
+      t.deepEqual(JSON.parse(xsr), sr, 'extracted npm-shrinkwrap.json')
+      t.deepEqual(xbin, 'console.log("hi there")', 'extracted binary')
+    })
   })
 })

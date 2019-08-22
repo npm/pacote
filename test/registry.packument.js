@@ -1,7 +1,5 @@
 'use strict'
 
-const BB = require('bluebird')
-
 const npmlog = require('npmlog')
 const test = require('tap').test
 const tnock = require('./util/tnock')
@@ -185,7 +183,7 @@ test('uses scope opt for registry lookup', t => {
   srv.get('/foo').reply(200, META)
   srv.get('/bar').reply(200, META)
 
-  return BB.join(
+  return Promise.all([
     packument('foo', {
       '@myscope:registry': OPTS.registry,
       scope: '@myscope',
@@ -200,7 +198,7 @@ test('uses scope opt for registry lookup', t => {
     }).then(meta => {
       t.deepEqual(meta, META, 'scope @ was auto-inserted')
     })
-  )
+  ])
 })
 
 test('defaults to registry.npmjs.org if no option given', t => {

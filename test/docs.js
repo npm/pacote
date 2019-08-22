@@ -10,21 +10,21 @@ test('all fixtures are documented', t => {
   // TODO - actually parse that table and make sure the
   //        important bits are documented?
   const readmePath = path.join(__dirname, 'fixtures', 'README.md')
-  return BB.join(
+  return Promise.all([
     fs.readFileAsync(readmePath, 'utf8'),
-    fs.readdirAsync(path.dirname(readmePath)),
-    (text, files) => {
+    fs.readdirAsync(path.dirname(readmePath))])
+    .then(([text, files]) => {
       files.forEach(f => {
         if (f !== 'README.md') {
           t.match(text, f, f + ' is mentioned.')
         }
       })
-    }
-  )
+    })
 })
 
 test('all toplevel api calls are documented', t => {
   const pacote = require('../')
+
   function getFns (obj) {
     const fns = []
     for (let k in obj) {
@@ -35,6 +35,7 @@ test('all toplevel api calls are documented', t => {
     }
     return fns
   }
+
   let apiFns = getFns(pacote)
   t.comment(apiFns)
   return fs.readFileAsync(

@@ -35,7 +35,7 @@ test('packs a directory into a valid tarball', t => {
     entry.on('data', d => { data += d })
   })
   const pack = packDir(manifest, CACHE, CACHE, target)
-  return BB.join(pipe(target, extractor), pack, () => {
+  return Promise.all([pipe(target, extractor), pack]).then(() => {
     t.deepEqual(entries, {
       'package/package.json': JSON.stringify(manifest),
       'package/index.js': 'true === false\n'

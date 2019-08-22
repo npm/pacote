@@ -1,7 +1,5 @@
 'use strict'
 
-const BB = require('bluebird')
-
 const npa = require('npm-package-arg')
 const npmlog = require('npmlog')
 const test = require('tap').test
@@ -233,7 +231,7 @@ test('uses scope opt for registry lookup', t => {
   srv.get('/foo').reply(200, META)
   srv.get('/bar').reply(200, META)
 
-  return BB.join(
+  return Promise.all([
     manifest('foo@1.2.3', {
       '@myscope:registry': OPTS.registry,
       scope: '@myscope',
@@ -248,7 +246,7 @@ test('uses scope opt for registry lookup', t => {
     }).then(pkg => {
       t.deepEqual(pkg, PKG, 'scope @ was auto-inserted')
     })
-  )
+  ])
 })
 
 test('defaults to registry.npmjs.org if no option given', t => {
@@ -340,14 +338,14 @@ test('package requests are case-sensitive', t => {
   })
   srv.get('/foo').reply(200, META)
 
-  return BB.join(
+  return Promise.all([
     manifest('Foo@1.2.3', OPTS).then(pkg => {
       t.deepEqual(pkg, CASEDPKG, 'got Cased package')
     }),
     manifest('foo@1.2.3', OPTS).then(pkg => {
       t.deepEqual(pkg, PKG, 'got lowercased package')
     })
-  )
+  ])
 })
 
 test('handles server-side case-normalization', t => {
@@ -356,14 +354,14 @@ test('handles server-side case-normalization', t => {
   srv.get('/Cased').reply(200, META)
   srv.get('/cased').reply(200, META)
 
-  return BB.join(
+  return Promise.all([
     manifest('Cased@1.2.3', OPTS).then(pkg => {
       t.deepEqual(pkg, PKG, 'got Cased package')
     }),
     manifest('cased@latest', OPTS).then(pkg => {
       t.deepEqual(pkg, PKG, 'got lowercased package')
     })
-  )
+  ])
 })
 
 test('recovers from request errors', t => {
