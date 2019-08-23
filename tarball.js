@@ -32,7 +32,7 @@ function tarballStream (spec, opts) {
     } else if (hasTouchedOutput) {
       throw new Error('abort, abort!')
     } else {
-      return new BB((resolve, reject) => {
+      return new Promise((resolve, reject) => {
         stream.on('error', reject)
         output.on('error', reject)
         output.on('error', () => { hasTouchedOutput = true })
@@ -56,7 +56,7 @@ function tarballToFile (spec, dest, opts) {
   return mkdirp(path.dirname(dest))
     .then(() => withTarballStream(spec, opts, stream => {
       return rimraf(dest)
-        .then(() => new BB((resolve, reject) => {
+        .then(() => new Promise((resolve, reject) => {
           const writer = fs.createWriteStream(dest)
           stream.on('error', reject)
           writer.on('error', reject)

@@ -30,14 +30,21 @@ test('extracting a git target reports failures', t => {
     .then(() => writeFile(path.join(dest, 'q'), 'foo'))
     .then(() => extract('github:zkat/pacote', dest,
       Object.assign({}, OPTS)))
-    .finally(() => {
-      process.env.PATH = oldPath
-    })
+
+    // .finally(() => {
+    //
+    // })
     .then(() => {
       t.fail('the promise should not have resolved')
     }, (err) => {
       // We're not testing the specific text of the error message. We just check
       // that it is an execution error.
       t.equal(err.code, 'ENOENT')
+    })
+    .then(() => {
+      process.env.PATH = oldPath
+    })
+    .catch(() => {
+      process.env.PATH = oldPath
     })
 })

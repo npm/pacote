@@ -67,7 +67,7 @@ function extract (spec, dest, opts) {
 }
 
 function tryExtract (spec, tarStream, dest, opts) {
-  return new BB((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     tarStream.on('error', reject)
 
     rimraf(dest)
