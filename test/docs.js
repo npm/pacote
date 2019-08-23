@@ -2,17 +2,20 @@
 
 const BB = require('bluebird')
 
-const fs = BB.promisifyAll(require('fs'))
+const fs = require('fs')
 const path = require('path')
-const test = require('tap').test
+const { test } = require('tap')
+
+const readFile = BB.promisify(fs.readFile)
+const readdir = BB.promisify(fs.readdir)
 
 test('all fixtures are documented', t => {
   // TODO - actually parse that table and make sure the
   //        important bits are documented?
   const readmePath = path.join(__dirname, 'fixtures', 'README.md')
   return Promise.all([
-    fs.readFileAsync(readmePath, 'utf8'),
-    fs.readdirAsync(path.dirname(readmePath))])
+    readFile(readmePath, 'utf8'),
+    readdir(path.dirname(readmePath))])
     .then(([text, files]) => {
       files.forEach(f => {
         if (f !== 'README.md') {
@@ -38,7 +41,7 @@ test('all toplevel api calls are documented', t => {
 
   let apiFns = getFns(pacote)
   t.comment(apiFns)
-  return fs.readFileAsync(
+  return readFile(
     path.join(__dirname, '..', 'README.md'),
     'utf8'
   ).then(readme => {

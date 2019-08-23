@@ -3,7 +3,7 @@
 const BB = require('bluebird')
 
 const getStream = require('get-stream')
-const pipeline = require('mississippi').pipeline
+const { pipeline } = require('mississippi')
 const tar = require('tar-stream')
 const zlib = require('zlib')
 

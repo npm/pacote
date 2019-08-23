@@ -2,10 +2,10 @@
 
 const BB = require('bluebird')
 
-const fs = BB.promisifyAll(require('fs'))
+const fs = require('fs')
 const mkdirp = BB.promisify(require('mkdirp'))
 const path = require('path')
-const test = require('tap').test
+const { test } = require('tap')
 const tar = require('tar-stream')
 const zlib = require('zlib')
 
@@ -13,29 +13,27 @@ const manifest = require('../manifest')
 
 const CACHE = require('./util/test-dir')(__filename)
 
+const writeFile = BB.promisify(fs.writeFile)
+
 test('support package.json with Byte Order Mark (BOM)', t => {
-  var extract = tar.extract()
-  var data = ''
-  extract.on('entry', function (header, stream, next) {
-    stream.on('data', function (chunk) {
+  const extract = tar.extract()
+  let data = ''
+  extract.on('entry', (header, stream, next) => {
+    stream.on('data', (chunk) => {
       if (header.name === 'package/package.json') {
         data += chunk
       }
     })
-
-    stream.on('end', function () {
-      next()
-    })
-
+    stream.on('end', () => next())
     stream.resume()
   })
 
   extract.on('finish', function () {
-    let PKG = path.join(CACHE, 'package')
+    const PKG = path.join(CACHE, 'package')
     mkdirp(PKG).then(() => {
       // Prepend a BOM to the json data here instead of creating a fixture.
-      let bomdata = '\ufeff' + data
-      fs.writeFile(path.join(PKG, 'package.json'), bomdata, function () {
+      const bomdata = '\ufeff' + data
+      writeFile(path.join(PKG, 'package.json'), bomdata).then(() => {
         t.resolves(manifest(PKG), 'successfully read package.json with Byte Order Mark (BOM)')
         t.end()
       })

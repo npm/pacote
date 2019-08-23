@@ -2,7 +2,7 @@
 
 const BB = require('bluebird')
 
-const cp = BB.promisifyAll(require('child_process'))
+const cp = require('child_process')
 const git = require('../../lib/util/git')
 const mkdirp = BB.promisify(require('mkdirp'))
 const retry = require('promise-retry')

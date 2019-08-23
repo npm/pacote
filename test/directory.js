@@ -2,16 +2,19 @@
 
 const BB = require('bluebird')
 
-const fs = BB.promisifyAll(require('fs'))
+const fs = require('fs')
 const mkdirp = BB.promisify(require('mkdirp'))
 const npmlog = require('npmlog')
 const path = require('path')
-const test = require('tap').test
+const { test } = require('tap')
 
 const extract = require('../extract')
 const manifest = require('../manifest')
 
 const CACHE = require('./util/test-dir')(__filename)
+
+const writeFile = BB.promisify(fs.writeFile)
+const readFile = BB.promisify(fs.readFile)
 
 npmlog.level = process.env.LOGLEVEL || 'silent'
 
@@ -32,13 +35,13 @@ test('supports directory deps', t => {
   const EXT = path.join(CACHE, 'extracted')
   return mkdirp(path.join(PKG, 'x')).then(() => {
     return Promise.all([
-      fs.writeFileAsync(
+      writeFile(
         path.join(PKG, 'package.json'), JSON.stringify(pkg)
       ),
-      fs.writeFileAsync(
+      writeFile(
         path.join(PKG, 'npm-shrinkwrap.json'), JSON.stringify(sr)
       ),
-      fs.writeFileAsync(
+      writeFile(
         path.join(PKG, 'x', 'mybin'), 'console.log("hi there")'
       )])
   }).then(() => {
@@ -67,13 +70,13 @@ test('supports directory deps', t => {
     return extract(PKG, EXT, { log: npmlog })
   }).then(() => {
     return Promise.all([
-      fs.readFileAsync(
+      readFile(
         path.join(EXT, 'package.json'), 'utf8'
       ),
-      fs.readFileAsync(
+      readFile(
         path.join(EXT, 'npm-shrinkwrap.json'), 'utf8'
       ),
-      fs.readFileAsync(
+      readFile(
         path.join(EXT, 'x', 'mybin'), 'utf8'
       )
     ]).then(([xpkg, xsr, xbin]) => {

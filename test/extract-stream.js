@@ -2,16 +2,19 @@
 
 const BB = require('bluebird')
 
-const fs = BB.promisifyAll(require('fs'))
+const fs = require('fs')
 const mkdirp = BB.promisify(require('mkdirp'))
 const mockTar = require('./util/mock-tarball')
 const npmlog = require('npmlog')
 const pipe = BB.promisify(require('mississippi').pipe)
-const test = require('tap').test
+const { test } = require('tap')
 
 require('./util/test-dir')(__filename)
 
 const extractStream = require('../lib/extract-stream')
+
+const readFile = BB.promisify(fs.readFile)
+const stat = BB.promisify(fs.stat)
 
 npmlog.level = process.env.LOGLEVEL || 'silent'
 const OPTS = {
@@ -30,10 +33,10 @@ test('basic extraction', t => {
   return mockTar(pkg, { stream: true }).then(tarStream => {
     return pipe(tarStream, extractStream('foo@1', './'))
   }).then(() => {
-    return fs.readFileAsync('./package.json', 'utf8')
+    return readFile('./package.json', 'utf8')
   }).then(data => {
     t.deepEqual(data, pkg['package.json'], 'extracted package.json')
-    return fs.readFileAsync('./index.js', 'utf8')
+    return readFile('./index.js', 'utf8')
   }).then(data => {
     t.equal(data, pkg['index.js'], 'extracted index.js')
   })
@@ -53,7 +56,7 @@ test('adds metadata fields if resolved/integrity are present', t => {
       integrity: 'sha1-deadbeef'
     }))
   }).then(() => {
-    return fs.readFileAsync('./package.json', 'utf8')
+    return readFile('./package.json', 'utf8')
   }).then(data => {
     t.deepEqual(JSON.parse(data), {
       name: 'foo',
@@ -77,8 +80,8 @@ test('automatically handles gzipped tarballs', t => {
     return pipe(tarStream, extractStream('foo@1', './', OPTS))
   }).then(() => {
     return Promise.all([
-      fs.readFileAsync('./package.json', 'utf8'),
-      fs.readFileAsync('./index.js', 'utf8')
+      readFile('./package.json', 'utf8'),
+      readFile('./index.js', 'utf8')
     ]).then(([json, indexjs]) => {
       t.deepEqual(json, pkg['package.json'], 'got gunzipped package.json')
       t.equal(indexjs, pkg['index.js'], 'got gunzipped index.js')
@@ -98,8 +101,8 @@ test('strips first item in path, even if not `package/`', t => {
     return pipe(tarStream, extractStream('foo@1', './', OPTS))
   }).then(() => {
     return Promise.all([
-      fs.readFileAsync('./package.json', 'utf8'),
-      fs.readFileAsync('./index.js', 'utf8')
+      readFile('./package.json', 'utf8'),
+      readFile('./index.js', 'utf8')
     ]).then(([json, indexjs]) => {
       t.deepEqual(
         json, pkg['package/package.json'], 'flattened package.json')
@@ -123,16 +126,16 @@ test('excludes symlinks', t => {
     return pipe(tarStream, extractStream('foo@1', './', OPTS))
   }).then(() => {
     return Promise.all([
-      fs.readFileAsync('./package.json', 'utf8').then(data => {
+      readFile('./package.json', 'utf8').then(data => {
         t.deepEqual(data, pkg['package.json'], 'package.json still there')
       }),
-      fs.statAsync('./linky').then(
-        stat => { throw new Error('this was supposed to error' + JSON.stringify(stat)) },
+      stat('./linky').then(
+        s => { throw new Error('this was supposed to error' + JSON.stringify(s)) },
         err => {
           t.equal(err.code, 'ENOENT', 'hard link excluded!')
         }
       ),
-      fs.readFileAsync('./symmylinky').then(
+      readFile('./symmylinky').then(
         () => { throw new Error('this was supposed to error') },
         err => {
           t.equal(err.code, 'ENOENT', 'symlink excluded!')
@@ -157,7 +160,7 @@ test('renames .gitignore to .npmignore if not present', t => {
     }, { stream: true }).then(tarStream => {
       return pipe(tarStream, extractStream('foo@1', './no-npmignore', OPTS))
     }).then(() => {
-      return fs.readFileAsync(
+      return readFile(
         './no-npmignore/.npmignore', 'utf8'
       ).then(data => {
         t.deepEqual(data, 'tada!', '.gitignore renamed to .npmignore')
@@ -178,12 +181,12 @@ test('renames .gitignore to .npmignore if not present', t => {
       return pipe(tarStream, extractStream('foo@1', './has-npmignore1', OPTS))
     }).then(() => {
       return Promise.all([
-        fs.readFileAsync(
+        readFile(
           './has-npmignore1/.npmignore', 'utf8'
         ).then(data => {
           t.deepEqual(data, 'npm!', '.npmignore left intact if present')
         }),
-        fs.readFileAsync(
+        readFile(
           './has-npmignore1/.gitignore', 'utf8'
         ).then(
           () => { throw new Error('expected an error') },
@@ -209,12 +212,12 @@ test('renames .gitignore to .npmignore if not present', t => {
       return pipe(tarStream, extractStream('foo@1', './has-npmignore2', OPTS))
     }).then(() => {
       return Promise.all([
-        fs.readFileAsync(
+        readFile(
           './has-npmignore2/.npmignore', 'utf8'
         ).then(data => {
           t.deepEqual(data, 'npm!', '.npmignore left intact if present')
         }),
-        fs.readFileAsync(
+        readFile(
           './has-npmignore2/.gitignore', 'utf8'
         ).then(data => {
           t.deepEqual(data, 'git!', '.gitignore intact if we previously had an .npmignore')
@@ -252,33 +255,33 @@ test('accepts dmode/fmode/umask opts', {
     }))
   }).then(() => {
     return Promise.all([
-      fs.statAsync('./package.json').then(stat => {
+      stat('./package.json').then(s => {
         t.equal(
           // 0644 & ~umask(266) => 400
-          stat.mode & 0o777,
+          s.mode & 0o777,
           0o644,
           'fmode set as expected'
         )
       }),
       // no entry in tarball, so mode is default from node-tar (0700) mixed with
       // our provided dmode (555) and umask (0266) on the extractor
-      fs.statAsync('./foo').then(stat => {
+      stat('./foo').then(s => {
         t.equal(
-          stat.mode & 0o777,
+          s.mode & 0o777,
           0o755,
           'mode set as expected'
         )
       }),
-      fs.statAsync('./foo/index.js').then(stat => {
+      stat('./foo/index.js').then(s => {
         t.equal(
-          stat.mode & 0o777,
+          s.mode & 0o777,
           0o644,
           'fmode set as expected'
         )
       }),
-      fs.statAsync('./bin/cli.js').then(stat => {
+      stat('./bin/cli.js').then(s => {
         t.equal(
-          stat.mode & 0o777,
+          s.mode & 0o777,
           0o755,
           'preserved execute bit as expected'
         )

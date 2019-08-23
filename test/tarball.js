@@ -3,24 +3,25 @@
 const BB = require('bluebird')
 
 const cacache = require('cacache')
-const clearMemoized = require('..').clearMemoized
-const fs = BB.promisifyAll(require('fs'))
+const { clearMemoized } = require('..')
+const fs = require('fs')
 const getStream = require('get-stream')
 const mockTar = require('./util/mock-tarball')
 const npmlog = require('npmlog')
 const path = require('path')
 const ssri = require('ssri')
 const Tacks = require('tacks')
-const test = require('tap').test
+const { test } = require('tap')
 const testDir = require('./util/test-dir')
 const tnock = require('./util/tnock')
 
+const tarball = require('../tarball')
+
+const readFile = BB.promisify(fs.readFile)
+
 const CACHE = path.join(testDir(__filename), 'cache')
 
-const Dir = Tacks.Dir
-const File = Tacks.File
-
-const tarball = require('../tarball')
+const { Dir, File } = Tacks
 
 npmlog.level = process.env.LOGLEVEL || 'silent'
 const BASE = {
@@ -125,7 +126,7 @@ test('(toFile) tarball by manifest if no integrity hash', t => {
 
     return tarball.toFile('foo@1.0.0', './dir/foo.tgz', OPTS).then(() => {
       t.equal(srv.isDone(), true, 'no pending requests')
-      return fs.readFileAsync('./dir/foo.tgz')
+      return readFile('./dir/foo.tgz')
     }).then(data => {
       t.deepEqual(data, tarData, 'tarball data from file matches')
       return cacache.ls(CACHE)
@@ -178,7 +179,7 @@ test('(toFile) use cache content if found', t => {
       clearMemoized()
       return tarball.toFile('foo@1.0.0', './dir/foo.tgz', OPTS)
     }).then(() => {
-      return fs.readFileAsync('./dir/foo.tgz')
+      return readFile('./dir/foo.tgz')
     }).then(data => {
       t.deepEqual(data, tarData, 'fetched from cache')
       return cacache.ls(CACHE)
@@ -239,7 +240,7 @@ test('(toFile) tarball by manifest if digest provided but no cache content found
     OPTS.digest = integrity
 
     return tarball.toFile('foo@1.0.0', './dir/foo.tgz', OPTS).then(() => {
-      return fs.readFileAsync('./dir/foo.tgz')
+      return readFile('./dir/foo.tgz')
     }).then(data => {
       t.equal(srv.isDone(), true, 'no pending requests')
       t.deepEqual(data, tarData, 'fetched by manifest')

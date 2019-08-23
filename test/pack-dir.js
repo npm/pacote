@@ -5,8 +5,8 @@ const BB = require('bluebird')
 const pipe = BB.promisify(require('mississippi').pipe)
 const Tacks = require('tacks')
 const tar = require('tar')
-const test = require('tap').test
-const through = require('mississippi').through
+const { test } = require('tap')
+const { through } = require('mississippi')
 
 const Dir = Tacks.Dir
 const File = Tacks.File

@@ -1,11 +1,11 @@
 'use strict'
 
-const Buffer = require('safe-buffer').Buffer
+const { Buffer } = require('safe-buffer')
 
 const fs = require('fs')
 const glob = require('glob')
 const path = require('path')
-const test = require('tap').test
+const { test } = require('tap')
 
 test('all JavaScript source files use strict mode', function (t) {
   const globStr = '**/*.js'

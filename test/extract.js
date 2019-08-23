@@ -2,16 +2,19 @@
 
 const BB = require('bluebird')
 
-const fs = BB.promisifyAll(require('fs'))
+const fs = require('fs')
 const mockTar = require('./util/mock-tarball')
 const npmlog = require('npmlog')
 const path = require('path')
 const ssri = require('ssri')
-const test = require('tap').test
+const { test } = require('tap')
 
 const testDir = require('./util/test-dir')(__filename)
 
 const extract = require('../extract.js')
+
+const readFile = BB.promisify(fs.readFile)
+const writeFile = BB.promisify(fs.writeFile)
 
 npmlog.level = process.env.LOGLEVEL || 'silent'
 const OPTS = {
@@ -53,12 +56,12 @@ test('opts.resolved `file:` specs bypass further resolution', t => {
         resolved: 'file:foo-1.2.3.tgz',
         where: testDir
       })
-      return fs.writeFileAsync(path.join(testDir, 'foo-1.2.3.tgz'), tarData)
+      return writeFile(path.join(testDir, 'foo-1.2.3.tgz'), tarData)
         .then(() => extract('foo@1.2.3', dest, opts))
     })
-    .then(() => fs.readFileAsync(path.join(dest, 'index.js'), 'utf8'))
+    .then(() => readFile(path.join(dest, 'index.js'), 'utf8'))
     .then(data => t.equal(data, pkg['index.js'], 'index.js extracted ok'))
-    .then(() => fs.readFileAsync(path.join(dest, 'package.json'), 'utf8'))
+    .then(() => readFile(path.join(dest, 'package.json'), 'utf8'))
     .then(JSON.parse)
     .then(json => t.deepEqual(json, {
       name: 'foo',

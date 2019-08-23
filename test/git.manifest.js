@@ -7,7 +7,7 @@ const npmlog = require('npmlog')
 const path = require('path')
 const rimraf = BB.promisify(require('rimraf'))
 const Tacks = require('tacks')
-const test = require('tap').test
+const { test } = require('tap')
 const testDir = require('./util/test-dir.js')(__filename)
 
 const Dir = Tacks.Dir

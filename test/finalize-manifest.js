@@ -1,6 +1,6 @@
 'use strict'
 
-const BB = require('bluebird')
+// const BB = require('bluebird')
 
 const cacache = require('cacache')
 const npa = require('npm-package-arg')
@@ -8,7 +8,7 @@ const npmlog = require('npmlog')
 const path = require('path')
 const ssri = require('ssri')
 const tar = require('tar-stream')
-const test = require('tap').test
+const { test } = require('tap')
 const testDir = require('./util/test-dir')
 const tnock = require('./util/tnock')
 
@@ -353,9 +353,9 @@ function makeTarball (files) {
     }, JSON.stringify(files[filename]))
   })
   pack.finalize()
-  return BB.fromNode(cb => {
-    pack.on('error', cb)
-    pack.on('end', function () { cb(null, tarData) })
+  return new Promise((resolve, reject) => {
+    pack.on('error', reject)
+    pack.on('end', function () { resolve(tarData) })
     pack.on('data', function (d) { tarData += d })
   })
 }

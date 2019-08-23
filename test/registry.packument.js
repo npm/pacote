@@ -1,7 +1,7 @@
 'use strict'
 
 const npmlog = require('npmlog')
-const test = require('tap').test
+const { test } = require('tap')
 const tnock = require('./util/tnock')
 
 const packument = require('../packument')

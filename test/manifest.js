@@ -1,6 +1,6 @@
 'use strict'
 
-const test = require('tap').test
+const { test } = require('tap')
 
 test('parses string specs into specifiers')
 test('accepts realized package specifiers')

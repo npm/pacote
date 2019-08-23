@@ -1,12 +1,12 @@
 'use strict'
 
 const cacache = require('cacache')
-const clearMemoized = require('..').clearMemoized
+const { clearMemoized } = require('..')
 const mockTar = require('./util/mock-tarball')
 const npa = require('npm-package-arg')
 const npmlog = require('npmlog')
 const ssri = require('ssri')
-const test = require('tap').test
+const { test } = require('tap')
 const testDir = require('./util/test-dir')
 const tnock = require('./util/tnock')
 

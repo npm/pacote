@@ -1,7 +1,7 @@
 'use strict'
 
 const nock = require('nock')
-const clearMemoized = require('../..').clearMemoized
+const { clearMemoized } = require('../..')
 
 module.exports = tnock
 function tnock (t, host) {

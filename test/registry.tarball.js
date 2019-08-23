@@ -5,7 +5,7 @@ const mockTar = require('./util/mock-tarball')
 const npa = require('npm-package-arg')
 const npmlog = require('npmlog')
 const ssri = require('ssri')
-const test = require('tap').test
+const { test } = require('tap')
 const tnock = require('./util/tnock')
 
 require('./util/test-dir')(__filename)

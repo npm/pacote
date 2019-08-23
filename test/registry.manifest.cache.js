@@ -1,13 +1,13 @@
 'use strict'
 
-const clearMemoized = require('..').clearMemoized
+const { clearMemoized } = require('..')
 const npmlog = require('npmlog')
-const test = require('tap').test
+const { test } = require('tap')
 const testDir = require('./util/test-dir')
 const tnock = require('./util/tnock')
 
 const CACHE = testDir(__filename)
-const Manifest = require('../lib/finalize-manifest').Manifest
+const { Manifest } = require('../lib/finalize-manifest')
 const manifest = require('../manifest')
 
 // This is what the server sends

@@ -3,7 +3,7 @@
 const BB = require('bluebird')
 
 const git = require('../lib/util/git')
-const test = require('tap').test
+const { test } = require('tap')
 const which = BB.promisify(require('which'))
 
 const systemGit = which.sync('git')

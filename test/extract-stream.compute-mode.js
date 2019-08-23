@@ -1,5 +1,5 @@
 'use strict'
-const test = require('tap').test
+const { test } = require('tap')
 const computeMode = require('../lib/extract-stream.js')._computeMode
 
 const tests = {

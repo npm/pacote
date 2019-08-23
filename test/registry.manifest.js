@@ -2,10 +2,10 @@
 
 const npa = require('npm-package-arg')
 const npmlog = require('npmlog')
-const test = require('tap').test
+const { test } = require('tap')
 const tnock = require('./util/tnock')
 
-const Manifest = require('../lib/finalize-manifest').Manifest
+const { Manifest } = require('../lib/finalize-manifest')
 const manifest = require('../manifest')
 
 const BASE = {

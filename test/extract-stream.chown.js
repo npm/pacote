@@ -8,7 +8,7 @@ const npmlog = require('npmlog')
 const path = require('path')
 const pipe = BB.promisify(require('mississippi').pipe)
 const requireInject = require('require-inject')
-const test = require('tap').test
+const { test } = require('tap')
 
 require('./util/test-dir')(__filename)
 

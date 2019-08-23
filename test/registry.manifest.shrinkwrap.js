@@ -2,7 +2,7 @@
 
 const npmlog = require('npmlog')
 const tar = require('tar-stream')
-const test = require('tap').test
+const { test } = require('tap')
 const tnock = require('./util/tnock')
 
 const manifest = require('../manifest')
