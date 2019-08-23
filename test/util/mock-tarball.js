@@ -7,6 +7,8 @@ const { pipeline } = require('mississippi')
 const tar = require('tar-stream')
 const zlib = require('zlib')
 
+const gzip = BB.promisify(zlib.gzip)
+
 module.exports = makeTarball
 function makeTarball (files, opts) {
   opts = opts || {}
@@ -29,7 +31,8 @@ function makeTarball (files, opts) {
       : files[filename].data)
   })
   pack.finalize()
-  return BB.try(() => {
+
+  const tryFn = () => {
     if (opts.stream && opts.gzip) {
       return pipeline(pack, zlib.createGzip())
     } else if (opts.stream) {
@@ -37,11 +40,20 @@ function makeTarball (files, opts) {
     } else {
       return getStream.buffer(pack).then(ret => {
         if (opts.gzip) {
-          return BB.fromNode(cb => zlib.gzip(ret, cb))
+          return gzip(ret)
         } else {
           return ret
         }
       })
+    }
+  }
+  return new Promise((resolve, reject) => {
+    try {
+      Promise.resolve(tryFn())
+        .then(resolve)
+        .catch(reject)
+    } catch (err) {
+      reject(err)
     }
   })
 }
