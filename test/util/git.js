@@ -68,9 +68,13 @@ function daemon (opts) {
         }
       })
   }, { factor: 1, minTimeout: 100 }))
-    .disposer(srv => BB.fromNode(cb => {
-      srv.on('error', cb)
-      srv.on('close', cb)
-      srv.kill()
-    }))
+}
+
+module.exports.mockRepoDisposer = mockRepoDisposer
+function mockRepoDisposer (srv) {
+  return new Promise((resolve, reject) => {
+    srv.on('error', reject)
+    srv.on('close', resolve)
+    srv.kill()
+  })
 }

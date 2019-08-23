@@ -3,6 +3,8 @@
 const BB = require('bluebird')
 
 const gitMock = require('./util/git.js')
+const { mockRepoDisposer } = require('./util/git.js')
+
 const npmlog = require('npmlog')
 const path = require('path')
 const rimraf = BB.promisify(require('rimraf'))
@@ -40,10 +42,23 @@ test('get manifest from package.json in git clone', {
     })
   }))
   fixture.create(testDir)
-  return BB.using(gitMock({ cwd: path.join(testDir, 'foo') }), srv => {
+
+  const disposer = (target, result, shouldThrow = false) => {
+    const returnResult = () => {
+      if (shouldThrow) {
+        throw result
+      }
+      return result
+    }
+    return mockRepoDisposer(target)
+      .then(() => returnResult())
+      .catch(() => returnResult())
+  }
+
+  const cb = (srv) => {
     return manifest(`bar@git://127.0.0.1:${srv.port}/`, OPTS)
-      .then(mani => {
-        t.similar(mani, {
+      .then((mani) => {
+        t.similar((mani), {
           name: 'foo',
           version: '1.2.3',
           _resolved: new RegExp(`git://127.0.0.1:${srv.port}/#[a-f0-9]{40}$`),
@@ -52,7 +67,12 @@ test('get manifest from package.json in git clone', {
           _id: 'foo@1.2.3'
         }, 'manifest fetched correctly')
       })
-  })
+  }
+
+  return gitMock({ cwd: path.join(testDir, 'foo') })
+    .then((srv) => cb(srv)
+      .then((result) => disposer(srv, result))
+      .catch((err) => disposer(srv, err, true)))
 })
 
 test('cleanup?', { skip: process.platform === 'win32' }, () => rimraf(testDir))
