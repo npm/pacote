@@ -31,7 +31,8 @@ function daemon (opts) {
   return BB.resolve(retry((tryAgain, attempt) => {
     let stderr = ''
     const port = (opts.port || PORT) + attempt
-    return BB.fromNode(cb => {
+
+    return new Promise((resolve, reject) => {
       const srv = cp.spawn('git', [
         'daemon',
         '--verbose',
@@ -50,11 +51,12 @@ function daemon (opts) {
         if (match) {
           srv.pid = parseInt(match[1])
           srv.port = port
-          cb(null, srv)
+          resolve(srv)
         }
       })
-      srv.once('exit', cb)
-      srv.once('error', cb)
+      // TODO: here
+      srv.once('exit', reject)
+      srv.once('error', reject)
     })
       .then(srv => {
         return srv

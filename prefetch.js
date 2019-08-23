@@ -19,7 +19,7 @@ function prefetch (spec, opts) {
   }
   if (opts.integrity && !opts.preferOnline) {
     opts.log.silly('prefetch', 'checking if', opts.integrity, 'is already cached')
-    return cacache.get.hasContent(opts.cache, opts.integrity).then(info => {
+    return cacache.get.hasContent(opts.cache, opts.integrity).then((info) => {
       if (info) {
         opts.log.silly('prefetch', `content already exists for ${spec} (${Date.now() - startTime}ms)`)
         return {

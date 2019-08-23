@@ -21,7 +21,7 @@ function packument (spec, opts) {
   const startTime = Date.now()
   return pinflight(label, () => {
     return fetchPackument(spec, opts)
-  }).then(p => {
+  }).then((p) => {
     const elapsedTime = Date.now() - startTime
     opts.log.silly('pacote', `${spec.registry ? 'registry' : spec.type} packument for ${spec.name}@${spec.saveSpec || spec.fetchSpec} fetched in ${elapsedTime}ms`)
     return p

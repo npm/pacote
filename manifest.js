@@ -21,9 +21,9 @@ function manifest (spec, opts) {
   ].join(':')
   return pinflight(label, () => {
     const startTime = Date.now()
-    return fetchManifest(spec, opts).then(rawManifest => {
+    return fetchManifest(spec, opts).then((rawManifest) => {
       return finalizeManifest(rawManifest, spec, opts)
-    }).then(manifest => {
+    }).then((manifest) => {
       if (opts.annotate) {
         manifest._from = spec.saveSpec || spec.raw
         manifest._requested = spec

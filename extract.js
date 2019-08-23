@@ -46,7 +46,7 @@ function extract (spec, dest, opts) {
         if (!opts.resolved) {
           const pjson = path.join(dest, 'package.json')
           return readFileAsync(pjson, 'utf8')
-            .then(str => truncateAsync(pjson)
+            .then((str) => truncateAsync(pjson)
               .then(() => appendFileAsync(pjson, str.replace(
                 /}\s*$/,
                 `\n,"_resolved": ${
