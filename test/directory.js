@@ -1,9 +1,9 @@
 'use strict'
 
-const BB = require('bluebird')
+const util = require('util')
 
 const fs = require('fs')
-const mkdirp = BB.promisify(require('mkdirp'))
+const mkdirp = util.promisify(require('mkdirp'))
 const npmlog = require('npmlog')
 const path = require('path')
 const { test } = require('tap')
@@ -13,8 +13,8 @@ const manifest = require('../manifest')
 
 const CACHE = require('./util/test-dir')(__filename)
 
-const writeFile = BB.promisify(fs.writeFile)
-const readFile = BB.promisify(fs.readFile)
+const writeFile = util.promisify(fs.writeFile)
+const readFile = util.promisify(fs.readFile)
 
 npmlog.level = process.env.LOGLEVEL || 'silent'
 

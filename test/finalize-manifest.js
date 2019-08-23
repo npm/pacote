@@ -1,6 +1,6 @@
 'use strict'
 
-// const BB = require('bluebird')
+// const util = require('util')
 
 const cacache = require('cacache')
 const npa = require('npm-package-arg')

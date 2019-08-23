@@ -1,6 +1,6 @@
 'use strict'
 
-const BB = require('bluebird')
+const util = require('util')
 
 const cacache = require('cacache')
 const { clearMemoized } = require('..')
@@ -17,7 +17,7 @@ const tnock = require('./util/tnock')
 
 const tarball = require('../tarball')
 
-const readFile = BB.promisify(fs.readFile)
+const readFile = util.promisify(fs.readFile)
 
 const CACHE = path.join(testDir(__filename), 'cache')
 

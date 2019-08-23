@@ -1,12 +1,12 @@
 'use strict'
 
-const BB = require('bluebird')
+const util = require('util')
 
 const fs = require('fs')
 const mockTar = require('./util/mock-tarball')
 const npmlog = require('npmlog')
 const path = require('path')
-const pipe = BB.promisify(require('mississippi').pipe)
+const pipe = util.promisify(require('mississippi').pipe)
 const requireInject = require('require-inject')
 const { test } = require('tap')
 

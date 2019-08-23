@@ -1,15 +1,15 @@
 'use strict'
 
-const BB = require('bluebird')
+const util = require('util')
 
 const fs = require('fs')
 const getStream = require('get-stream')
-const mkdirp = BB.promisify(require('mkdirp'))
+const mkdirp = util.promisify(require('mkdirp'))
 const npa = require('npm-package-arg')
 const optCheck = require('./lib/util/opt-check.js')
 const { PassThrough } = require('stream')
 const path = require('path')
-const rimraf = BB.promisify(require('rimraf'))
+const rimraf = util.promisify(require('rimraf'))
 const withTarballStream = require('./lib/with-tarball-stream.js')
 
 module.exports = tarball

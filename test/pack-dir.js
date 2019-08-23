@@ -1,8 +1,8 @@
 'use strict'
 
-const BB = require('bluebird')
+const util = require('util')
 
-const pipe = BB.promisify(require('mississippi').pipe)
+const pipe = util.promisify(require('mississippi').pipe)
 const Tacks = require('tacks')
 const tar = require('tar')
 const { test } = require('tap')

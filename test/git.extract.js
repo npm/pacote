@@ -1,8 +1,8 @@
 'use strict'
 
-const BB = require('bluebird')
+const util = require('util')
 const fs = require('fs')
-const mkdirp = BB.promisify(require('mkdirp'))
+const mkdirp = util.promisify(require('mkdirp'))
 const npmlog = require('npmlog')
 const path = require('path')
 const { test } = require('tap')
@@ -11,7 +11,7 @@ const testDir = require('./util/test-dir')(__filename)
 
 const extract = require('../extract.js')
 
-const writeFile = BB.promisify(fs.writeFile)
+const writeFile = util.promisify(fs.writeFile)
 
 npmlog.level = process.env.LOGLEVEL || 'silent'
 const OPTS = {

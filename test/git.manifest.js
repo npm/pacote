@@ -1,13 +1,13 @@
 'use strict'
 
-const BB = require('bluebird')
+const util = require('util')
 
 const gitMock = require('./util/git.js')
 const { mockRepoDisposer } = require('./util/git.js')
 
 const npmlog = require('npmlog')
 const path = require('path')
-const rimraf = BB.promisify(require('rimraf'))
+const rimraf = util.promisify(require('rimraf'))
 const Tacks = require('tacks')
 const { test } = require('tap')
 const testDir = require('./util/test-dir.js')(__filename)

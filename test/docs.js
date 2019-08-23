@@ -1,13 +1,13 @@
 'use strict'
 
-const BB = require('bluebird')
+const util = require('util')
 
 const fs = require('fs')
 const path = require('path')
 const { test } = require('tap')
 
-const readFile = BB.promisify(fs.readFile)
-const readdir = BB.promisify(fs.readdir)
+const readFile = util.promisify(fs.readFile)
+const readdir = util.promisify(fs.readdir)
 
 test('all fixtures are documented', t => {
   // TODO - actually parse that table and make sure the

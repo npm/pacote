@@ -1,13 +1,13 @@
 'use strict'
 
-const BB = require('bluebird')
+const util = require('util')
 
 const getStream = require('get-stream')
 const { pipeline } = require('mississippi')
 const tar = require('tar-stream')
 const zlib = require('zlib')
 
-const gzip = BB.promisify(zlib.gzip)
+const gzip = util.promisify(zlib.gzip)
 
 module.exports = makeTarball
 function makeTarball (files, opts) {

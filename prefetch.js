@@ -1,9 +1,9 @@
 'use strict'
 
-const BB = require('bluebird')
+const util = require('util')
 
 const cacache = require('cacache')
-const finished = BB.promisify(require('mississippi').finished)
+const finished = util.promisify(require('mississippi').finished)
 const optCheck = require('./lib/util/opt-check')
 const npa = require('npm-package-arg')
 
@@ -15,7 +15,7 @@ function prefetch (spec, opts) {
   const startTime = Date.now()
   if (!opts.cache) {
     opts.log.info('prefetch', 'skipping prefetch: no cache provided')
-    return BB.resolve({ spec })
+    return Promise.resolve({ spec })
   }
   if (opts.integrity && !opts.preferOnline) {
     opts.log.silly('prefetch', 'checking if', opts.integrity, 'is already cached')
@@ -42,7 +42,7 @@ let fetch
 function prefetchByManifest (start, spec, opts) {
   let manifest
   let integrity
-  return BB.resolve().then(() => {
+  return Promise.resolve().then(() => {
     if (!fetch) {
       fetch = require('./lib/fetch')
     }

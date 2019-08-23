@@ -1,10 +1,10 @@
 'use strict'
 
-const BB = require('bluebird')
+const util = require('util')
 
 const cp = require('child_process')
 const git = require('../../lib/util/git')
-const mkdirp = BB.promisify(require('mkdirp'))
+const mkdirp = util.promisify(require('mkdirp'))
 const retry = require('promise-retry')
 
 module.exports = mockRepo
@@ -28,7 +28,7 @@ module.exports.daemon = daemon
 function daemon (opts) {
   opts = opts || {}
 
-  return BB.resolve(retry((tryAgain, attempt) => {
+  return Promise.resolve(retry((tryAgain, attempt) => {
     let stderr = ''
     const port = (opts.port || PORT) + attempt
 

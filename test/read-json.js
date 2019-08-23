@@ -1,9 +1,9 @@
 'use strict'
 
-const BB = require('bluebird')
+const util = require('util')
 
 const fs = require('fs')
-const mkdirp = BB.promisify(require('mkdirp'))
+const mkdirp = util.promisify(require('mkdirp'))
 const path = require('path')
 const { test } = require('tap')
 const tar = require('tar-stream')
@@ -13,7 +13,7 @@ const manifest = require('../manifest')
 
 const CACHE = require('./util/test-dir')(__filename)
 
-const writeFile = BB.promisify(fs.writeFile)
+const writeFile = util.promisify(fs.writeFile)
 
 test('support package.json with Byte Order Mark (BOM)', t => {
   const extract = tar.extract()

@@ -1,21 +1,21 @@
 'use strict'
 
-const BB = require('bluebird')
+const util = require('util')
 
 const extractStream = require('./lib/extract-stream.js')
 const fs = require('fs')
-const mkdirp = BB.promisify(require('mkdirp'))
+const mkdirp = util.promisify(require('mkdirp'))
 const npa = require('npm-package-arg')
 const optCheck = require('./lib/util/opt-check.js')
 const path = require('path')
-const rimraf = BB.promisify(require('rimraf'))
+const rimraf = util.promisify(require('rimraf'))
 const withTarballStream = require('./lib/with-tarball-stream.js')
 const inferOwner = require('infer-owner')
-const chown = BB.promisify(require('chownr'))
+const chown = util.promisify(require('chownr'))
 
-const truncateAsync = BB.promisify(fs.truncate)
-const readFileAsync = BB.promisify(fs.readFile)
-const appendFileAsync = BB.promisify(fs.appendFile)
+const truncateAsync = util.promisify(fs.truncate)
+const readFileAsync = util.promisify(fs.readFile)
+const appendFileAsync = util.promisify(fs.appendFile)
 
 // you used to call me on my...
 const selfOwner = process.getuid ? {

@@ -1,6 +1,6 @@
 'use strict'
 
-const BB = require('bluebird')
+const util = require('util')
 
 const fs = require('fs')
 const getBuff = require('get-stream').buffer
@@ -14,7 +14,7 @@ const CACHE = require('./util/test-dir')(__filename)
 
 const fetch = require('../lib/fetch')
 
-const writeFile = BB.promisify(fs.writeFile)
+const writeFile = util.promisify(fs.writeFile)
 
 npmlog.level = process.env.LOGLEVEL || 'silent'
 const OPTS = {

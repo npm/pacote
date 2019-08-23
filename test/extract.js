@@ -1,6 +1,6 @@
 'use strict'
 
-const BB = require('bluebird')
+const util = require('util')
 
 const fs = require('fs')
 const mockTar = require('./util/mock-tarball')
@@ -13,8 +13,8 @@ const testDir = require('./util/test-dir')(__filename)
 
 const extract = require('../extract.js')
 
-const readFile = BB.promisify(fs.readFile)
-const writeFile = BB.promisify(fs.writeFile)
+const readFile = util.promisify(fs.readFile)
+const writeFile = util.promisify(fs.writeFile)
 
 npmlog.level = process.env.LOGLEVEL || 'silent'
 const OPTS = {

@@ -1,20 +1,20 @@
 'use strict'
 
-const BB = require('bluebird')
+const util = require('util')
 
 const fs = require('fs')
-const mkdirp = BB.promisify(require('mkdirp'))
+const mkdirp = util.promisify(require('mkdirp'))
 const mockTar = require('./util/mock-tarball')
 const npmlog = require('npmlog')
-const pipe = BB.promisify(require('mississippi').pipe)
+const pipe = util.promisify(require('mississippi').pipe)
 const { test } = require('tap')
 
 require('./util/test-dir')(__filename)
 
 const extractStream = require('../lib/extract-stream')
 
-const readFile = BB.promisify(fs.readFile)
-const stat = BB.promisify(fs.stat)
+const readFile = util.promisify(fs.readFile)
+const stat = util.promisify(fs.stat)
 
 npmlog.level = process.env.LOGLEVEL || 'silent'
 const OPTS = {
