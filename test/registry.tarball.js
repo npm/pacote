@@ -51,17 +51,17 @@ test('basic tarball streaming', function (t) {
     }),
     'index.js': 'console.log("hello world!")'
   }
-  return mockTar(pkg).then(tarData => {
+  return mockTar(pkg).then((tarData) => {
     const srv = tnock(t, OPTS.registry)
     srv.get('/foo').reply(200, META(tarData))
     srv.get('/foo/-/foo-1.2.3.tgz').reply(200, tarData)
-    return getBuff(fetch.tarball(npa('foo@^1.2.3'), OPTS)).then(data => {
+    return getBuff(fetch.tarball(npa('foo@^1.2.3'), OPTS)).then((data) => {
       t.deepEqual(data, tarData, 'fetched tarball data matches')
     })
   })
 })
 
-test('aliased tarball streaming', t => {
+test('aliased tarball streaming', (t) => {
   const pkg = {
     'package.json': JSON.stringify({
       name: 'foo',
@@ -69,19 +69,19 @@ test('aliased tarball streaming', t => {
     }),
     'index.js': 'console.log("hello world!")'
   }
-  return mockTar(pkg).then(tarData => {
+  return mockTar(pkg).then((tarData) => {
     const srv = tnock(t, OPTS.registry)
     srv.get('/foo').reply(200, META(tarData))
     srv.get('/foo/-/foo-1.2.3.tgz').reply(200, tarData)
-    return getBuff(
-      fetch.tarball(npa('bar@npm:foo@^1.2.3'), OPTS)
-    ).then(data => {
-      t.deepEqual(data, tarData, 'fetched tarball data matches')
-    })
+    return getBuff(fetch.tarball(npa('bar@npm:foo@^1.2.3'), OPTS)).then(
+      (data) => {
+        t.deepEqual(data, tarData, 'fetched tarball data matches')
+      }
+    )
   })
 })
 
-test('errors if manifest fails', t => {
+test('errors if manifest fails', (t) => {
   const pkg = {
     'package.json': JSON.stringify({
       name: 'foo',
@@ -89,20 +89,29 @@ test('errors if manifest fails', t => {
     }),
     'index.js': 'console.log("hello world!")'
   }
-  return mockTar(pkg).then(tarData => {
+  return mockTar(pkg).then((tarData) => {
     const srv = tnock(t, OPTS.registry)
-    srv.get('/foo').times(2).reply(404)
-    return getBuff(fetch.tarball(npa('foo@^1.2.3'), OPTS)).then(data => {
-      throw new Error('this was not supposed to succeed ' + data.length + data.toString('utf8'))
-    }).catch(err => {
-      t.ok(err, 'correctly errored')
-      t.notMatch(err.message, /not supposed to succeed/)
-      t.equal(err.code, 'E404', 'got a 404 back')
-    })
+    srv
+      .get('/foo')
+      .times(2)
+      .reply(404)
+    return getBuff(fetch.tarball(npa('foo@^1.2.3'), OPTS))
+      .then((data) => {
+        throw new Error(
+          'this was not supposed to succeed ' +
+            data.length +
+            data.toString('utf8')
+        )
+      })
+      .catch((err) => {
+        t.ok(err, 'correctly errored')
+        t.notMatch(err.message, /not supposed to succeed/)
+        t.equal(err.code, 'E404', 'got a 404 back')
+      })
   })
 })
 
-test('errors if tarball fetching fails', t => {
+test('errors if tarball fetching fails', (t) => {
   const pkg = {
     'package.json': JSON.stringify({
       name: 'foo',
@@ -110,21 +119,27 @@ test('errors if tarball fetching fails', t => {
     }),
     'index.js': 'console.log("hello world!")'
   }
-  return mockTar(pkg).then(tarData => {
+  return mockTar(pkg).then((tarData) => {
     const srv = tnock(t, OPTS.registry)
     srv.get('/foo').reply(200, META(tarData))
     srv.get('/foo/-/foo-1.2.3.tgz').reply(404)
-    return getBuff(fetch.tarball(npa('foo@^1.2.3'), OPTS)).then(data => {
-      throw new Error('this was not supposed to succeed ' + data.length + data.toString('utf8'))
-    }).catch(err => {
-      t.ok(err, 'correctly errored')
-      t.notMatch(err.message, /not supposed to succeed/)
-      t.equal(err.code, 'E404', 'got a 404 back')
-    })
+    return getBuff(fetch.tarball(npa('foo@^1.2.3'), OPTS))
+      .then((data) => {
+        throw new Error(
+          'this was not supposed to succeed ' +
+            data.length +
+            data.toString('utf8')
+        )
+      })
+      .catch((err) => {
+        t.ok(err, 'correctly errored')
+        t.notMatch(err.message, /not supposed to succeed/)
+        t.equal(err.code, 'E404', 'got a 404 back')
+      })
   })
 })
 
-test('tarball url updated to fit registry protocol', t => {
+test('tarball url updated to fit registry protocol', (t) => {
   const pkg = {
     'package.json': JSON.stringify({
       name: 'foo',
@@ -132,17 +147,17 @@ test('tarball url updated to fit registry protocol', t => {
     }),
     'index.js': 'console.log("hello world!")'
   }
-  return mockTar(pkg).then(tarData => {
+  return mockTar(pkg).then((tarData) => {
     const srv = tnock(t, OPTS.registry)
     srv.get('/foo').reply(200, META(tarData, 'http://my.mock.registry/'))
     srv.get('/foo/-/foo-1.2.3.tgz').reply(200, tarData)
-    return getBuff(fetch.tarball(npa('foo@^1.2.3'), OPTS)).then(data => {
+    return getBuff(fetch.tarball(npa('foo@^1.2.3'), OPTS)).then((data) => {
       t.deepEqual(data, tarData, 'fetched tarball from https server')
     })
   })
 })
 
-test('tarball url updated to fit registry protocol+port', t => {
+test('tarball url updated to fit registry protocol+port', (t) => {
   const pkg = {
     'package.json': JSON.stringify({
       name: 'foo',
@@ -150,17 +165,21 @@ test('tarball url updated to fit registry protocol+port', t => {
     }),
     'index.js': 'console.log("hello world!")'
   }
-  return mockTar(pkg).then(tarData => {
+  return mockTar(pkg).then((tarData) => {
     const srv = tnock(t, OPTS.registry)
     srv.get('/foo').reply(200, META(tarData, 'http://my.mock.registry:567/'))
     srv.get('/foo/-/foo-1.2.3.tgz').reply(200, tarData)
-    return getBuff(fetch.tarball(npa('foo@^1.2.3'), OPTS)).then(data => {
-      t.deepEqual(data, tarData, 'fetched tarball from https server and adjusted port')
+    return getBuff(fetch.tarball(npa('foo@^1.2.3'), OPTS)).then((data) => {
+      t.deepEqual(
+        data,
+        tarData,
+        'fetched tarball from https server and adjusted port'
+      )
     })
   })
 })
 
-test('can use opts.resolved instead of manifest._resolved', t => {
+test('can use opts.resolved instead of manifest._resolved', (t) => {
   const pkg = {
     'package.json': JSON.stringify({
       name: 'foo',
@@ -168,19 +187,19 @@ test('can use opts.resolved instead of manifest._resolved', t => {
     }),
     'index.js': 'console.log("hello world!")'
   }
-  return mockTar(pkg).then(tarData => {
+  return mockTar(pkg).then((tarData) => {
     const srv = tnock(t, OPTS.registry)
     const opts = Object.assign({}, OPTS, {
       resolved: `${OPTS.registry}foo/-/foo-is-here.tgz`
     })
     srv.get('/foo/-/foo-is-here.tgz').reply(200, tarData)
-    return getBuff(fetch.tarball(npa('foo@^1.2.3'), opts)).then(data => {
+    return getBuff(fetch.tarball(npa('foo@^1.2.3'), opts)).then((data) => {
       t.deepEqual(data, tarData, 'fetched tarball from passed-in resolved')
     })
   })
 })
 
-test('opts.resolved is ignored if url points to a different host', t => {
+test('opts.resolved is ignored if url points to a different host', (t) => {
   const pkg = {
     'package.json': JSON.stringify({
       name: 'foo',
@@ -188,14 +207,14 @@ test('opts.resolved is ignored if url points to a different host', t => {
     }),
     'index.js': 'console.log("hello world!")'
   }
-  return mockTar(pkg).then(tarData => {
+  return mockTar(pkg).then((tarData) => {
     const srv = tnock(t, OPTS.registry)
     const opts = Object.assign({}, OPTS, {
       resolved: `https://some-other-registry/foo/-/foo-is-here.tgz`
     })
     srv.get('/foo').reply(200, META(tarData))
     srv.get('/foo/-/foo-1.2.3.tgz').reply(200, tarData)
-    return getBuff(fetch.tarball(npa('foo@^1.2.3'), opts)).then(data => {
+    return getBuff(fetch.tarball(npa('foo@^1.2.3'), opts)).then((data) => {
       t.deepEqual(data, tarData, 'fetched tarball from manifest url')
     })
   })

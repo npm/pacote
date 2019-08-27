@@ -14,15 +14,17 @@ const CACHE = require('./util/test-dir')(__filename)
 
 const packDir = require('../lib/util/pack-dir')
 
-test('packs a directory into a valid tarball', t => {
+test('packs a directory into a valid tarball', (t) => {
   const manifest = {
     name: 'foo',
     version: '1.2.3'
   }
-  const fixture = new Tacks(Dir({
-    'package.json': File(manifest),
-    'index.js': File('true === false\n')
-  }))
+  const fixture = new Tacks(
+    Dir({
+      'package.json': File(manifest),
+      'index.js': File('true === false\n')
+    })
+  )
   fixture.create(CACHE)
   let entries = {}
   const target = through()
@@ -32,10 +34,18 @@ test('packs a directory into a valid tarball', t => {
     entry.on('end', () => {
       entries[entry.path] = data
     })
-    entry.on('data', d => { data += d })
+    entry.on('data', (d) => {
+      data += d
+    })
   })
   const pack = packDir(manifest, CACHE, CACHE, target)
-  return Promise.all([pipe(target, extractor), pack]).then(() => {
+  return Promise.all([
+    pipe(
+      target,
+      extractor
+    ),
+    pack
+  ]).then(() => {
     t.deepEqual(entries, {
       'package/package.json': JSON.stringify(manifest),
       'package/index.js': 'true === false\n'

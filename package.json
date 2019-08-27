@@ -12,7 +12,7 @@
     "release": "standard-version -s",
     "postrelease": "npm publish && git push --follow-tags",
     "pretest": "standard",
-    "test": "nyc --all -- tap -J test/*.js",
+    "test": "nyc --all --reporter=lcov --reporter=text --reporter=text-summary -- tap -J test/*.js",
     "test-docker": "docker run -it --rm --name pacotest -v \"$PWD\":/tmp -w /tmp node:latest npm test",
     "update-coc": "weallbehave -o . && git add CODE_OF_CONDUCT.md && git commit -m 'docs(coc): updated CODE_OF_CONDUCT.md'",
     "update-contrib": "weallcontribute -o . && git add CONTRIBUTING.md && git commit -m 'docs(contributing): updated CONTRIBUTING.md'"
@@ -82,5 +82,16 @@
     "tar-stream": "^1.6.2",
     "weallbehave": "^1.2.0",
     "weallcontribute": "^1.0.7"
+  },
+  "nyc": {
+    "branches": 70,
+    "lines": 80,
+    "functions": 75,
+    "statements": 80,
+    "exclude": [
+      "node_modules/**",
+      "coverage/**",
+      "test/**"
+    ]
   }
 }

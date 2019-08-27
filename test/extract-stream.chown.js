@@ -14,7 +14,7 @@ require('./util/test-dir')(__filename)
 
 npmlog.level = process.env.LOGLEVEL || 'silent'
 
-test('accepts gid and uid opts', { skip: !process.getuid }, t => {
+test('accepts gid and uid opts', { skip: !process.getuid }, (t) => {
   const pkg = {
     'target/package.json': {
       data: JSON.stringify({
@@ -33,7 +33,10 @@ test('accepts gid and uid opts', { skip: !process.getuid }, t => {
   fsClone.utimes = (_1, _2, _3, cb) => cb()
   const openedFds = {}
   fsClone.open = (path, flags, mode, cb) => {
-    if (!cb) { cb = mode; mode = null }
+    if (!cb) {
+      cb = mode
+      mode = null
+    }
     fs.open(path, flags, mode, (err, fd) => {
       openedFds[fd] = path
       cb(err, fd)
@@ -49,13 +52,17 @@ test('accepts gid and uid opts', { skip: !process.getuid }, t => {
   }
   fsClone.chown = (p, uid, gid, cb) => {
     process.nextTick(() => {
-      t.deepEqual({
-        uid: uid,
-        gid: gid
-      }, {
-        uid: NEWUID,
-        gid: NEWGID
-      }, 'correct owner set on ' + p)
+      t.deepEqual(
+        {
+          uid: uid,
+          gid: gid
+        },
+        {
+          uid: NEWUID,
+          gid: NEWGID
+        },
+        'correct owner set on ' + p
+      )
       updatedPaths.push(path.relative('.', p))
       cb(null)
     })
@@ -63,18 +70,27 @@ test('accepts gid and uid opts', { skip: !process.getuid }, t => {
   const extractStream = requireInject('../lib/extract-stream', {
     fs: fsClone
   })
-  return mockTar(pkg, { stream: true }).then(tarStream => {
-    return pipe(tarStream, extractStream('foo@1', '.', {
-      uid: NEWUID,
-      gid: NEWGID,
-      log: npmlog
-    }))
-  }).then(() => {
-    t.deepEqual(updatedPaths.sort(), [
-      'target',
-      'target/foo',
-      'target/package.json',
-      'target/foo/index.js'
-    ].sort(), 'extracted files had correct uid/gid set')
-  })
+  return mockTar(pkg, { stream: true })
+    .then((tarStream) => {
+      return pipe(
+        tarStream,
+        extractStream('foo@1', '.', {
+          uid: NEWUID,
+          gid: NEWGID,
+          log: npmlog
+        })
+      )
+    })
+    .then(() => {
+      t.deepEqual(
+        updatedPaths.sort(),
+        [
+          'target',
+          'target/foo',
+          'target/package.json',
+          'target/foo/index.js'
+        ].sort(),
+        'extracted files had correct uid/gid set'
+      )
+    })
 })

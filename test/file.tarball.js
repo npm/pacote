@@ -30,11 +30,17 @@ test('basic tarball streaming', function (t) {
     'index.js': 'console.log("hello world!")'
   }
   const tarballPath = path.join(CACHE, 'foo-1.2.3.tgz')
-  return mockTar(pkg).then(tarData => {
-    return writeFile(tarballPath, tarData).then(() => {
-      return getBuff(fetch.tarball(npa(tarballPath), OPTS))
-    }).then(data => {
-      t.deepEqual(data, tarData, 'fetched tarball data matches one from local')
-    })
+  return mockTar(pkg).then((tarData) => {
+    return writeFile(tarballPath, tarData)
+      .then(() => {
+        return getBuff(fetch.tarball(npa(tarballPath), OPTS))
+      })
+      .then((data) => {
+        t.deepEqual(
+          data,
+          tarData,
+          'fetched tarball data matches one from local'
+        )
+      })
   })
 })

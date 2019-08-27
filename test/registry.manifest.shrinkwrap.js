@@ -42,22 +42,31 @@ const META = {
 }
 
 let TARBALL = ''
-test('tarball setup', t => {
+test('tarball setup', (t) => {
   const pack = tar.pack()
-  pack.entry({ name: 'package/npm-shrinkwrap.json' }, JSON.stringify(SHRINKWRAP))
+  pack.entry(
+    { name: 'package/npm-shrinkwrap.json' },
+    JSON.stringify(SHRINKWRAP)
+  )
   pack.entry({ name: 'package/package.json' }, JSON.stringify(PKG))
   pack.finalize()
-  pack.on('error', function (e) { throw e })
-  pack.on('end', function () { t.end() })
-  pack.on('data', function (d) { TARBALL += d })
+  pack.on('error', function (e) {
+    throw e
+  })
+  pack.on('end', function () {
+    t.end()
+  })
+  pack.on('data', function (d) {
+    TARBALL += d
+  })
 })
 
-test('fetches shrinkwrap data if missing + required', t => {
+test('fetches shrinkwrap data if missing + required', (t) => {
   const srv = tnock(t, OPTS.registry)
 
   srv.get('/foo').reply(200, META)
   srv.get('/foo/-/foo-1.2.3.tgz').reply(200, TARBALL)
-  return manifest('foo@1.2.3', OPTS).then(pkg => {
+  return manifest('foo@1.2.3', OPTS).then((pkg) => {
     t.ok(pkg, 'got a package manifest')
     t.deepEqual(pkg._shrinkwrap, SHRINKWRAP, 'got a shrinkwrap')
   })

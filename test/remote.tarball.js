@@ -31,12 +31,12 @@ test('basic tarball streaming', function (t) {
     }),
     'index.js': 'console.log("hello world!")'
   }
-  return mockTar(pkg).then(tarData => {
+  return mockTar(pkg).then((tarData) => {
     const tarballPath = '/foo/hosted/plexus/foo-1.2.3.tgz'
     const srv = tnock(t, OPTS.registry)
     srv.get(tarballPath).reply(200, tarData)
     const spec = npa(OPTS.registry + tarballPath.slice(1))
-    return getBuff(fetch.tarball(spec, OPTS)).then(data => {
+    return getBuff(fetch.tarball(spec, OPTS)).then((data) => {
       t.deepEqual(data, tarData, 'fetched tarball data matches')
     })
   })

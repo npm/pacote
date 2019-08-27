@@ -93,50 +93,59 @@ const OPTS = {
   }
 }
 
-test('fetches packument from registry', t => {
+test('fetches packument from registry', (t) => {
   const srv = tnock(t, OPTS.registry)
 
   srv.get('/foo').reply(200, META)
-  return packument('foo', OPTS).then(meta => {
+  return packument('foo', OPTS).then((meta) => {
     t.deepEqual(meta, META, 'got packument')
   })
 })
 
-test('fetches packument from scoped registry', t => {
+test('fetches packument from scoped registry', (t) => {
   const srv = tnock(t, OPTS.registry)
 
   srv.get('/@usr%2ffoo').reply(200, META)
-  return packument('@usr/foo', OPTS).then(meta => {
+  return packument('@usr/foo', OPTS).then((meta) => {
     t.deepEqual(meta, META, 'got scoped packument')
   })
 })
 
-test('fetches corgi by default', t => {
+test('fetches corgi by default', (t) => {
   const srv = tnock(t, OPTS.registry)
 
-  srv.get('/foo').matchHeader(
-    'accept', 'application/vnd.npm.install-v1+json; q=1.0, application/json; q=0.8, */*'
-  ).reply(200, META)
-  return packument('foo', OPTS).then(meta => {
+  srv
+    .get('/foo')
+    .matchHeader(
+      'accept',
+      'application/vnd.npm.install-v1+json; q=1.0, application/json; q=0.8, */*'
+    )
+    .reply(200, META)
+  return packument('foo', OPTS).then((meta) => {
     t.deepEqual(meta, META, 'got packument')
   })
 })
 
-test('falls back to fullfat if corgi fails', t => {
+test('falls back to fullfat if corgi fails', (t) => {
   const srv = tnock(t, OPTS.registry)
 
-  srv.get('/foo').matchHeader(
-    'accept', 'application/vnd.npm.install-v1+json; q=1.0, application/json; q=0.8, */*'
-  ).reply(404)
-  srv.get('/foo').matchHeader(
-    'accept', 'application/json'
-  ).reply(200, META)
-  return packument('foo', OPTS).then(meta => {
+  srv
+    .get('/foo')
+    .matchHeader(
+      'accept',
+      'application/vnd.npm.install-v1+json; q=1.0, application/json; q=0.8, */*'
+    )
+    .reply(404)
+  srv
+    .get('/foo')
+    .matchHeader('accept', 'application/json')
+    .reply(200, META)
+  return packument('foo', OPTS).then((meta) => {
     t.deepEqual(meta, META, 'got packument')
   })
 })
 
-test('sends auth token if passed in opts', t => {
+test('sends auth token if passed in opts', (t) => {
   const TOKEN = 'deadbeef'
   const opts = {
     log: OPTS.log,
@@ -145,26 +154,25 @@ test('sends auth token if passed in opts', t => {
   }
 
   const srv = tnock(t, OPTS.registry)
-  srv.get(
-    '/foo'
-  ).matchHeader(
-    'authorization', 'Bearer ' + TOKEN
-  ).reply(200, META)
-  return packument('foo', opts).then(meta => {
+  srv
+    .get('/foo')
+    .matchHeader('authorization', 'Bearer ' + TOKEN)
+    .reply(200, META)
+  return packument('foo', opts).then((meta) => {
     t.deepEqual(meta, META, 'got packument with auth')
   })
 })
 
-test('treats options as optional', t => {
+test('treats options as optional', (t) => {
   const srv = tnock(t, 'https://registry.npmjs.org')
 
   srv.get('/foo').reply(200, META)
-  return packument('foo').then(meta => {
+  return packument('foo').then((meta) => {
     t.deepEqual(meta, META, 'used default options')
   })
 })
 
-test('uses scope from spec for registry lookup', t => {
+test('uses scope from spec for registry lookup', (t) => {
   const opts = {
     '@myscope:registry': OPTS.registry,
     // package scope takes priority
@@ -172,12 +180,12 @@ test('uses scope from spec for registry lookup', t => {
   }
   const srv = tnock(t, OPTS.registry)
   srv.get('/@myscope%2ffoo').reply(200, META)
-  return packument('@myscope/foo', opts).then(meta => {
+  return packument('@myscope/foo', opts).then((meta) => {
     t.deepEqual(meta, META, 'used scope to pick registry')
   })
 })
 
-test('uses scope opt for registry lookup', t => {
+test('uses scope opt for registry lookup', (t) => {
   const srv = tnock(t, OPTS.registry)
 
   srv.get('/foo').reply(200, META)
@@ -189,28 +197,28 @@ test('uses scope opt for registry lookup', t => {
       scope: '@myscope',
       // scope option takes priority
       registry: 'nope'
-    }).then(meta => {
+    }).then((meta) => {
       t.deepEqual(meta, META, 'used scope to pick registry')
     }),
     packument('bar', {
       '@myscope:registry': OPTS.registry,
       scope: 'myscope' // @ auto-inserted
-    }).then(meta => {
+    }).then((meta) => {
       t.deepEqual(meta, META, 'scope @ was auto-inserted')
     })
   ])
 })
 
-test('defaults to registry.npmjs.org if no option given', t => {
+test('defaults to registry.npmjs.org if no option given', (t) => {
   const srv = tnock(t, 'https://registry.npmjs.org')
 
   srv.get('/foo').reply(200, META)
-  return packument('foo', { registry: undefined }).then(meta => {
+  return packument('foo', { registry: undefined }).then((meta) => {
     t.deepEqual(meta, META, 'used npm registry')
   })
 })
 
-test('supports scoped auth', t => {
+test('supports scoped auth', (t) => {
   const TOKEN = 'deadbeef'
   const opts = {
     scope: 'myscope',
@@ -218,17 +226,16 @@ test('supports scoped auth', t => {
     '//mock.reg/:_authToken': TOKEN
   }
   const srv = tnock(t, OPTS.registry)
-  srv.get(
-    '/foo'
-  ).matchHeader(
-    'authorization', 'Bearer ' + TOKEN
-  ).reply(200, META)
-  return packument('foo', opts).then(meta => {
+  srv
+    .get('/foo')
+    .matchHeader('authorization', 'Bearer ' + TOKEN)
+    .reply(200, META)
+  return packument('foo', opts).then((meta) => {
     t.deepEqual(meta, META, 'used scope to pick registry and auth')
   })
 })
 
-test('sends auth token if passed in global opts', t => {
+test('sends auth token if passed in global opts', (t) => {
   const TOKEN = 'deadbeef'
   const opts = {
     registry: OPTS.registry,
@@ -237,17 +244,16 @@ test('sends auth token if passed in global opts', t => {
   }
 
   const srv = tnock(t, OPTS.registry)
-  srv.get(
-    '/foo'
-  ).matchHeader(
-    'authorization', 'Bearer ' + TOKEN
-  ).reply(200, META)
-  return packument('foo', opts).then(meta => {
+  srv
+    .get('/foo')
+    .matchHeader('authorization', 'Bearer ' + TOKEN)
+    .reply(200, META)
+  return packument('foo', opts).then((meta) => {
     t.deepEqual(meta, META, 'got global auth token')
   })
 })
 
-test('sends basic authorization if alwaysAuth and _auth', t => {
+test('sends basic authorization if alwaysAuth and _auth', (t) => {
   const TOKEN = 'deadbeef'
   const opts = {
     registry: OPTS.registry,
@@ -256,12 +262,11 @@ test('sends basic authorization if alwaysAuth and _auth', t => {
   }
 
   const srv = tnock(t, OPTS.registry)
-  srv.get(
-    '/foo'
-  ).matchHeader(
-    'authorization', 'Basic ' + TOKEN
-  ).reply(200, META)
-  return packument('foo', opts).then(meta => {
+  srv
+    .get('/foo')
+    .matchHeader('authorization', 'Basic ' + TOKEN)
+    .reply(200, META)
+  return packument('foo', opts).then((meta) => {
     t.deepEqual(meta, META, 'alwaysAuth works')
   })
 })

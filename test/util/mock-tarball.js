@@ -15,20 +15,23 @@ function makeTarball (files, opts) {
   const pack = tar.pack()
   Object.keys(files).forEach(function (filename) {
     const entry = files[filename]
-    pack.entry({
-      name: (opts.noPrefix ? '' : 'package/') + filename,
-      type: entry.type,
-      size: entry.size,
-      mode: entry.mode,
-      mtime: entry.mtime || new Date(0),
-      linkname: entry.linkname,
-      uid: entry.uid,
-      gid: entry.gid,
-      uname: entry.uname,
-      gname: entry.gname
-    }, typeof files[filename] === 'string'
-      ? files[filename]
-      : files[filename].data)
+    pack.entry(
+      {
+        name: (opts.noPrefix ? '' : 'package/') + filename,
+        type: entry.type,
+        size: entry.size,
+        mode: entry.mode,
+        mtime: entry.mtime || new Date(0),
+        linkname: entry.linkname,
+        uid: entry.uid,
+        gid: entry.gid,
+        uname: entry.uname,
+        gname: entry.gname
+      },
+      typeof files[filename] === 'string'
+        ? files[filename]
+        : files[filename].data
+    )
   })
   pack.finalize()
 
@@ -38,7 +41,7 @@ function makeTarball (files, opts) {
     } else if (opts.stream) {
       return pack
     } else {
-      return getStream.buffer(pack).then(ret => {
+      return getStream.buffer(pack).then((ret) => {
         if (opts.gzip) {
           return gzip(ret)
         } else {

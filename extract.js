@@ -18,15 +18,18 @@ const readFileAsync = util.promisify(fs.readFile)
 const appendFileAsync = util.promisify(fs.appendFile)
 
 // you used to call me on my...
-const selfOwner = process.getuid ? {
-  uid: process.getuid(),
-  gid: process.getgid()
-} : {
-  uid: undefined,
-  gid: undefined
-}
+const selfOwner = process.getuid
+  ? {
+    uid: process.getuid(),
+    gid: process.getgid()
+  }
+  : {
+    uid: undefined,
+    gid: undefined
+  }
 
 module.exports = extract
+
 function extract (spec, dest, opts) {
   opts = optCheck(opts)
   spec = npa(spec, opts.where)
@@ -39,30 +42,35 @@ function extract (spec, dest, opts) {
   const startTime = Date.now()
   return inferOwner(dest).then(({ uid, gid }) => {
     opts = opts.concat({ uid, gid })
-    return withTarballStream(spec, opts, stream => {
+    return withTarballStream(spec, opts, (stream) => {
       return tryExtract(spec, stream, dest, opts)
     })
       .then(() => {
         if (!opts.resolved) {
           const pjson = path.join(dest, 'package.json')
-          return readFileAsync(pjson, 'utf8')
-            .then((str) => truncateAsync(pjson)
-              .then(() => appendFileAsync(pjson, str.replace(
-                /}\s*$/,
-                `\n,"_resolved": ${
-                  JSON.stringify(opts.resolved || '')
-                }\n,"_integrity": ${
-                  JSON.stringify(opts.integrity || '')
-                }\n,"_from": ${
-                  JSON.stringify(spec.toString())
-                }\n}`
-              ))))
+          return readFileAsync(pjson, 'utf8').then((str) =>
+            truncateAsync(pjson).then(() =>
+              appendFileAsync(
+                pjson,
+                str.replace(
+                  /}\s*$/,
+                  `\n,"_resolved": ${JSON.stringify(
+                    opts.resolved || ''
+                  )}\n,"_integrity": ${JSON.stringify(
+                    opts.integrity || ''
+                  )}\n,"_from": ${JSON.stringify(spec.toString())}\n}`
+                )
+              )
+            )
+          )
         }
       })
-      .then(() => opts.log.silly(
-        'extract',
-        `${spec} extracted to ${dest} (${Date.now() - startTime}ms)`
-      ))
+      .then(() =>
+        opts.log.silly(
+          'extract',
+          `${spec} extracted to ${dest} (${Date.now() - startTime}ms)`
+        )
+      )
   })
 }
 
@@ -75,9 +83,12 @@ function tryExtract (spec, tarStream, dest, opts) {
       .then((made) => {
         // respect the current ownership of unpack targets
         // but don't try to chown if we're not root.
-        if (selfOwner.uid === 0 &&
-            typeof selfOwner.gid === 'number' &&
-            selfOwner.uid !== opts.uid && selfOwner.gid !== opts.gid) {
+        if (
+          selfOwner.uid === 0 &&
+          typeof selfOwner.gid === 'number' &&
+          selfOwner.uid !== opts.uid &&
+          selfOwner.gid !== opts.gid
+        ) {
           return chown(made || dest, opts.uid, opts.gid)
         }
       })
@@ -88,12 +99,11 @@ function tryExtract (spec, tarStream, dest, opts) {
         tarStream.pipe(xtractor)
       })
       .catch(reject)
-  })
-    .catch(err => {
-      if (err.code === 'EINTEGRITY') {
-        err.message = `Verification failed while extracting ${spec}:\n${err.message}`
-      }
+  }).catch((err) => {
+    if (err.code === 'EINTEGRITY') {
+      err.message = `Verification failed while extracting ${spec}:\n${err.message}`
+    }
 
-      throw err
-    })
+    throw err
+  })
 }

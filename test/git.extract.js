@@ -22,29 +22,33 @@ const OPTS = {
   retry: false
 }
 
-test('extracting a git target reports failures', t => {
+test('extracting a git target reports failures', (t) => {
   const oldPath = process.env.PATH
   process.env.PATH = ''
   const dest = path.join(testDir, 'foo')
-  return mkdirp(dest)
-    .then(() => writeFile(path.join(dest, 'q'), 'foo'))
-    .then(() => extract('github:zkat/pacote', dest,
-      Object.assign({}, OPTS)))
+  return (
+    mkdirp(dest)
+      .then(() => writeFile(path.join(dest, 'q'), 'foo'))
+      .then(() => extract('github:zkat/pacote', dest, Object.assign({}, OPTS)))
 
-    // .finally(() => {
-    //
-    // })
-    .then(() => {
-      t.fail('the promise should not have resolved')
-    }, (err) => {
-      // We're not testing the specific text of the error message. We just check
-      // that it is an execution error.
-      t.equal(err.code, 'ENOENT')
-    })
-    .then(() => {
-      process.env.PATH = oldPath
-    })
-    .catch(() => {
-      process.env.PATH = oldPath
-    })
+      // .finally(() => {
+      //
+      // })
+      .then(
+        () => {
+          t.fail('the promise should not have resolved')
+        },
+        (err) => {
+          // We're not testing the specific text of the error message. We just check
+          // that it is an execution error.
+          t.equal(err.code, 'ENOENT')
+        }
+      )
+      .then(() => {
+        process.env.PATH = oldPath
+      })
+      .catch(() => {
+        process.env.PATH = oldPath
+      })
+  )
 })

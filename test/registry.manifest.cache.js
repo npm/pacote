@@ -57,33 +57,39 @@ const HEADERS = {
   'content-length': JSON.stringify(META).length
 }
 
-test('inflights concurrent requests', t => {
+test('inflights concurrent requests', (t) => {
   clearMemoized()
   const srv = tnock(t, OPTS.registry)
 
-  srv.get('/foo').once().reply(200, META, HEADERS)
+  srv
+    .get('/foo')
+    .once()
+    .reply(200, META, HEADERS)
   return Promise.all([
-    manifest('foo@1.2.3', OPTS).then(pkg => {
+    manifest('foo@1.2.3', OPTS).then((pkg) => {
       t.deepEqual(pkg, PKG, 'got a manifest')
     }),
-    manifest('foo@1.2.3', OPTS).then(pkg => {
+    manifest('foo@1.2.3', OPTS).then((pkg) => {
       t.deepEqual(pkg, PKG, 'got a manifest')
     })
   ])
 })
 
-test('supports fetching from an optional cache', t => {
+test('supports fetching from an optional cache', (t) => {
   clearMemoized()
-  tnock(t, OPTS.registry).get('/foo').once().reply(200, META, HEADERS)
+  tnock(t, OPTS.registry)
+    .get('/foo')
+    .once()
+    .reply(200, META, HEADERS)
   return manifest('foo@1.2.3', OPTS).then(() => {
     clearMemoized()
-    return manifest('foo@1.2.3', OPTS).then(pkg => {
+    return manifest('foo@1.2.3', OPTS).then((pkg) => {
       t.deepEqual(pkg, PKG)
     })
   })
 })
 
-test('falls back to registry if cache entry missing', t => {
+test('falls back to registry if cache entry missing', (t) => {
   clearMemoized()
   const opts = {
     registry: OPTS.registry,
@@ -93,26 +99,28 @@ test('falls back to registry if cache entry missing', t => {
   }
   const srv = tnock(t, opts.registry)
   srv.get('/foo').reply(200, META)
-  return manifest('foo@1.2.3', opts).then(pkg => {
+  return manifest('foo@1.2.3', opts).then((pkg) => {
     t.deepEqual(pkg, PKG)
   })
 })
 
-test('tries again if cached data is missing target', t => {
+test('tries again if cached data is missing target', (t) => {
   clearMemoized()
   const srv = tnock(t, OPTS.registry)
   srv.get('/foo').reply(() => {
     srv.get('/foo').reply(200, META, HEADERS)
     return [
-      200, {
+      200,
+      {
         versions: { '1.1.2': BASE }
-      }, HEADERS
+      },
+      HEADERS
     ]
   })
-  return manifest('foo@1.1.2', OPTS).then(pkg => {
+  return manifest('foo@1.1.2', OPTS).then((pkg) => {
     t.deepEqual(pkg, PKG, 'got expected package from network')
     clearMemoized()
-    return manifest('foo@1.2.3', OPTS).then(pkg => {
+    return manifest('foo@1.2.3', OPTS).then((pkg) => {
       t.deepEqual(pkg, PKG, 'got updated package in spite of cache')
     })
   })

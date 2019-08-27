@@ -9,23 +9,23 @@ const { test } = require('tap')
 const readFile = util.promisify(fs.readFile)
 const readdir = util.promisify(fs.readdir)
 
-test('all fixtures are documented', t => {
+test('all fixtures are documented', (t) => {
   // TODO - actually parse that table and make sure the
   //        important bits are documented?
   const readmePath = path.join(__dirname, 'fixtures', 'README.md')
   return Promise.all([
     readFile(readmePath, 'utf8'),
-    readdir(path.dirname(readmePath))])
-    .then(([text, files]) => {
-      files.forEach(f => {
-        if (f !== 'README.md') {
-          t.match(text, f, f + ' is mentioned.')
-        }
-      })
+    readdir(path.dirname(readmePath))
+  ]).then(([text, files]) => {
+    files.forEach((f) => {
+      if (f !== 'README.md') {
+        t.match(text, f, f + ' is mentioned.')
+      }
     })
+  })
 })
 
-test('all toplevel api calls are documented', t => {
+test('all toplevel api calls are documented', (t) => {
   const pacote = require('../')
 
   function getFns (obj) {
@@ -33,7 +33,7 @@ test('all toplevel api calls are documented', t => {
     for (let k in obj) {
       if (obj.hasOwnProperty(k) && typeof obj[k] === 'function') {
         fns.push(k)
-        fns.push.apply(fns, getFns(obj[k], k).map(n => `${k}.${n}`))
+        fns.push.apply(fns, getFns(obj[k], k).map((n) => `${k}.${n}`))
       }
     }
     return fns
@@ -41,18 +41,20 @@ test('all toplevel api calls are documented', t => {
 
   let apiFns = getFns(pacote)
   t.comment(apiFns)
-  return readFile(
-    path.join(__dirname, '..', 'README.md'),
-    'utf8'
-  ).then(readme => {
-    apiFns.forEach(fn => {
-      t.match(
-        readme,
-        new RegExp(`#### <a name="[^"]+"></a> \`> pacote.${fn}\\([^)]*\\)\``, 'g'),
-        `pacote.${fn} has a docs entry`
-      )
-    })
-  })
+  return readFile(path.join(__dirname, '..', 'README.md'), 'utf8').then(
+    (readme) => {
+      apiFns.forEach((fn) => {
+        t.match(
+          readme,
+          new RegExp(
+            `#### <a name="[^"]+"></a> \`> pacote.${fn}\\([^)]*\\)\``,
+            'g'
+          ),
+          `pacote.${fn} has a docs entry`
+        )
+      })
+    }
+  )
 })
 
 test('all options are documented')

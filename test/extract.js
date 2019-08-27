@@ -30,15 +30,16 @@ test('looks up the manifest for the given spec')
 test('extracts given spec to a target directory')
 test('skips manifest fetching of opts.digest in cache')
 
-test('validates dest and cache args', t => {
-  t.throws(() => extract('foo'),
-    TypeError('Extract requires a destination'))
-  t.throws(() => extract('github:person/repo', '/tmp', {}),
-    TypeError('Extracting git packages requires a cache folder'))
+test('validates dest and cache args', (t) => {
+  t.throws(() => extract('foo'), TypeError('Extract requires a destination'))
+  t.throws(
+    () => extract('github:person/repo', '/tmp', {}),
+    TypeError('Extracting git packages requires a cache folder')
+  )
   t.end()
 })
 
-test('opts.resolved `file:` specs bypass further resolution', t => {
+test('opts.resolved `file:` specs bypass further resolution', (t) => {
   const pkg = {
     'package.json': JSON.stringify({
       name: 'foo',
@@ -49,25 +50,32 @@ test('opts.resolved `file:` specs bypass further resolution', t => {
   const dest = path.join(testDir, 'foo')
   let sri
   return mockTar(pkg)
-    .then(tarData => {
+    .then((tarData) => {
       sri = ssri.fromData(tarData)
       const opts = Object.assign({}, OPTS, {
         integrity: sri,
         resolved: 'file:foo-1.2.3.tgz',
         where: testDir
       })
-      return writeFile(path.join(testDir, 'foo-1.2.3.tgz'), tarData)
-        .then(() => extract('foo@1.2.3', dest, opts))
+      return writeFile(path.join(testDir, 'foo-1.2.3.tgz'), tarData).then(() =>
+        extract('foo@1.2.3', dest, opts)
+      )
     })
     .then(() => readFile(path.join(dest, 'index.js'), 'utf8'))
-    .then(data => t.equal(data, pkg['index.js'], 'index.js extracted ok'))
+    .then((data) => t.equal(data, pkg['index.js'], 'index.js extracted ok'))
     .then(() => readFile(path.join(dest, 'package.json'), 'utf8'))
     .then(JSON.parse)
-    .then(json => t.deepEqual(json, {
-      name: 'foo',
-      version: '1.2.3',
-      _resolved: 'file:foo-1.2.3.tgz',
-      _integrity: sri.toString(),
-      _from: 'foo@1.2.3'
-    }, 'package.json written ok with extra _fields'))
+    .then((json) =>
+      t.deepEqual(
+        json,
+        {
+          name: 'foo',
+          version: '1.2.3',
+          _resolved: 'file:foo-1.2.3.tgz',
+          _integrity: sri.toString(),
+          _from: 'foo@1.2.3'
+        },
+        'package.json written ok with extra _fields'
+      )
+    )
 })
