@@ -75,12 +75,9 @@ See below for valid `opts` values.
 
 ### Options
 
-All options are optional.  However, many operations will fail if
-`opts.cache` is not set.  A future version of this library MAY default
-`opts.cache` to `~/.npm/_cacache`, since that is the value used by npm.
-
 * `cache` Where to store cache entries and temp files.  Passed to
-  [`cacache`](http://npm.im/cacache)
+  [`cacache`](http://npm.im/cacache).  Defaults to the same cache directory
+  that npm will use by default, based on platform and environment.
 * `where` Base folder for resolving relative `file:` dependencies.
 * `resolved` Shortcut for looking up resolved values.  Should be specified
   if known.
