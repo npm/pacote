@@ -1,0 +1,48 @@
+{
+  "name": "abbrev",
+  "dist-tags": {
+    "latest": "1.1.1"
+  },
+  "versions": {
+    "1.1.1": {
+      "name": "abbrev",
+      "version": "1.1.1",
+      "description": "Like ruby's abbrev module, but in js",
+      "author": {
+        "name": "Isaac Z. Schlueter",
+        "email": "i@izs.me"
+      },
+      "main": "abbrev.js",
+      "scripts": {
+        "test": "tap test.js --100",
+        "preversion": "npm test",
+        "postversion": "npm publish",
+        "postpublish": "git push origin --all; git push origin --tags"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git+ssh://git@github.com/isaacs/abbrev-js.git"
+      },
+      "license": "ISC",
+      "devDependencies": {
+        "tap": "^10.1"
+      },
+      "files": [
+        "abbrev.js"
+      ],
+      "readme": "# abbrev-js\n\nJust like [ruby's Abbrev](http://apidock.com/ruby/Abbrev).\n\nUsage:\n\n    var abbrev = require(\"abbrev\");\n    abbrev(\"foo\", \"fool\", \"folding\", \"flop\");\n    \n    // returns:\n    { fl: 'flop'\n    , flo: 'flop'\n    , flop: 'flop'\n    , fol: 'folding'\n    , fold: 'folding'\n    , foldi: 'folding'\n    , foldin: 'folding'\n    , folding: 'folding'\n    , foo: 'foo'\n    , fool: 'fool'\n    }\n\nThis is handy for command-line scripts, or other cases where you want to be able to accept shorthands.\n",
+      "readmeFilename": "README.md",
+      "bugs": {
+        "url": "https://github.com/isaacs/abbrev-js/issues"
+      },
+      "homepage": "https://github.com/isaacs/abbrev-js#readme",
+      "_id": "abbrev@1.1.1",
+      "_integrity": "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==",
+      "_resolved": "${CWD}/test/fixtures/abbrev-1.1.1.tgz",
+      "dist": {
+        "tarball": "file:${CWD}/test/fixtures/abbrev-1.1.1.tgz",
+        "integrity": "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q=="
+      }
+    }
+  }
+}

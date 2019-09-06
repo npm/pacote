@@ -1,3 +1,4 @@
 const { basename } = require('path')
-const map = base => base === 'index.js' ? base : `lib/${base}`
-module.exports = test => map(basename(test))
+module.exports = test =>
+  basename(test) === 'index.js' ? 'index.js'
+    : test.replace(/^test[\\\/]/, 'lib/')
