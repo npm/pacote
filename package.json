@@ -1,6 +1,6 @@
 {
-  "name": "pacote-10",
-  "version": "0.0.0",
+  "name": "pacote",
+  "version": "10.0.0-wip.0",
   "description": "JavaScript package downloader",
   "author": "Isaac Z. Schlueter <i@izs.me> (https://izs.me)",
   "license": "ISC",
