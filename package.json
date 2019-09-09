@@ -4,6 +4,7 @@
   "description": "JavaScript package downloader",
   "author": "Isaac Z. Schlueter <i@izs.me> (https://izs.me)",
   "license": "ISC",
+  "main": "lib/index.js",
   "scripts": {
     "test": "tap",
     "snap": "tap",
@@ -19,7 +20,6 @@
     "tap": "^14.6.1"
   },
   "files": [
-    "index.js",
     "lib"
   ],
   "keywords": [
