@@ -14,7 +14,8 @@
   },
   "tap": {
     "check-coverage": true,
-    "coverage-map": "map.js"
+    "coverage-map": "map.js",
+    "esm": false
   },
   "devDependencies": {
     "tap": "^14.6.1"
