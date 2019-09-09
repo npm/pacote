@@ -7,12 +7,18 @@ if (mungePath) {
   process.env.PATH = __dirname
 }
 
+const er = {
+  message: 'No git binary found in $PATH',
+  code: 'ENOGIT',
+}
+
 const whichGit = require('../../../lib/util/git/which.js')
 t.equal(whichGit({ git: 'foo' }), 'foo')
 if (mungePath)
-  t.equal(whichGit(), null)
+  t.match(whichGit(), er)
 else {
   const which = require('which')
   t.equal(whichGit(), which.sync('git'))
+  t.match(whichGit({ git: false }), er)
   t.spawn(process.execPath, [__filename, 'mungePath'])
 }
