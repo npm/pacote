@@ -10,7 +10,6 @@ const { promisify } = require('util')
 
 const t = require('tap')
 
-mkdirp.sync(repo)
 t.teardown(() => rimraf.sync(repo))
 
 const fs = require('fs')
@@ -106,5 +105,5 @@ t.test('check the revs', t =>
     t.equal(r, r2)
     t.match(r, expect)
     Object.keys(r.shas).forEach(sha => r.shas[sha].forEach(ref =>
-      t.equal(r.refs[ref].sha, sha, 'shas list is consistent')))
+      t.equal(r.refs[ref].sha, sha, `shas list is consistent ${ref}`)))
   })))
