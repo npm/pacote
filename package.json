@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "require-inject": "^1.4.4",
-    "tap": "^14.6.1"
+    "tap": "^14.6.2"
   },
   "files": [
     "lib"
