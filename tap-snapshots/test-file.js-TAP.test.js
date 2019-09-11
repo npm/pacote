@@ -8,7 +8,7 @@
 exports[`test/file.js TAP basic > extract 1`] = `
 Object {
   "integrity": "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==",
-  "resolved": "/Users/isaacs/dev/npm/pacote/test/fixtures/abbrev-1.1.1.tgz",
+  "resolved": "\${CWD}/test/fixtures/abbrev-1.1.1.tgz",
 }
 `
 
@@ -16,7 +16,7 @@ exports[`test/file.js TAP basic > manifest 1`] = `
 Object {
   "_id": "abbrev@1.1.1",
   "_integrity": "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==",
-  "_resolved": "/Users/isaacs/dev/npm/pacote/test/fixtures/abbrev-1.1.1.tgz",
+  "_resolved": "\${CWD}/test/fixtures/abbrev-1.1.1.tgz",
   "author": Object {
     "email": "i@izs.me",
     "name": "Isaac Z. Schlueter",
@@ -85,7 +85,7 @@ Object {
     "1.1.1": Object {
       "_id": "abbrev@1.1.1",
       "_integrity": "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==",
-      "_resolved": "/Users/isaacs/dev/npm/pacote/test/fixtures/abbrev-1.1.1.tgz",
+      "_resolved": "\${CWD}/test/fixtures/abbrev-1.1.1.tgz",
       "author": Object {
         "email": "i@izs.me",
         "name": "Isaac Z. Schlueter",
@@ -99,7 +99,7 @@ Object {
       },
       "dist": Object {
         "integrity": "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==",
-        "tarball": "file:/Users/isaacs/dev/npm/pacote/test/fixtures/abbrev-1.1.1.tgz",
+        "tarball": "file:\${CWD}/test/fixtures/abbrev-1.1.1.tgz",
       },
       "files": Array [
         "abbrev.js",

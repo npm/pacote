@@ -8,6 +8,7 @@ const mkdirp = require('mkdirp')
 const me = resolve(__dirname, basename(__filename, '.js'))
 rimraf.sync(me)
 mkdirp.sync(me)
+t.cleanSnapshot = str => str.split(process.cwd()).join('${CWD}')
 t.teardown(() => rimraf.sync(me))
 
 const abbrev = resolve(__dirname, 'fixtures/abbrev-1.1.1.tgz')
