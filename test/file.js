@@ -13,7 +13,6 @@ t.teardown(() => rimraf.sync(me))
 
 const abbrev = resolve(__dirname, 'fixtures/abbrev-1.1.1.tgz')
 const abbrevspec = `file:${relative(process.cwd(), abbrev)}`
-const abbrevMani = require('./fixtures/abbrev-manifest-min.json')
 
 t.test('basic', t => {
   const f = new FileFetcher(abbrevspec, {})

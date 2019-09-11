@@ -1,0 +1,12 @@
+{
+  "name": "git-prepare-script",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "prepare": "node prepare.js"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "abbrev": "^1.1.1"
+  }
+}
