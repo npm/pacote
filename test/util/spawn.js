@@ -108,21 +108,3 @@ switch (process.argv[2]) {
     setTimeout(() => {}, 1000)
     break
 }
-
-// write some node programs that can be spawned and do stuff
-switch (process.argv[2]) {
-  case undefined:
-    main()
-    break
-
-  case 'echo':
-    console.log('ok')
-    process.exit(0)
-  case 'fail':
-    console.error('not ok')
-    process.exit(1)
-  case 'signal':
-    process.kill(process.pid, 'SIGTERM')
-    setTimeout(() => {}, 1000)
-    break
-}
