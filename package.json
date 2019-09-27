@@ -37,6 +37,7 @@
     "lru-cache": "^5.1.1",
     "make-fetch-happen": "github:npm/make-fetch-happen#v6-minipass-refactor-wip",
     "minipass": "^2.9.0",
+    "mutate-fs": "^2.1.1",
     "npm-packlist": "^1.4.4",
     "npm-pick-manifest": "^3.0.2",
     "npm-registry-fetch": "^4.0.0",

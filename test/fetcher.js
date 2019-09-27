@@ -6,7 +6,6 @@ if (fakeSudo) {
   process.getuid = () => 0
   const fakeChown = type => (path, uid, gid, cb) => {
     process.chownLog.push({type, path, uid, gid})
-    //;(type === 'chown' ? chown : lchown)(path, uid, gid, cb)
     process.nextTick(cb)
   }
   const chown = fs.chown
@@ -22,10 +21,12 @@ const t = require('tap')
 if (!fakeSudo)
   t.teardown(() => require('rimraf').sync(me))
 
+require('rimraf').sync(me)
 const npa = require('npm-package-arg')
 const { promisify } = require('util')
 const rimraf = promisify(require('rimraf'))
 const mkdirp = require('mkdirp')
+mkdirp.sync(me)
 
 const _tarballFromResolved = Symbol.for('pacote.Fetcher._tarballFromResolved')
 
@@ -55,7 +56,7 @@ t.test('tarball data', t =>
     cache,
     integrity: abbrevMani._integrity,
   }).tarball())
-  .then(data => t.equal(data.toString('hex'), fs.readFileSync(abbrev, 'hex'), 'with integrity')))
+  .then(data => t.same(data, fs.readFileSync(abbrev), 'with integrity')))
 
 t.test('tarballFile', t => {
   const target = resolve(me, 'tarball-file')
@@ -161,15 +162,25 @@ t.test('extract', t => {
         preferOnline: false,
       }).extract(target + '/badcache')
         .then(({resolved, integrity}) => {
-          t.same(logs, [
+          t.match(logs, [
             [ 'warn', 'tar', 'zlib: incorrect header check' ],
+            [
+              'silly',
+              'tar',
+              { message: 'zlib: incorrect header check',
+                errno: Number,
+                code: 'Z_DATA_ERROR',
+                recoverable: false,
+                tarCode: 'TAR_ABORT'
+              }
+            ],
             [
               'warn',
               'tarball',
-              'cached data for file:test/fixtures/abbrev-1.1.1.tgz ' +
-              '(sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOF' +
-              'kl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==) seems ' +
-              'to be corrupted. Refreshing cache.'
+              'cached data for file:test/fixtures/abbrev-1.1.1.tgz (sha512-' +
+              'nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTN' +
+              'NfNtAfZ9/1RtehkszU9qcTii0Q==) seems to be corrupted. ' +
+              'Refreshing cache.'
             ],
             [
               'silly',
@@ -286,6 +297,24 @@ t.test('extract', t => {
       missing.forEach(f =>
         t.throws(() => fs.statSync(dir + '/' + f), 'excluded ' + f))
     })
+})
+
+t.test('a non-retriable cache error', t => {
+  const res = {}
+  const target = resolve(me, 'non-retriable-failure')
+  const mutateFS = require('mutate-fs')
+  const cacache = require('cacache')
+  const data = fs.readFileSync(abbrev)
+  const poop = new Error('poop')
+  poop.code = 'LE_POOP'
+  t.teardown(mutateFS.fail('read', poop))
+  t.teardown(() => process.chownLog.length = 0)
+  return cacache.put(cache, 'any-old-key', data, {
+    integrity: abbrevMani._integrity,
+  }).then(() => t.rejects(new FileFetcher(abbrev, {
+    cache,
+    integrity: abbrevMani._integrity,
+  }).manifest(), poop))
 })
 
 // no need to do some of these basic tests in sudo mode
