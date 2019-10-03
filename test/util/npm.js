@@ -12,6 +12,8 @@ cp.spawn = (...args) => {
   return proc
 }
 
+t.cleanSnapshot = s => s.split(process.execPath).join('{NODE}')
+
 const npm = require('../../lib/util/npm.js')
 t.test('do the things', t => {
   t.pass('wtf')

@@ -11,9 +11,9 @@ Object {
     "/path/to/npm/bin/npm-cli.js",
     "flerb",
   ],
-  "cmd": "/usr/local/bin/node",
+  "cmd": "{NODE}",
   "stderr": "",
-  "stdout": "[\\"/usr/local/bin/node\\",[\\"/path/to/npm/bin/npm-cli.js\\",\\"flerb\\"],{\\"cwd\\":\\"/cwd\\"}]",
+  "stdout": "[\\"{NODE}\\",[\\"/path/to/npm/bin/npm-cli.js\\",\\"flerb\\"],{\\"cwd\\":\\"/cwd\\"}]",
 }
 `
 
