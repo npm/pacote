@@ -64,7 +64,11 @@ t.test('underscore, no tag or version', t => {
   const f = new RegistryFetcher('underscore', {registry, cache})
 
   return f.resolve().then(r => t.equal(r, `${registry}underscore/-/underscore-1.5.1.tgz`))
-  .then(() => f.manifest()).then(m => t.match(m, { version: '1.5.1' }))
+  .then(() => f.manifest()).then(m => {
+    t.equal(m, f.package)
+    t.match(m, { version: '1.5.1' })
+    return f.manifest().then(m2 => t.equal(m, m2, 'manifest cached'))
+  })
   .then(() => f.extract(me + '/underscore'))
   .then(result => t.deepEqual(result, {
     resolved: `${registry}underscore/-/underscore-1.5.1.tgz`,

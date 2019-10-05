@@ -14,11 +14,14 @@ t.teardown(() => rimraf.sync(me))
 const abbrev = resolve(__dirname, 'fixtures/abbrev-1.1.1.tgz')
 const abbrevspec = `file:${relative(process.cwd(), abbrev)}`
 
-t.test('basic', t => {
+t.test('basic', async t => {
   const f = new FileFetcher(abbrevspec, {})
   t.same(f.types, ['file'])
-  t.resolveMatchSnapshot(f.packument(), 'packument')
-  t.resolveMatchSnapshot(f.manifest(), 'manifest')
+  const fm = await f.manifest()
+  t.matchSnapshot(fm, 'manifest')
+  t.equal(fm, f.package)
+  t.equal(await f.manifest(), fm, 'cached manifest')
+  t.matchSnapshot(await f.packument(), 'packument')
   const pj = me + '/extract/package.json'
   return t.resolveMatchSnapshot(f.extract(me + '/extract'), 'extract')
     .then(() => t.matchSnapshot(require(pj), 'package.json extracted'))

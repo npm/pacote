@@ -255,6 +255,7 @@ t.test('basic stuff', async t => {
   t.throws(() => fs.statSync(me + '/g/prepare.js'))
 
   const gm = await g.manifest()
+  t.equal(gm, g.package)
   t.match(gm, {
     name: 'repo',
     version: '1.0.0',
@@ -271,6 +272,7 @@ t.test('basic stuff', async t => {
     _integrity: `${g.integrity}`,
     _resolved: `${remote}#${g.resolvedSha}`,
   })
+  t.equal(await g.manifest(), gm, 'cached manifest')
 
   // one that doesn't have an npm install step, but does have submods
   const subs = new GitFetcher(submodsRemote, {cache})

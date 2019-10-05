@@ -23,6 +23,8 @@ t.test('basic', t => {
   const pj = me + '/abbrev/package.json'
   return t.resolveMatchSnapshot(f.extract(me + '/abbrev'), 'extract')
     .then(() => t.matchSnapshot(require(pj), 'package.json extracted'))
+    .then(() => t.matchSnapshot(f.package, 'saved package.json'))
+    .then(() => f.manifest().then(mani => t.equal(mani, f.package)))
 })
 
 const prepare = resolve(__dirname, 'fixtures/prepare-script')
