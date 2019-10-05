@@ -1,4 +1,4 @@
-require('abbrev')
+require('./node_modules/abbrev')
 const fs = require('fs')
 fs.writeFileSync(__dirname + '/index.js', `
 // abbrev should not be here in production!

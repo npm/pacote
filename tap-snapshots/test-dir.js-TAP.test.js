@@ -128,7 +128,7 @@ Object {
 
 exports[`test/dir.js TAP with prepare script > extract 1`] = `
 Object {
-  "integrity": "sha512-xUCDNBpGrK4uuS6LLf6c367HTkNF9+ljWScpTI/d+/Qc5izFR/HxyxALO7fP4Vlr09qiPKZPxrjmav3s8Fs4UQ==",
+  "integrity": "sha512-HTzPAt8wmXNchUdisnGDSCuUgrFee5v8F6GsLc5mQd29VXiNzv4PGz71jjLSIF1wWQSB+UjLTmSJSGznF/s/Lw==",
   "resolved": "\${CWD}/test/fixtures/prepare-script",
 }
 `
