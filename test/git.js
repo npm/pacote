@@ -125,7 +125,6 @@ t.test('setup', { bail: true }, t => {
       'daemon',
       `--port=${gitPort}`,
       '--export-all',
-      '--log-destination=stderr',
       '--verbose',
       '--informative-errors',
       '--reuseaddr',

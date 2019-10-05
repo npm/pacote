@@ -56,7 +56,6 @@ t.test('spawn daemon', { bail: true }, t => {
     'daemon',
     `--port=${port}`,
     '--export-all',
-    '--log-destination=stderr',
     '--verbose',
     '--informative-errors',
     '--reuseaddr',
