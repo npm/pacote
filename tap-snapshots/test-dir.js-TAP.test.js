@@ -7,7 +7,7 @@
 'use strict'
 exports[`test/dir.js TAP basic > extract 1`] = `
 Object {
-  "integrity": "sha512-Pu19JLmf7/K5q3YMhqAKTywGAqjs2JOPu2xYkV2NE+HfN1V4OH7yJH1kbm5Uwo+GhQcDLl8wqdSttV1RNbEDzg==",
+  "integrity": "sha512-Ict4yhLfiPOkcX+yjBRSI2QUetKt+A08AXMyLeQbKGYg/OGI/1k47Hu9tWZOx1l4j+M1z07Zxt3IL41TmLkbDw==",
   "resolved": "\${CWD}/test/fixtures/abbrev",
 }
 `
@@ -128,7 +128,7 @@ Object {
 
 exports[`test/dir.js TAP with prepare script > extract 1`] = `
 Object {
-  "integrity": "sha512-QobLMr3ORoYTIGcLiChmBgyBSZxuTtw4hXerXmBiStRt1qFfrnTLj7+s+9/k6riMciuLwwGL1kDSOi71oMTbcg==",
+  "integrity": "sha512-xUCDNBpGrK4uuS6LLf6c367HTkNF9+ljWScpTI/d+/Qc5izFR/HxyxALO7fP4Vlr09qiPKZPxrjmav3s8Fs4UQ==",
   "resolved": "\${CWD}/test/fixtures/prepare-script",
 }
 `
