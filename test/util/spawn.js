@@ -52,13 +52,10 @@ const main = () => {
 
   t.test('errors', t => {
     t.rejects(spawn(__filename), {
-      message: `spawn ${__filename} EACCES`,
+      message: /spawn.*EACCES/,
       errno: 'EACCES',
       code: 'EACCES',
-      syscall: `spawn ${__filename}`,
-      path: __filename,
-      stdout: '',
-      stderr: '',
+      syscall: /spawn/,
     })
     return t.test('stdio errors', t => {
       const proto = require('stream').Readable.prototype
