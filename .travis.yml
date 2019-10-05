@@ -1,5 +1,8 @@
 language: node_js
 
+script:
+  - npm test -- -t3600
+
 node_js:
   - node
   - 12
