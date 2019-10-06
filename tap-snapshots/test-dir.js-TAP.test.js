@@ -165,6 +165,13 @@ Object {
 }
 `
 
+exports[`test/dir.js TAP make bins executable > results of unpack 1`] = `
+Object {
+  "integrity": "sha512-rlE32nBV7XgKCm0I7YqAewyVPbaRJWUQMZUFLlngGK3imG+som3Hin7d/zPTikWg64tHIxb8VXeeq6u0IRRfmQ==",
+  "resolved": "\${CWD}/test/fixtures/bin-object",
+}
+`
+
 exports[`test/dir.js TAP with prepare script > extract 1`] = `
 Object {
   "integrity": "sha512-HTzPAt8wmXNchUdisnGDSCuUgrFee5v8F6GsLc5mQd29VXiNzv4PGz71jjLSIF1wWQSB+UjLTmSJSGznF/s/Lw==",

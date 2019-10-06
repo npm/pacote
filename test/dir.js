@@ -59,3 +59,13 @@ t.test('when read fails', t => {
   const f = new DirFetcher(preparespec, {})
   return t.rejects(f.extract(me + '/nope'), poop)
 })
+
+t.test('make bins executable', async t => {
+  const file = resolve(__dirname, 'fixtures/bin-object')
+  const spec = `file:${relative(process.cwd(), file)}`
+  const f = new DirFetcher(spec, {})
+  const target = resolve(me, basename(file))
+  const res = await f.extract(target)
+  t.matchSnapshot(res, 'results of unpack')
+  t.equal(fs.statSync(target + '/script.js').mode & 0o111, 0o111)
+})

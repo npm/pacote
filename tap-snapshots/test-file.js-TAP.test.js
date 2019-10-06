@@ -125,3 +125,24 @@ Object {
   },
 }
 `
+
+exports[`test/file.js TAP make bins executable bin-good > results of unpack 1`] = `
+Object {
+  "integrity": "sha512-Fx11OiHxV82CztnPk+k0S6H/66J4/eUzZEMGX2dJjP+Mxfrm8fSzE4SQG604zWk17ELZsOGENCdWSkvj4cpjUw==",
+  "resolved": "\${CWD}/test/fixtures/bin-good.tgz",
+}
+`
+
+exports[`test/file.js TAP make bins executable bin-object > results of unpack 1`] = `
+Object {
+  "integrity": "sha512-TqzCjecWyQe8vqLbT0nv/OaWf0ptRZ2DnPmiuGUYJJb70shp02+/uu37IJSkM2ZEP1SAOeKrYrWPVIIYW+d//g==",
+  "resolved": "\${CWD}/test/fixtures/bin-object.tgz",
+}
+`
+
+exports[`test/file.js TAP make bins executable bin-string > results of unpack 1`] = `
+Object {
+  "integrity": "sha512-iCc87DMYVMofO221ksAlMD88Zgsr4OIvqeX73KxTPikWaQPvBFZpzI9FGWnD4PTLTyJzOSETQh86+IwEidJRZg==",
+  "resolved": "\${CWD}/test/fixtures/bin-string.tgz",
+}
+`

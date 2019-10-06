@@ -18,6 +18,7 @@ const { relative, resolve, basename } = require('path')
 const me = resolve(__dirname, basename(__filename, '.js'))
 const Fetcher = require('../lib/fetcher.js')
 const t = require('tap')
+t.cleanSnapshot = s => s.split(process.cwd()).join('{CWD}')
 if (!fakeSudo)
   t.teardown(() => require('rimraf').sync(me))
 
@@ -378,5 +379,17 @@ if (!fakeSudo) {
 
     t.end()
   })
-
 }
+
+t.test('make bins executable', async t => {
+  const file = resolve(__dirname, 'fixtures/bin-object.tgz')
+  const spec = `file:${relative(process.cwd(), file)}`
+  const f = new FileFetcher(spec, {})
+  // simulate a fetcher that already has a manifest
+  const manifest = require('./fixtures/bin-object/package.json')
+  f.package = manifest
+  const target = resolve(me, basename(file, '.tgz'))
+  const res = await f.extract(target)
+  t.matchSnapshot(res, 'results of unpack')
+  t.equal(fs.statSync(target + '/script.js').mode & 0o111, 0o111)
+})
