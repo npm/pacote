@@ -36,7 +36,6 @@
     "fs-minipass": "^2.0.0",
     "infer-owner": "^1.0.4",
     "lru-cache": "^5.1.1",
-    "make-fetch-happen": "^6.0.0",
     "minipass": "^3.0.1",
     "minipass-fetch": "^1.1.2",
     "mutate-fs": "^2.1.1",
