@@ -72,7 +72,7 @@ t.test('underscore, no tag or version', t => {
   .then(() => f.extract(me + '/underscore'))
   .then(result => t.deepEqual(result, {
     resolved: `${registry}underscore/-/underscore-1.5.1.tgz`,
-    integrity: 'sha1-0r3oF9F2/63olKtxRY5oKhS4bck=',
+    integrity: 'sha1-0r3oF9F2/63olKtxRY5oKhS4bck= sha512-yOc7VukmA45a1D6clUn1mD7Mbc9LcVYAQEXNKSTblzha59hSFJ6cAt90JDoxh05GQnTPI9nk4wjT/I8C/nAMPw==',
   }))
 })
 
@@ -86,6 +86,17 @@ t.test('scoped, no tag or version', t => {
     resolved: `${registry}@isaacs/namespace-test/-/namespace-test-1.0.0.tgz`,
     integrity: 'sha512-5ZYe1LgwHIaag0p9loMwsf5N/wJ4XAuHVNhSO+qulQOXWnyJVuco6IZjo+5u4ZLF/GimdHJcX+QK892ONfOCqQ==',
   }))
+})
+
+t.test('provide invalid integrity, fails to unpack', async t => {
+  const f = new RegistryFetcher('@isaacs/namespace-test', {
+    registry,
+    cache,
+    integrity: 'sha512-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=='
+  })
+  return t.rejects(f.extract(me + '/bad-integrity'), {
+    code: 'EINTEGRITY',
+  })
 })
 
 t.test('404 fails with E404', t => {

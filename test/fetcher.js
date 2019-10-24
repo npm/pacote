@@ -393,3 +393,19 @@ t.test('make bins executable', async t => {
   t.matchSnapshot(res, 'results of unpack')
   t.equal(fs.statSync(target + '/script.js').mode & 0o111, 0o111)
 })
+
+t.test('set integrity, pick default algo', t => {
+  const opts = {
+    integrity: 'sha1-foobar sha256-barbaz sha512-glorp',
+    defaultIntegrityAlgorithm: 'sha256',
+  }
+  const f = new FileFetcher('pkg.tgz', opts)
+  t.equal(f.pickIntegrityAlgorithm(), 'sha512')
+  t.isa(opts.integrity, Object)
+  const i = f.integrity
+  f.integrity = null
+  t.equal(f.integrity, i, 'cannot remove integrity')
+  const g = new FileFetcher('pkg.tgz', { defaultIntegrityAlgorithm: 'sha256' })
+  t.equal(g.pickIntegrityAlgorithm(), 'sha256')
+  t.end()
+})
