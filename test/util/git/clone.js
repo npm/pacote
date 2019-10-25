@@ -3,15 +3,17 @@ const clone = require('../../../lib/util/git/clone.js')
 const t = require('tap')
 const fs = require('fs')
 const {spawn} = require('child_process')
-const mkdirp = require('mkdirp')
 const rimraf = require('rimraf')
 const { promisify } = require('util')
-const { resolve, basename } = require('path')
+const { resolve } = require('path')
 
 const port = 12345 + (+process.env.TAP_CHILD_ID || 0)
 const spawnGit = require('../../../lib/util/git/spawn.js')
-const me = resolve(__dirname, basename(__filename, '.js'))
-rimraf.sync(me)
+t.saveFixture = true
+const me = t.testdir({
+  'submodule-repo': {},
+  repo: {},
+})
 const remote = `git://localhost:${port}/repo`
 const submodsRemote = `git://localhost:${port}/submodule-repo`
 const repo = resolve(me, 'repo')
@@ -19,7 +21,6 @@ const repo = resolve(me, 'repo')
 t.test('create repo', { bail: true }, t => {
   const git = (...cmd) => spawnGit(cmd, { cwd: repo })
   const write = (f, c) => fs.writeFileSync(`${repo}/${f}`, c)
-  mkdirp.sync(repo)
   return git('init')
   .then(() => write('foo', 'bar'))
   .then(() => git('add', 'foo'))
@@ -81,7 +82,6 @@ t.test('create a repo with a submodule', { bail: true }, t => {
   const repo = resolve(me, 'submodule-repo')
   const git = (...cmd) => spawnGit(cmd, { cwd: repo })
   const write = (f, c) => fs.writeFileSync(`${repo}/${f}`, c)
-  mkdirp.sync(repo)
   return git('init')
     .then(() => write('file', 'data'))
     .then(() => git('add', 'file'))

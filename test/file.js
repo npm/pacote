@@ -5,11 +5,8 @@ const npa = require('npm-package-arg')
 const { promisify } = require('util')
 const rimraf = promisify(require('rimraf'))
 const mkdirp = require('mkdirp')
-const me = resolve(__dirname, basename(__filename, '.js'))
-rimraf.sync(me)
-mkdirp.sync(me)
+const me = t.testdir()
 t.cleanSnapshot = str => str.split(process.cwd()).join('${CWD}')
-t.teardown(() => rimraf.sync(me))
 
 const abbrev = resolve(__dirname, 'fixtures/abbrev-1.1.1.tgz')
 const abbrevspec = `file:${relative(process.cwd(), abbrev)}`

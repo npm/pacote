@@ -15,19 +15,14 @@ if (fakeSudo) {
 }
 
 const { relative, resolve, basename } = require('path')
-const me = resolve(__dirname, basename(__filename, '.js'))
-const Fetcher = require('../lib/fetcher.js')
 const t = require('tap')
+const me = t.testdir()
+const Fetcher = require('../lib/fetcher.js')
 t.cleanSnapshot = s => s.split(process.cwd()).join('{CWD}')
-if (!fakeSudo)
-  t.teardown(() => require('rimraf').sync(me))
 
-require('rimraf').sync(me)
 const npa = require('npm-package-arg')
 const { promisify } = require('util')
-const rimraf = promisify(require('rimraf'))
 const mkdirp = require('mkdirp')
-mkdirp.sync(me)
 
 const _tarballFromResolved = Symbol.for('pacote.Fetcher._tarballFromResolved')
 

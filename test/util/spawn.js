@@ -1,4 +1,3 @@
-
 const main = () => {
   const t = require('tap')
   const spawn = require('../../lib/util/spawn.js')

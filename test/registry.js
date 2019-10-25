@@ -2,13 +2,8 @@ const RegistryFetcher = require('../lib/registry.js')
 const t = require('tap')
 const mr = require('npm-registry-mock')
 const port = 18000 + (+process.env.TAP_CHILD_ID || 0)
-const mkdirp = require('mkdirp')
-const rimraf = require('rimraf')
 const {resolve, basename} = require('path')
-const me = resolve(__dirname, basename(__filename, '.js'))
-rimraf.sync(me)
-mkdirp.sync(me)
-t.teardown(() => rimraf.sync(me))
+const me = t.testdir()
 
 t.test('start mock registry', { bail: true }, t => {
   mr({

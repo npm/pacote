@@ -1,25 +1,13 @@
 const revs = require('../../../lib/util/git/revs.js')
 const spawn = require('../../../lib/util/git/spawn.js')
-
-const { resolve, basename } = require('path')
-const repo = resolve(__dirname, basename(__filename, '.js'))
-
-const mkdirp = require('mkdirp')
-const rimraf = require('rimraf')
-const { promisify } = require('util')
-
 const t = require('tap')
-
-t.teardown(() => rimraf.sync(repo))
-
+const repo = t.testdir()
 const fs = require('fs')
 
 const git = (...cmd) => spawn(cmd, {cwd: repo})
 const write = (f, c) => fs.writeFileSync(`${repo}/${f}`, c)
 t.test('setup', t =>
-  promisify(rimraf)(repo)
-  .then(() => mkdirp.sync(repo))
-  .then(() => git('init'))
+  git('init')
   .then(() => write('foo', 'bar'))
   .then(() => git('add', 'foo'))
   .then(() => git('commit', '-m', 'foobar'))

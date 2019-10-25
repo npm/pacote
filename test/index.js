@@ -2,7 +2,7 @@ const t = require('tap')
 const pacote = require('../lib/index.js')
 const fs = require('fs')
 
-const { resolve, basename, relative } = require('path')
+const { resolve, relative } = require('path')
 const abbrev = resolve(__dirname, 'fixtures/abbrev-1.1.1.tgz')
 const abbrevspec = `file:${relative(process.cwd(), abbrev)}`
 const abbrevMani = require('./fixtures/abbrev-manifest-min.json')
@@ -12,10 +12,7 @@ const ignore = resolve(__dirname, 'fixtures/ignore-pkg.tgz')
 const ignorespec = `file:${relative(process.cwd(), ignore)}`
 
 const mkdirp = require('mkdirp')
-const me = resolve(__dirname, basename(__filename, '.js'))
-mkdirp.sync(me)
-const rimraf = require('rimraf')
-t.teardown(() => rimraf.sync(me))
+const me = t.testdir()
 
 t.cleanSnapshot = str => str
   .split(process.cwd()).join('${CWD}')

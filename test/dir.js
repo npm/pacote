@@ -1,16 +1,14 @@
 const DirFetcher = require('../lib/dir.js')
 const t = require('tap')
-const { relative, resolve, basename } = require('path')
 const npa = require('npm-package-arg')
 const fs = require('fs')
 const { promisify } = require('util')
-const rimraf = promisify(require('rimraf'))
-const mkdirp = require('mkdirp')
-const me = resolve(__dirname, basename(__filename, '.js'))
-rimraf.sync(me)
-mkdirp.sync(me)
+
+const { relative, resolve, basename } = require('path')
+
+const me = t.testdir()
+
 t.cleanSnapshot = str => str.split(process.cwd()).join('${CWD}')
-t.teardown(() => rimraf.sync(me))
 
 const abbrev = resolve(__dirname, 'fixtures/abbrev')
 const abbrevspec = `file:${relative(process.cwd(), abbrev)}`

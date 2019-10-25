@@ -2,14 +2,9 @@ const RemoteFetcher = require('../lib/remote.js')
 const http = require('http')
 const t = require('tap')
 
-const { relative, resolve, basename } = require('path')
-const me = resolve(__dirname, basename(__filename, '.js'))
-const mkdirp = require('mkdirp')
-const rimraf = require('rimraf')
-rimraf.sync(me)
-mkdirp.sync(me)
+const { relative, resolve } = require('path')
+const me = t.testdir()
 const cache = resolve(me, 'cache')
-t.teardown(() => rimraf.sync(me))
 
 t.cleanSnapshot = str => str.split(''+port).join('{PORT}')
 

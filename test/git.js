@@ -25,15 +25,19 @@ const t = require('tap')
 const fs = require('fs')
 const http = require('http')
 
-const {resolve, basename, relative} = require('path')
+const {resolve} = require('path')
 const rimraf = require('rimraf')
 const abbrev = resolve(__dirname, 'fixtures/abbrev-1.1.1.tgz')
 const npa = require('npm-package-arg')
 
-const me = resolve(__dirname, basename(__filename, '.js'))
-rimraf.sync(me)
+t.saveFixture = true
+const me = t.testdir({
+  repo: {},
+  cache: {},
+})
 const repo = resolve(me, 'repo')
 const cache = resolve(me, 'cache')
+
 const abbrevSpec = `file:${abbrev}`
 
 const spawnGit = require('../lib/util/git/spawn.js')
