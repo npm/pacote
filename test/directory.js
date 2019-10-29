@@ -56,6 +56,7 @@ test('supports directory deps', t => {
       devDependencies: {},
       bundleDependencies: false,
       peerDependencies: {},
+      peerDependenciesMeta: {},
       deprecated: false,
       _resolved: path.resolve(PKG).replace(/\\/g, '/'),
       _shasum: null,

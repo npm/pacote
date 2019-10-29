@@ -40,6 +40,7 @@ test('returns a manifest with the right fields', t => {
     optionalDependencies: {},
     bundleDependencies: [],
     peerDependencies: {},
+    peerDependenciesMeta: {},
     bin: './foo.js',
     _resolved: 'resolved.to.this',
     _integrity: 'sha1-deadbeefc0ffeebad1dea',
@@ -59,6 +60,7 @@ test('returns a manifest with the right fields', t => {
       optionalDependencies: {},
       bundleDependencies: [],
       peerDependencies: {},
+      peerDependenciesMeta: {},
       bin: {
         testing: './foo.js'
       },
@@ -93,6 +95,7 @@ test('defaults all field to expected types + values', t => {
       optionalDependencies: {},
       bundleDependencies: false, // because npm does boolean checks on this
       peerDependencies: {},
+      peerDependenciesMeta: {},
       bin: null,
       _resolved: base._resolved,
       _integrity: base._integrity,
@@ -264,6 +267,7 @@ test('uses package.json as base if passed null', t => {
         devDependencies: {},
         bundleDependencies: false,
         peerDependencies: {},
+        peerDependenciesMeta: {},
         _resolved: OPTS.registry + tarballPath,
         deprecated: false,
         _integrity: ssri.fromData(tarData, { algorithms: ['sha512'] }).toString(),
