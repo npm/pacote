@@ -1,6 +1,6 @@
 # pacote
 
-JavaScript package downloader
+JavaScript Package Handler
 
 ## USAGE
 
@@ -24,6 +24,38 @@ pacote.tarball('https://server.com/package.tgz').then(data => {
 Anything that you can do to with kind of package, you can do to any kind of
 package.  Data that isn't relevant (like a packument for a tarball) will be
 simulated.
+
+## CLI
+
+This module exports a command line interface that can do most of what is
+described below.  Run `pacote -h` to learn more.
+
+```
+Pacote - The JavaScript Package Handler, v10.0.0
+
+Usage:
+
+  pacote resolve <spec>
+    Fesolve a specifier and output the fully resolved target
+
+  pacote manifest <spec>
+    Fetch a manifest and print to stdout
+
+  pacote packument <spec>
+    Fetch a full packument and print to stdout
+
+  pacote tarball <spec> <filename>
+    Fetch a package tarball and save to <filename>
+    If <filename> is missing or '-', the tarball will be streamed to stdout.
+
+  pacote extract <spec> <folder>
+    Extract a package to the destination folder.
+
+Configuration values all match the names of configs passed to npm, or options
+passed to Pacote.
+
+For example '--cache=/path/to/folder' will use that folder as the cache.
+```
 
 ## API
 
