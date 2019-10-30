@@ -24,7 +24,7 @@
     "tap": "^14.9.1"
   },
   "files": [
-    "lib"
+    "lib/**/*.js"
   ],
   "keywords": [
     "packages",
