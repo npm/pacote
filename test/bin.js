@@ -3,7 +3,9 @@ const {main, run, usage, parseArg, parse} = require('../lib/bin.js')
 const {spawn} = require('child_process')
 const t = require('tap')
 const version = require('../package.json').version
-t.cleanSnapshot = str => str.split(version).join('{VERSION}')
+t.cleanSnapshot = str =>
+  str.split(version).join('{VERSION}')
+  .split(process.env.HOME).join('{HOME}')
 
 const pacote = require('../')
 const called = []

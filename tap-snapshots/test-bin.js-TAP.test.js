@@ -38,7 +38,7 @@ Object {
   "exitlog": Array [],
   "loglog": Array [
     Array [
-      "{\\n  \\"method\\": \\"extract\\",\\n  \\"spec\\": \\"npm@latest-6\\",\\n  \\"dest\\": \\"folder\\",\\n  \\"conf\\": {\\n    \\"_\\": [\\n      \\"extract\\",\\n      \\"npm@latest-6\\",\\n      \\"folder\\"\\n    ],\\n    \\"json\\": true,\\n    \\"cache\\": \\"/Users/isaacs/.npm/_cacache\\"\\n  }\\n}",
+      "{\\n  \\"method\\": \\"extract\\",\\n  \\"spec\\": \\"npm@latest-6\\",\\n  \\"dest\\": \\"folder\\",\\n  \\"conf\\": {\\n    \\"_\\": [\\n      \\"extract\\",\\n      \\"npm@latest-6\\",\\n      \\"folder\\"\\n    ],\\n    \\"json\\": true,\\n    \\"cache\\": \\"{HOME}/.npm/_cacache\\"\\n  }\\n}",
     ],
   ],
 }
@@ -57,7 +57,7 @@ Object {
             "npm@latest-6",
             "folder",
           ],
-          "cache": "/Users/isaacs/.npm/_cacache",
+          "cache": "{HOME}/.npm/_cacache",
           "json": false,
         },
         "dest": "folder",
@@ -75,7 +75,7 @@ Object {
   "exitlog": Array [],
   "loglog": Array [
     Array [
-      "{\\n  \\"method\\": \\"manifest\\",\\n  \\"spec\\": \\"bar@foo\\",\\n  \\"conf\\": {\\n    \\"_\\": [\\n      \\"manifest\\",\\n      \\"bar@foo\\"\\n    ],\\n    \\"json\\": true,\\n    \\"cache\\": \\"/Users/isaacs/.npm/_cacache\\"\\n  }\\n}",
+      "{\\n  \\"method\\": \\"manifest\\",\\n  \\"spec\\": \\"bar@foo\\",\\n  \\"conf\\": {\\n    \\"_\\": [\\n      \\"manifest\\",\\n      \\"bar@foo\\"\\n    ],\\n    \\"json\\": true,\\n    \\"cache\\": \\"{HOME}/.npm/_cacache\\"\\n  }\\n}",
     ],
   ],
 }
@@ -87,7 +87,7 @@ Object {
   "exitlog": Array [],
   "loglog": Array [
     Array [
-      "{\\n  \\"method\\": \\"packument\\",\\n  \\"spec\\": \\"paku@mint\\",\\n  \\"conf\\": {\\n    \\"_\\": [\\n      \\"packument\\",\\n      \\"paku@mint\\"\\n    ],\\n    \\"json\\": true,\\n    \\"cache\\": \\"/Users/isaacs/.npm/_cacache\\"\\n  }\\n}",
+      "{\\n  \\"method\\": \\"packument\\",\\n  \\"spec\\": \\"paku@mint\\",\\n  \\"conf\\": {\\n    \\"_\\": [\\n      \\"packument\\",\\n      \\"paku@mint\\"\\n    ],\\n    \\"json\\": true,\\n    \\"cache\\": \\"{HOME}/.npm/_cacache\\"\\n  }\\n}",
     ],
   ],
 }
@@ -113,7 +113,7 @@ Object {
   "exitlog": Array [],
   "loglog": Array [
     Array [
-      "{\\n  \\"method\\": \\"resolve\\",\\n  \\"spec\\": \\"foo@bar\\",\\n  \\"conf\\": {\\n    \\"_\\": [\\n      \\"resolve\\",\\n      \\"foo@bar\\"\\n    ],\\n    \\"json\\": true,\\n    \\"cache\\": \\"/Users/isaacs/.npm/_cacache\\"\\n  }\\n}",
+      "{\\n  \\"method\\": \\"resolve\\",\\n  \\"spec\\": \\"foo@bar\\",\\n  \\"conf\\": {\\n    \\"_\\": [\\n      \\"resolve\\",\\n      \\"foo@bar\\"\\n    ],\\n    \\"json\\": true,\\n    \\"cache\\": \\"{HOME}/.npm/_cacache\\"\\n  }\\n}",
     ],
   ],
 }
@@ -125,7 +125,7 @@ Object {
   "exitlog": Array [],
   "loglog": Array [
     Array [
-      "{\\n  \\"method\\": \\"tarball\\",\\n  \\"spec\\": \\"tar@ball\\",\\n  \\"file\\": \\"file.tgz\\",\\n  \\"conf\\": {\\n    \\"_\\": [\\n      \\"tarball\\",\\n      \\"tar@ball\\",\\n      \\"file.tgz\\"\\n    ],\\n    \\"json\\": true,\\n    \\"cache\\": \\"/Users/isaacs/.npm/_cacache\\"\\n  }\\n}",
+      "{\\n  \\"method\\": \\"tarball\\",\\n  \\"spec\\": \\"tar@ball\\",\\n  \\"file\\": \\"file.tgz\\",\\n  \\"conf\\": {\\n    \\"_\\": [\\n      \\"tarball\\",\\n      \\"tar@ball\\",\\n      \\"file.tgz\\"\\n    ],\\n    \\"json\\": true,\\n    \\"cache\\": \\"{HOME}/.npm/_cacache\\"\\n  }\\n}",
     ],
   ],
 }
