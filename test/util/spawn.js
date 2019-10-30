@@ -52,7 +52,6 @@ const main = () => {
   t.test('errors', t => {
     t.rejects(spawn(__filename), {
       message: /spawn.*EACCES/,
-      errno: 'EACCES',
       code: 'EACCES',
       syscall: /spawn/,
     })
