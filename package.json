@@ -53,5 +53,6 @@
   },
   "engines": {
     "node": ">=8"
-  }
+  },
+  "repository": "git@github.com:npm/pacote"
 }
