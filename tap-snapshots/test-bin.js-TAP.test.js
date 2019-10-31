@@ -11,7 +11,7 @@ Object {
   "exitlog": Array [],
   "loglog": Array [
     Array [
-      "Pacote - The JavaScript Package Handler, v{VERSION}\\n\\nUsage:\\n\\n  pacote resolve <spec>\\n    Fesolve a specifier and output the fully resolved target\\n\\n  pacote manifest <spec>\\n    Fetch a manifest and print to stdout\\n\\n  pacote packument <spec>\\n    Fetch a full packument and print to stdout\\n\\n  pacote tarball <spec> <filename>\\n    Fetch a package tarball and save to <filename>\\n    If <filename> is missing or '-', the tarball will be streamed to stdout.\\n\\n  pacote extract <spec> <folder>\\n    Extract a package to the destination folder.\\n\\nConfiguration values all match the names of configs passed to npm, or options\\npassed to Pacote.\\n\\nFor example '--cache=/path/to/folder' will use that folder as the cache.\\n",
+      "Pacote - The JavaScript Package Handler, v{VERSION}\\n\\nUsage:\\n\\n  pacote resolve <spec>\\n    Resolve a specifier and output the fully resolved target\\n\\n  pacote manifest <spec>\\n    Fetch a manifest and print to stdout\\n\\n  pacote packument <spec>\\n    Fetch a full packument and print to stdout\\n\\n  pacote tarball <spec> [<filename>]\\n    Fetch a package tarball and save to <filename>\\n    If <filename> is missing or '-', the tarball will be streamed to stdout.\\n\\n  pacote extract <spec> <folder>\\n    Extract a package to the destination folder.\\n\\nConfiguration values all match the names of configs passed to npm, or options\\npassed to Pacote.\\n\\nFor example '--cache=/path/to/folder' will use that folder as the cache.\\n",
     ],
   ],
 }
@@ -24,7 +24,7 @@ Object {
       "bad command: blerg",
     ],
     Array [
-      "Pacote - The JavaScript Package Handler, v{VERSION}\\n\\nUsage:\\n\\n  pacote resolve <spec>\\n    Fesolve a specifier and output the fully resolved target\\n\\n  pacote manifest <spec>\\n    Fetch a manifest and print to stdout\\n\\n  pacote packument <spec>\\n    Fetch a full packument and print to stdout\\n\\n  pacote tarball <spec> <filename>\\n    Fetch a package tarball and save to <filename>\\n    If <filename> is missing or '-', the tarball will be streamed to stdout.\\n\\n  pacote extract <spec> <folder>\\n    Extract a package to the destination folder.\\n\\nConfiguration values all match the names of configs passed to npm, or options\\npassed to Pacote.\\n\\nFor example '--cache=/path/to/folder' will use that folder as the cache.\\n",
+      "Pacote - The JavaScript Package Handler, v{VERSION}\\n\\nUsage:\\n\\n  pacote resolve <spec>\\n    Resolve a specifier and output the fully resolved target\\n\\n  pacote manifest <spec>\\n    Fetch a manifest and print to stdout\\n\\n  pacote packument <spec>\\n    Fetch a full packument and print to stdout\\n\\n  pacote tarball <spec> [<filename>]\\n    Fetch a package tarball and save to <filename>\\n    If <filename> is missing or '-', the tarball will be streamed to stdout.\\n\\n  pacote extract <spec> <folder>\\n    Extract a package to the destination folder.\\n\\nConfiguration values all match the names of configs passed to npm, or options\\npassed to Pacote.\\n\\nFor example '--cache=/path/to/folder' will use that folder as the cache.\\n",
     ],
   ],
   "exitlog": Array [],
@@ -215,7 +215,7 @@ Pacote - The JavaScript Package Handler, v{VERSION}
 Usage:
 
   pacote resolve <spec>
-    Fesolve a specifier and output the fully resolved target
+    Resolve a specifier and output the fully resolved target
 
   pacote manifest <spec>
     Fetch a manifest and print to stdout
@@ -223,7 +223,7 @@ Usage:
   pacote packument <spec>
     Fetch a full packument and print to stdout
 
-  pacote tarball <spec> <filename>
+  pacote tarball <spec> [<filename>]
     Fetch a package tarball and save to <filename>
     If <filename> is missing or '-', the tarball will be streamed to stdout.
 
