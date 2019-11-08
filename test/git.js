@@ -63,7 +63,8 @@ t.test('setup', { bail: true }, t => {
     return git('init')
     .then(() => git('config', 'user.name', 'pacotedev'))
     .then(() => git('config', 'user.email', 'i+pacotedev@izs.me'))
-    .then(() => git('config', 'commit.gpgsign', 'false'))
+    .then(() => git('config', 'tag.gpgSign', 'false'))
+    .then(() => git('config', 'commit.gpgSign', 'false'))
     .then(() => git('config', 'tag.forceSignAnnotated', 'false'))
     .then(() => write('package.json', JSON.stringify({
       name: 'repo',
@@ -158,7 +159,8 @@ t.test('setup', { bail: true }, t => {
     return git('init')
       .then(() => git('config', 'user.name', 'pacotedev'))
       .then(() => git('config', 'user.email', 'i+pacotedev@izs.me'))
-      .then(() => git('config', 'commit.gpgsign', 'false'))
+      .then(() => git('config', 'tag.gpgSign', 'false'))
+      .then(() => git('config', 'commit.gpgSign', 'false'))
       .then(() => git('config', 'tag.forceSignAnnotated', 'false'))
       .then(() => write('package.json', JSON.stringify({
         name: 'submod-repo',

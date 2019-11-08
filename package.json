@@ -14,6 +14,7 @@
     "postpublish": "git push origin --follow-tags"
   },
   "tap": {
+    "timeout": 300,
     "check-coverage": true,
     "coverage-map": "map.js",
     "esm": false
