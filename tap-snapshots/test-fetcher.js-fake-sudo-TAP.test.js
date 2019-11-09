@@ -7,6 +7,7 @@
 'use strict'
 exports[`test/fetcher.js fake-sudo TAP make bins executable > results of unpack 1`] = `
 Object {
+  "from": "file:test/fixtures/bin-object.tgz",
   "integrity": "sha512-TqzCjecWyQe8vqLbT0nv/OaWf0ptRZ2DnPmiuGUYJJb70shp02+/uu37IJSkM2ZEP1SAOeKrYrWPVIIYW+d//g==",
   "resolved": "{CWD}/test/fixtures/bin-object.tgz",
 }

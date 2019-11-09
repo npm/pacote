@@ -11,7 +11,7 @@ Object {
   "exitlog": Array [],
   "loglog": Array [
     Array [
-      "Pacote - The JavaScript Package Handler, v{VERSION}\\n\\nUsage:\\n\\n  pacote resolve <spec>\\n    Resolve a specifier and output the fully resolved target\\n\\n  pacote manifest <spec>\\n    Fetch a manifest and print to stdout\\n\\n  pacote packument <spec>\\n    Fetch a full packument and print to stdout\\n\\n  pacote tarball <spec> [<filename>]\\n    Fetch a package tarball and save to <filename>\\n    If <filename> is missing or '-', the tarball will be streamed to stdout.\\n\\n  pacote extract <spec> <folder>\\n    Extract a package to the destination folder.\\n\\nConfiguration values all match the names of configs passed to npm, or options\\npassed to Pacote.\\n\\nFor example '--cache=/path/to/folder' will use that folder as the cache.\\n",
+      "Pacote - The JavaScript Package Handler, v{VERSION}\\n\\nUsage:\\n\\n  pacote resolve <spec>\\n    Resolve a specifier and output the fully resolved target\\n    Returns integrity and from if '--long' flag is set.\\n\\n  pacote manifest <spec>\\n    Fetch a manifest and print to stdout\\n\\n  pacote packument <spec>\\n    Fetch a full packument and print to stdout\\n\\n  pacote tarball <spec> [<filename>]\\n    Fetch a package tarball and save to <filename>\\n    If <filename> is missing or '-', the tarball will be streamed to stdout.\\n\\n  pacote extract <spec> <folder>\\n    Extract a package to the destination folder.\\n\\nConfiguration values all match the names of configs passed to npm, or\\noptions passed to Pacote.  Additional flags for this executable:\\n\\n  --long     Print an object from 'resolve', including integrity and spec.\\n  --json     Print result objects as JSON rather than node's default.\\n             (This is the default if stdout is not a TTY.)\\n  --help -h  Print this helpful text.\\n\\nFor example '--cache=/path/to/folder' will use that folder as the cache.\\n",
     ],
   ],
 }
@@ -24,7 +24,7 @@ Object {
       "bad command: blerg",
     ],
     Array [
-      "Pacote - The JavaScript Package Handler, v{VERSION}\\n\\nUsage:\\n\\n  pacote resolve <spec>\\n    Resolve a specifier and output the fully resolved target\\n\\n  pacote manifest <spec>\\n    Fetch a manifest and print to stdout\\n\\n  pacote packument <spec>\\n    Fetch a full packument and print to stdout\\n\\n  pacote tarball <spec> [<filename>]\\n    Fetch a package tarball and save to <filename>\\n    If <filename> is missing or '-', the tarball will be streamed to stdout.\\n\\n  pacote extract <spec> <folder>\\n    Extract a package to the destination folder.\\n\\nConfiguration values all match the names of configs passed to npm, or options\\npassed to Pacote.\\n\\nFor example '--cache=/path/to/folder' will use that folder as the cache.\\n",
+      "Pacote - The JavaScript Package Handler, v{VERSION}\\n\\nUsage:\\n\\n  pacote resolve <spec>\\n    Resolve a specifier and output the fully resolved target\\n    Returns integrity and from if '--long' flag is set.\\n\\n  pacote manifest <spec>\\n    Fetch a manifest and print to stdout\\n\\n  pacote packument <spec>\\n    Fetch a full packument and print to stdout\\n\\n  pacote tarball <spec> [<filename>]\\n    Fetch a package tarball and save to <filename>\\n    If <filename> is missing or '-', the tarball will be streamed to stdout.\\n\\n  pacote extract <spec> <folder>\\n    Extract a package to the destination folder.\\n\\nConfiguration values all match the names of configs passed to npm, or\\noptions passed to Pacote.  Additional flags for this executable:\\n\\n  --long     Print an object from 'resolve', including integrity and spec.\\n  --json     Print result objects as JSON rather than node's default.\\n             (This is the default if stdout is not a TTY.)\\n  --help -h  Print this helpful text.\\n\\nFor example '--cache=/path/to/folder' will use that folder as the cache.\\n",
     ],
   ],
   "exitlog": Array [],
@@ -75,7 +75,7 @@ Object {
   "exitlog": Array [],
   "loglog": Array [
     Array [
-      "{\\n  \\"method\\": \\"manifest\\",\\n  \\"spec\\": \\"bar@foo\\",\\n  \\"conf\\": {\\n    \\"_\\": [\\n      \\"manifest\\",\\n      \\"bar@foo\\"\\n    ],\\n    \\"json\\": true,\\n    \\"cache\\": \\"{HOME}/.npm/_cacache\\"\\n  }\\n}",
+      "{\\n  \\"method\\": \\"manifest\\",\\n  \\"spec\\": \\"bar@foo\\",\\n  \\"conf\\": {\\n    \\"_\\": [\\n      \\"manifest\\",\\n      \\"bar@foo\\"\\n    ],\\n    \\"json\\": true,\\n    \\"cache\\": \\"{HOME}/.npm/_cacache\\"\\n  },\\n  \\"_resolved\\": \\"manifest resolved\\",\\n  \\"_integrity\\": \\"manifest integrity\\",\\n  \\"_from\\": \\"manifest from\\"\\n}",
     ],
   ],
 }
@@ -104,6 +104,18 @@ Object {
     1,
   ],
   "loglog": Array [],
+}
+`
+
+exports[`test/bin.js TAP main resolve foo@bar --long > must match snapshot 1`] = `
+Object {
+  "errorlog": Array [],
+  "exitlog": Array [],
+  "loglog": Array [
+    Array [
+      "{\\n  \\"resolved\\": \\"manifest resolved\\",\\n  \\"integrity\\": \\"manifest integrity\\",\\n  \\"from\\": \\"manifest from\\"\\n}",
+    ],
+  ],
 }
 `
 
@@ -147,6 +159,9 @@ Object {
 
 exports[`test/bin.js TAP run > expect resolving Promise 2`] = `
 Object {
+  "_from": "manifest from",
+  "_integrity": "manifest integrity",
+  "_resolved": "manifest resolved",
   "conf": Object {
     "_": Array [
       "manifest",
@@ -216,6 +231,7 @@ Usage:
 
   pacote resolve <spec>
     Resolve a specifier and output the fully resolved target
+    Returns integrity and from if '--long' flag is set.
 
   pacote manifest <spec>
     Fetch a manifest and print to stdout
@@ -230,8 +246,13 @@ Usage:
   pacote extract <spec> <folder>
     Extract a package to the destination folder.
 
-Configuration values all match the names of configs passed to npm, or options
-passed to Pacote.
+Configuration values all match the names of configs passed to npm, or
+options passed to Pacote.  Additional flags for this executable:
+
+  --long     Print an object from 'resolve', including integrity and spec.
+  --json     Print result objects as JSON rather than node's default.
+             (This is the default if stdout is not a TTY.)
+  --help -h  Print this helpful text.
 
 For example '--cache=/path/to/folder' will use that folder as the cache.
 

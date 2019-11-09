@@ -12,7 +12,14 @@ const called = []
 pacote.resolve = (spec, conf) =>
   spec === 'fail' ? Promise.reject(new Error('fail'))
   : Promise.resolve({method: 'resolve', spec, conf})
-pacote.manifest = (spec, conf) => Promise.resolve({method: 'manifest', spec, conf})
+pacote.manifest = (spec, conf) => Promise.resolve({
+  method: 'manifest',
+  spec,
+  conf,
+  _resolved: 'manifest resolved',
+  _integrity: 'manifest integrity',
+  _from: 'manifest from',
+})
 pacote.packument = (spec, conf) => Promise.resolve({method: 'packument', spec, conf})
 pacote.tarball.file = (spec, file, conf) => Promise.resolve({method: 'tarball', spec, file, conf})
 const Minipass = require('minipass')
@@ -103,6 +110,7 @@ t.test('main', t => {
 
   test('--help')
   test('resolve', 'foo@bar')
+  test('resolve', 'foo@bar', '--long')
   test('manifest', 'bar@foo')
   test('packument', 'paku@mint')
   test('tarball', 'tar@ball', 'file.tgz')

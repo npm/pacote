@@ -7,6 +7,7 @@
 'use strict'
 exports[`test/index.js TAP > extract 1`] = `
 Object {
+  "from": "file:test/fixtures/abbrev-1.1.1.tgz",
   "integrity": "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==",
   "resolved": "\${CWD}/test/fixtures/abbrev-1.1.1.tgz",
 }
@@ -14,6 +15,7 @@ Object {
 
 exports[`test/index.js TAP > manifest 1`] = `
 Object {
+  "_from": "file:test/fixtures/abbrev-1.1.1.tgz",
   "_id": "abbrev@1.1.1",
   "_integrity": "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==",
   "_resolved": "\${CWD}/test/fixtures/abbrev-1.1.1.tgz",
@@ -53,6 +55,7 @@ Object {
 
 exports[`test/index.js TAP > manifest 2`] = `
 Object {
+  "_from": "file:test/fixtures/abbrev-1.1.1.tgz",
   "_id": "abbrev@1.1.1",
   "_integrity": "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==",
   "_resolved": "\${CWD}/test/fixtures/abbrev-1.1.1.tgz",
@@ -98,6 +101,7 @@ Object {
   "name": "abbrev",
   "versions": Object {
     "1.1.1": Object {
+      "_from": "file:test/fixtures/abbrev-1.1.1.tgz",
       "_id": "abbrev@1.1.1",
       "_integrity": "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==",
       "_resolved": "\${CWD}/test/fixtures/abbrev-1.1.1.tgz",
@@ -147,6 +151,7 @@ exports[`test/index.js TAP > resolve 1`] = `
 
 exports[`test/index.js TAP > tarball to file 1`] = `
 Object {
+  "from": "file:test/fixtures/abbrev-1.1.1.tgz",
   "integrity": "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==",
   "resolved": "\${CWD}/test/fixtures/abbrev-1.1.1.tgz",
 }

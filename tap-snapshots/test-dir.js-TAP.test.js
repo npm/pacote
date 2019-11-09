@@ -7,6 +7,7 @@
 'use strict'
 exports[`test/dir.js TAP basic > extract 1`] = `
 Object {
+  "from": "file:test/fixtures/abbrev",
   "integrity": "sha512-Ict4yhLfiPOkcX+yjBRSI2QUetKt+A08AXMyLeQbKGYg/OGI/1k47Hu9tWZOx1l4j+M1z07Zxt3IL41TmLkbDw==",
   "resolved": "\${CWD}/test/fixtures/abbrev",
 }
@@ -14,6 +15,7 @@ Object {
 
 exports[`test/dir.js TAP basic > manifest 1`] = `
 Object {
+  "_from": "file:test/fixtures/abbrev",
   "_id": "abbrev@1.1.1",
   "_integrity": "null",
   "_resolved": "\${CWD}/test/fixtures/abbrev",
@@ -83,6 +85,7 @@ Object {
   "name": "abbrev",
   "versions": Object {
     "1.1.1": Object {
+      "_from": "file:test/fixtures/abbrev",
       "_id": "abbrev@1.1.1",
       "_integrity": "null",
       "_resolved": "\${CWD}/test/fixtures/abbrev",
@@ -128,6 +131,7 @@ Object {
 
 exports[`test/dir.js TAP basic > saved package.json 1`] = `
 Object {
+  "_from": "file:test/fixtures/abbrev",
   "_id": "abbrev@1.1.1",
   "_integrity": "null",
   "_resolved": "\${CWD}/test/fixtures/abbrev",
@@ -167,6 +171,7 @@ Object {
 
 exports[`test/dir.js TAP make bins executable > results of unpack 1`] = `
 Object {
+  "from": "file:test/fixtures/bin-object",
   "integrity": "sha512-rlE32nBV7XgKCm0I7YqAewyVPbaRJWUQMZUFLlngGK3imG+som3Hin7d/zPTikWg64tHIxb8VXeeq6u0IRRfmQ==",
   "resolved": "\${CWD}/test/fixtures/bin-object",
 }
@@ -174,6 +179,7 @@ Object {
 
 exports[`test/dir.js TAP with prepare script > extract 1`] = `
 Object {
+  "from": "file:test/fixtures/prepare-script",
   "integrity": "sha512-HTzPAt8wmXNchUdisnGDSCuUgrFee5v8F6GsLc5mQd29VXiNzv4PGz71jjLSIF1wWQSB+UjLTmSJSGznF/s/Lw==",
   "resolved": "\${CWD}/test/fixtures/prepare-script",
 }
@@ -189,6 +195,7 @@ Array [
 
 exports[`test/dir.js TAP with prepare script > manifest 1`] = `
 Object {
+  "_from": "file:test/fixtures/prepare-script",
   "_id": "git-prepare-script@1.0.0",
   "_integrity": "null",
   "_resolved": "\${CWD}/test/fixtures/prepare-script",
@@ -214,6 +221,7 @@ Object {
   "name": "git-prepare-script",
   "versions": Object {
     "1.0.0": Object {
+      "_from": "file:test/fixtures/prepare-script",
       "_id": "git-prepare-script@1.0.0",
       "_integrity": "null",
       "_resolved": "\${CWD}/test/fixtures/prepare-script",

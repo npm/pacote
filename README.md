@@ -12,8 +12,8 @@ pacote.manifest('foo@1.x').then(manifest => console.log('got it', manifest))
 
 // extract a package into a folder
 pacote.extract('github:npm/cli', 'some/path', options)
-  .then(({resolved, integrity}) => {
-    console.log('extracted!', resolved, integrity)
+  .then(({from, resolved, integrity}) => {
+    console.log('extracted!', from, resolved, integrity)
   })
 
 pacote.tarball('https://server.com/package.tgz').then(data => {
@@ -31,12 +31,13 @@ This module exports a command line interface that can do most of what is
 described below.  Run `pacote -h` to learn more.
 
 ```
-Pacote - The JavaScript Package Handler, v10.0.0
+Pacote - The JavaScript Package Handler, v10.1.1
 
 Usage:
 
   pacote resolve <spec>
-    Fesolve a specifier and output the fully resolved target
+    Resolve a specifier and output the fully resolved target
+    Returns integrity and from if '--long' flag is set.
 
   pacote manifest <spec>
     Fetch a manifest and print to stdout
@@ -44,15 +45,20 @@ Usage:
   pacote packument <spec>
     Fetch a full packument and print to stdout
 
-  pacote tarball <spec> <filename>
+  pacote tarball <spec> [<filename>]
     Fetch a package tarball and save to <filename>
     If <filename> is missing or '-', the tarball will be streamed to stdout.
 
   pacote extract <spec> <folder>
     Extract a package to the destination folder.
 
-Configuration values all match the names of configs passed to npm, or options
-passed to Pacote.
+Configuration values all match the names of configs passed to npm, or
+options passed to Pacote.  Additional flags for this executable:
+
+  --long     Print an object from 'resolve', including integrity and spec.
+  --json     Print result objects as JSON rather than node's default.
+             (This is the default if stdout is not a TTY.)
+  --help -h  Print this helpful text.
 
 For example '--cache=/path/to/folder' will use that folder as the cache.
 ```
@@ -71,7 +77,7 @@ See below for valid `opts` values.
 
 * `pacote.extract(spec, dest, opts)` Extract a package's tarball into a
   destination folder.  Returns a promise that resolves to the
-  `{resolved,integrity}` of the extracted package.
+  `{from,resolved,integrity}` of the extracted package.
 
 * `pacote.manifest(spec, opts)` Fetch (or simulate) a package's manifest
   (basically, the `package.json` file, plus a bit of metadata).
@@ -85,11 +91,11 @@ See below for valid `opts` values.
 
 * `pacote.tarball(spec, opts)`  Get a package tarball data as a buffer in
   memory.  Returns a Promise that resolves to the tarball data Buffer, with
-  `resolved` and `integrity` fields attached.
+  `from`, `resolved`, and `integrity` fields attached.
 
 * `pacote.tarball.file(spec, dest, opts)`  Save a package tarball data to
   a file on disk.  Returns a Promise that resolves to
-  `{integrity,resolved}` of the fetched tarball.
+  `{from,integrity,resolved}` of the fetched tarball.
 
 * `pacote.tarball.stream(spec, streamHandler, opts)`  Fetch a tarball and
   make the stream available to the `streamHandler` function.
@@ -185,6 +191,7 @@ In addition to the common `package.json` fields, manifests include:
 
 * `manifest._resolved` The tarball url or file path where the package
   artifact can be found.
+* `manifest._from` A normalized form of the spec passed in as an argument.
 * `manifest._integrity` The integrity value for the package artifact.
 * `manifest.dist` Registry manifests (those included in a packument) have a
   `dist` object.  Only `tarball` is required, though at least one of

@@ -254,7 +254,8 @@ t.test('basic stuff', async t => {
 
   const gx = await g.extract(me + '/g')
   const rx = await r.extract(me + '/r')
-  t.same(gx, rx, 'got the same resolved and integrity')
+  t.equal(gx.resolved, rx.resolved, 'got the same resolved')
+  t.equal(gx.integrity, rx.integrity, 'got the same integrity')
 
   // prepare script ran, files were filtered properly
   fs.statSync(me + '/g/index.js')

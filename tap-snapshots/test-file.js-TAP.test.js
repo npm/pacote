@@ -7,6 +7,7 @@
 'use strict'
 exports[`test/file.js TAP basic > extract 1`] = `
 Object {
+  "from": "file:test/fixtures/abbrev-1.1.1.tgz",
   "integrity": "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==",
   "resolved": "\${CWD}/test/fixtures/abbrev-1.1.1.tgz",
 }
@@ -14,6 +15,7 @@ Object {
 
 exports[`test/file.js TAP basic > manifest 1`] = `
 Object {
+  "_from": "file:test/fixtures/abbrev-1.1.1.tgz",
   "_id": "abbrev@1.1.1",
   "_integrity": "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==",
   "_resolved": "\${CWD}/test/fixtures/abbrev-1.1.1.tgz",
@@ -83,6 +85,7 @@ Object {
   "name": "abbrev",
   "versions": Object {
     "1.1.1": Object {
+      "_from": "file:test/fixtures/abbrev-1.1.1.tgz",
       "_id": "abbrev@1.1.1",
       "_integrity": "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==",
       "_resolved": "\${CWD}/test/fixtures/abbrev-1.1.1.tgz",
@@ -128,6 +131,7 @@ Object {
 
 exports[`test/file.js TAP make bins executable bin-good > results of unpack 1`] = `
 Object {
+  "from": "file:test/fixtures/bin-good.tgz",
   "integrity": "sha512-Fx11OiHxV82CztnPk+k0S6H/66J4/eUzZEMGX2dJjP+Mxfrm8fSzE4SQG604zWk17ELZsOGENCdWSkvj4cpjUw==",
   "resolved": "\${CWD}/test/fixtures/bin-good.tgz",
 }
@@ -135,6 +139,7 @@ Object {
 
 exports[`test/file.js TAP make bins executable bin-object > results of unpack 1`] = `
 Object {
+  "from": "file:test/fixtures/bin-object.tgz",
   "integrity": "sha512-TqzCjecWyQe8vqLbT0nv/OaWf0ptRZ2DnPmiuGUYJJb70shp02+/uu37IJSkM2ZEP1SAOeKrYrWPVIIYW+d//g==",
   "resolved": "\${CWD}/test/fixtures/bin-object.tgz",
 }
@@ -142,6 +147,7 @@ Object {
 
 exports[`test/file.js TAP make bins executable bin-string > results of unpack 1`] = `
 Object {
+  "from": "file:test/fixtures/bin-string.tgz",
   "integrity": "sha512-iCc87DMYVMofO221ksAlMD88Zgsr4OIvqeX73KxTPikWaQPvBFZpzI9FGWnD4PTLTyJzOSETQh86+IwEidJRZg==",
   "resolved": "\${CWD}/test/fixtures/bin-string.tgz",
 }
