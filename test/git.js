@@ -396,3 +396,10 @@ t.test('fetch a private repo where the tgz is not a tarball', t => {
     code: 'TAR_BAD_ARCHIVE',
   })
 })
+
+t.test('resolved is a git+ssh url for hosted repos that support it', t => {
+  const hash = '0000000000000000000000000000000000000000'
+  const gf = new GitFetcher(`github:x/y#${hash}`, {})
+  t.equal(gf.resolved, `git+ssh://git@github.com/x/y.git#${hash}`)
+  t.end()
+})
