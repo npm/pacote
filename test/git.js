@@ -219,7 +219,7 @@ t.test('setup', { bail: true }, t => {
           return res.end(data)
         } catch (er) {
           res.statusCode = 500
-          res.end(er.stack)
+          return res.end(er.stack)
         }
         case '/repo-1.0.0.tgz': try {
           const data = fs.readFileSync(me + '/repo-1.0.0.tgz')
@@ -227,8 +227,11 @@ t.test('setup', { bail: true }, t => {
           return res.end(data)
         } catch (er) {
           res.statusCode = 500
-          res.end(er.stack)
+          return res.end(er.stack)
         }
+        case '/not-tar.tgz':
+          res.statusCode = 200
+          return res.end('this is not a gzipped tarball tho')
         default:
           res.statusCode = 404
           return res.end('not found')
@@ -376,4 +379,20 @@ t.test('fetch a weird ref', t => {
       'got the same HEAD~3 sha as before')))
 
   t.end()
+})
+
+t.test('fetch a private repo where the tgz is a 404', t => {
+  const gf = new GitFetcher(`localhost:repo/x#${REPO_HEAD}`, {cache})
+  gf.spec.hosted.tarball = () => `${hostedUrl}/not-found.tgz`
+  // should fetch it by falling back to ssh when it gets an http error
+  return gf.extract(me + '/no-tgz')
+})
+
+t.test('fetch a private repo where the tgz is not a tarball', t => {
+  const gf = new GitFetcher(`localhost:repo/x#${REPO_HEAD}`, {cache})
+  gf.spec.hosted.tarball = () => `${hostedUrl}/not-tar.tgz`
+  // should NOT retry, because the error was not an HTTP fetch error
+  return t.rejects(gf.extract(me + '/bad-tgz'), {
+    code: 'TAR_BAD_ARCHIVE',
+  })
 })
