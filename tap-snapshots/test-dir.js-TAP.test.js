@@ -19,13 +19,7 @@ Object {
   "_id": "abbrev@1.1.1",
   "_integrity": "null",
   "_resolved": "\${CWD}/test/fixtures/abbrev",
-  "author": Object {
-    "email": "i@izs.me",
-    "name": "Isaac Z. Schlueter",
-  },
-  "bugs": Object {
-    "url": "https://github.com/isaacs/abbrev-js/issues",
-  },
+  "author": "Isaac Z. Schlueter <i@izs.me>",
   "description": "Like ruby's abbrev module, but in js",
   "devDependencies": Object {
     "tap": "^10.1",
@@ -33,16 +27,10 @@ Object {
   "files": Array [
     "abbrev.js",
   ],
-  "homepage": "https://github.com/isaacs/abbrev-js#readme",
   "license": "ISC",
   "main": "abbrev.js",
   "name": "abbrev",
-  "readme": "# abbrev-js\\n\\nJust like [ruby's Abbrev](http://apidock.com/ruby/Abbrev).\\n\\nUsage:\\n\\n    var abbrev = require(\\"abbrev\\");\\n    abbrev(\\"foo\\", \\"fool\\", \\"folding\\", \\"flop\\");\\n    \\n    // returns:\\n    { fl: 'flop'\\n    , flo: 'flop'\\n    , flop: 'flop'\\n    , fol: 'folding'\\n    , fold: 'folding'\\n    , foldi: 'folding'\\n    , foldin: 'folding'\\n    , folding: 'folding'\\n    , foo: 'foo'\\n    , fool: 'fool'\\n    }\\n\\nThis is handy for command-line scripts, or other cases where you want to be able to accept shorthands.\\n",
-  "readmeFilename": "README.md",
-  "repository": Object {
-    "type": "git",
-    "url": "git+ssh://git@github.com/isaacs/abbrev-js.git",
-  },
+  "repository": "http://github.com/isaacs/abbrev-js",
   "scripts": Object {
     "postpublish": "git push origin --all; git push origin --tags",
     "postversion": "npm publish",
@@ -89,13 +77,7 @@ Object {
       "_id": "abbrev@1.1.1",
       "_integrity": "null",
       "_resolved": "\${CWD}/test/fixtures/abbrev",
-      "author": Object {
-        "email": "i@izs.me",
-        "name": "Isaac Z. Schlueter",
-      },
-      "bugs": Object {
-        "url": "https://github.com/isaacs/abbrev-js/issues",
-      },
+      "author": "Isaac Z. Schlueter <i@izs.me>",
       "description": "Like ruby's abbrev module, but in js",
       "devDependencies": Object {
         "tap": "^10.1",
@@ -107,16 +89,10 @@ Object {
       "files": Array [
         "abbrev.js",
       ],
-      "homepage": "https://github.com/isaacs/abbrev-js#readme",
       "license": "ISC",
       "main": "abbrev.js",
       "name": "abbrev",
-      "readme": "# abbrev-js\\n\\nJust like [ruby's Abbrev](http://apidock.com/ruby/Abbrev).\\n\\nUsage:\\n\\n    var abbrev = require(\\"abbrev\\");\\n    abbrev(\\"foo\\", \\"fool\\", \\"folding\\", \\"flop\\");\\n    \\n    // returns:\\n    { fl: 'flop'\\n    , flo: 'flop'\\n    , flop: 'flop'\\n    , fol: 'folding'\\n    , fold: 'folding'\\n    , foldi: 'folding'\\n    , foldin: 'folding'\\n    , folding: 'folding'\\n    , foo: 'foo'\\n    , fool: 'fool'\\n    }\\n\\nThis is handy for command-line scripts, or other cases where you want to be able to accept shorthands.\\n",
-      "readmeFilename": "README.md",
-      "repository": Object {
-        "type": "git",
-        "url": "git+ssh://git@github.com/isaacs/abbrev-js.git",
-      },
+      "repository": "http://github.com/isaacs/abbrev-js",
       "scripts": Object {
         "postpublish": "git push origin --all; git push origin --tags",
         "postversion": "npm publish",
@@ -135,13 +111,7 @@ Object {
   "_id": "abbrev@1.1.1",
   "_integrity": "null",
   "_resolved": "\${CWD}/test/fixtures/abbrev",
-  "author": Object {
-    "email": "i@izs.me",
-    "name": "Isaac Z. Schlueter",
-  },
-  "bugs": Object {
-    "url": "https://github.com/isaacs/abbrev-js/issues",
-  },
+  "author": "Isaac Z. Schlueter <i@izs.me>",
   "description": "Like ruby's abbrev module, but in js",
   "devDependencies": Object {
     "tap": "^10.1",
@@ -149,16 +119,10 @@ Object {
   "files": Array [
     "abbrev.js",
   ],
-  "homepage": "https://github.com/isaacs/abbrev-js#readme",
   "license": "ISC",
   "main": "abbrev.js",
   "name": "abbrev",
-  "readme": "# abbrev-js\\n\\nJust like [ruby's Abbrev](http://apidock.com/ruby/Abbrev).\\n\\nUsage:\\n\\n    var abbrev = require(\\"abbrev\\");\\n    abbrev(\\"foo\\", \\"fool\\", \\"folding\\", \\"flop\\");\\n    \\n    // returns:\\n    { fl: 'flop'\\n    , flo: 'flop'\\n    , flop: 'flop'\\n    , fol: 'folding'\\n    , fold: 'folding'\\n    , foldi: 'folding'\\n    , foldin: 'folding'\\n    , folding: 'folding'\\n    , foo: 'foo'\\n    , fool: 'fool'\\n    }\\n\\nThis is handy for command-line scripts, or other cases where you want to be able to accept shorthands.\\n",
-  "readmeFilename": "README.md",
-  "repository": Object {
-    "type": "git",
-    "url": "git+ssh://git@github.com/isaacs/abbrev-js.git",
-  },
+  "repository": "http://github.com/isaacs/abbrev-js",
   "scripts": Object {
     "postpublish": "git push origin --all; git push origin --tags",
     "postversion": "npm publish",
@@ -205,7 +169,6 @@ Object {
   "license": "ISC",
   "main": "index.js",
   "name": "git-prepare-script",
-  "readme": "ERROR: No README data found!",
   "scripts": Object {
     "prepare": "node prepare.js",
   },
@@ -235,7 +198,6 @@ Object {
       "license": "ISC",
       "main": "index.js",
       "name": "git-prepare-script",
-      "readme": "ERROR: No README data found!",
       "scripts": Object {
         "prepare": "node prepare.js",
       },
