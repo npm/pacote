@@ -48,7 +48,6 @@
     "osenv": "^0.1.5",
     "promise-inflight": "^1.0.1",
     "promise-retry": "^1.1.1",
-    "read-package-json": "^2.1.0",
     "read-package-json-fast": "^1.0.3",
     "semver": "^6.3.0",
     "ssri": "^7.1.0",
