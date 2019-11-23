@@ -20,10 +20,10 @@
     "esm": false
   },
   "devDependencies": {
+    "mutate-fs": "^2.1.1",
     "npm-registry-mock": "^1.3.1",
     "require-inject": "^1.4.4",
-    "mutate-fs": "^2.1.1",
-    "tap": "^14.9.1"
+    "tap": "^14.10.1"
   },
   "files": [
     "lib/**/*.js"
