@@ -359,6 +359,7 @@ if (!fakeSudo) {
       'foo@bar': 'RegistryFetcher',
       'foo@1.2': 'RegistryFetcher',
       'foo@1.2.3': 'RegistryFetcher',
+      'npm:foo@2': 'RegistryFetcher',
       '@foo/bar': 'RegistryFetcher',
       '@foo/bar@1.2': 'RegistryFetcher',
       '@foo/bar@1.2.3': 'RegistryFetcher',
