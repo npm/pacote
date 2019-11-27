@@ -38,7 +38,7 @@ Object {
   "exitlog": Array [],
   "loglog": Array [
     Array [
-      "{\\n  \\"method\\": \\"extract\\",\\n  \\"spec\\": \\"npm@latest-6\\",\\n  \\"dest\\": \\"folder\\",\\n  \\"conf\\": {\\n    \\"_\\": [\\n      \\"extract\\",\\n      \\"npm@latest-6\\",\\n      \\"folder\\"\\n    ],\\n    \\"json\\": true,\\n    \\"cache\\": \\"{HOME}/.npm/_cacache\\"\\n  }\\n}",
+      "{\\n  \\"method\\": \\"extract\\",\\n  \\"spec\\": \\"npm@latest-6\\",\\n  \\"dest\\": \\"folder\\",\\n  \\"conf\\": {\\n    \\"_\\": [\\n      \\"extract\\",\\n      \\"npm@latest-6\\",\\n      \\"folder\\"\\n    ],\\n    \\"cache\\": \\"{HOME}/.npm/_cacache\\",\\n    \\"json\\": true\\n  }\\n}",
     ],
   ],
 }
@@ -75,7 +75,7 @@ Object {
   "exitlog": Array [],
   "loglog": Array [
     Array [
-      "{\\n  \\"method\\": \\"manifest\\",\\n  \\"spec\\": \\"bar@foo\\",\\n  \\"conf\\": {\\n    \\"_\\": [\\n      \\"manifest\\",\\n      \\"bar@foo\\"\\n    ],\\n    \\"json\\": true,\\n    \\"cache\\": \\"{HOME}/.npm/_cacache\\"\\n  },\\n  \\"_resolved\\": \\"manifest resolved\\",\\n  \\"_integrity\\": \\"manifest integrity\\",\\n  \\"_from\\": \\"manifest from\\"\\n}",
+      "{\\n  \\"method\\": \\"manifest\\",\\n  \\"spec\\": \\"bar@foo\\",\\n  \\"conf\\": {\\n    \\"_\\": [\\n      \\"manifest\\",\\n      \\"bar@foo\\"\\n    ],\\n    \\"cache\\": \\"{HOME}/.npm/_cacache\\"\\n  },\\n  \\"_resolved\\": \\"manifest resolved\\",\\n  \\"_integrity\\": \\"manifest integrity\\",\\n  \\"_from\\": \\"manifest from\\"\\n}",
     ],
   ],
 }
@@ -87,7 +87,7 @@ Object {
   "exitlog": Array [],
   "loglog": Array [
     Array [
-      "{\\n  \\"method\\": \\"packument\\",\\n  \\"spec\\": \\"paku@mint\\",\\n  \\"conf\\": {\\n    \\"_\\": [\\n      \\"packument\\",\\n      \\"paku@mint\\"\\n    ],\\n    \\"json\\": true,\\n    \\"cache\\": \\"{HOME}/.npm/_cacache\\"\\n  }\\n}",
+      "{\\n  \\"method\\": \\"packument\\",\\n  \\"spec\\": \\"paku@mint\\",\\n  \\"conf\\": {\\n    \\"_\\": [\\n      \\"packument\\",\\n      \\"paku@mint\\"\\n    ],\\n    \\"cache\\": \\"{HOME}/.npm/_cacache\\"\\n  }\\n}",
     ],
   ],
 }
@@ -125,7 +125,31 @@ Object {
   "exitlog": Array [],
   "loglog": Array [
     Array [
-      "{\\n  \\"method\\": \\"resolve\\",\\n  \\"spec\\": \\"foo@bar\\",\\n  \\"conf\\": {\\n    \\"_\\": [\\n      \\"resolve\\",\\n      \\"foo@bar\\"\\n    ],\\n    \\"json\\": true,\\n    \\"cache\\": \\"{HOME}/.npm/_cacache\\"\\n  }\\n}",
+      "{\\n  \\"method\\": \\"resolve\\",\\n  \\"spec\\": \\"foo@bar\\",\\n  \\"conf\\": {\\n    \\"_\\": [\\n      \\"resolve\\",\\n      \\"foo@bar\\"\\n    ],\\n    \\"cache\\": \\"{HOME}/.npm/_cacache\\"\\n  }\\n}",
+    ],
+  ],
+}
+`
+
+exports[`test/bin.js TAP main resolve string --json > must match snapshot 1`] = `
+Object {
+  "errorlog": Array [],
+  "exitlog": Array [],
+  "loglog": Array [
+    Array [
+      "\\"just a string\\"",
+    ],
+  ],
+}
+`
+
+exports[`test/bin.js TAP main resolve string > must match snapshot 1`] = `
+Object {
+  "errorlog": Array [],
+  "exitlog": Array [],
+  "loglog": Array [
+    Array [
+      "just a string",
     ],
   ],
 }
@@ -137,7 +161,7 @@ Object {
   "exitlog": Array [],
   "loglog": Array [
     Array [
-      "{\\n  \\"method\\": \\"tarball\\",\\n  \\"spec\\": \\"tar@ball\\",\\n  \\"file\\": \\"file.tgz\\",\\n  \\"conf\\": {\\n    \\"_\\": [\\n      \\"tarball\\",\\n      \\"tar@ball\\",\\n      \\"file.tgz\\"\\n    ],\\n    \\"json\\": true,\\n    \\"cache\\": \\"{HOME}/.npm/_cacache\\"\\n  }\\n}",
+      "{\\n  \\"method\\": \\"tarball\\",\\n  \\"spec\\": \\"tar@ball\\",\\n  \\"file\\": \\"file.tgz\\",\\n  \\"conf\\": {\\n    \\"_\\": [\\n      \\"tarball\\",\\n      \\"tar@ball\\",\\n      \\"file.tgz\\"\\n    ],\\n    \\"cache\\": \\"{HOME}/.npm/_cacache\\"\\n  }\\n}",
     ],
   ],
 }

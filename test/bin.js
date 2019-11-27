@@ -11,6 +11,7 @@ const pacote = require('../')
 const called = []
 pacote.resolve = (spec, conf) =>
   spec === 'fail' ? Promise.reject(new Error('fail'))
+  : spec === 'string' ? Promise.resolve('just a string')
   : Promise.resolve({method: 'resolve', spec, conf})
 pacote.manifest = (spec, conf) => Promise.resolve({
   method: 'manifest',
@@ -53,9 +54,14 @@ t.test('parse', t => {
     json: false,
     cache: process.env.HOME + '/.npm/_cacache',
   })
+  t.same(parse(['a', 'b', '--foo', '--json']), {
+    _: ['a', 'b'],
+    foo: true,
+    json: true,
+    cache: process.env.HOME + '/.npm/_cacache',
+  })
   t.same(parse(['a', 'b', '--', '--json']), {
     _: ['a', 'b', '--json'],
-    json: !process.stdout.isTTY,
     cache: process.env.HOME + '/.npm/_cacache',
   })
   t.match(parse(['-h']), { help: true })
@@ -104,13 +110,17 @@ t.test('main', t => {
     cb()
   })
 
+  Object.defineProperty(process.stdout, 'isTTY', { value: false })
+
   const test = (...args) =>
-    t.test(args.join(' '), t => Promise.resolve(main(['--json', ...args]))
+    t.test(args.join(' '), t => Promise.resolve(main(args))
       .then(() => t.matchSnapshot({errorlog, loglog, exitlog})))
 
   test('--help')
   test('resolve', 'foo@bar')
   test('resolve', 'foo@bar', '--long')
+  test('resolve', 'string')
+  test('resolve', 'string', '--json')
   test('manifest', 'bar@foo')
   test('packument', 'paku@mint')
   test('tarball', 'tar@ball', 'file.tgz')
