@@ -96,6 +96,44 @@ t.test('provide invalid integrity, fails to unpack', async t => {
   })
 })
 
+t.test('provide invalid integrity, fails to manifest', async t => {
+  const f = new RegistryFetcher('@isaacs/namespace-test', {
+    registry,
+    cache,
+    integrity: 'sha512-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=='
+  })
+  return t.rejects(f.manifest(), {
+    code: 'EINTEGRITY',
+  })
+})
+
+t.test('provide different type of integrity, concats', async t => {
+  const f = new RegistryFetcher('@isaacs/namespace-test', {
+    registry,
+    cache,
+    integrity: 'sha_a_le_beef-this_is_a_very_bad_joke_im_so_sorry',
+  })
+  return f.manifest().then(mani =>
+    t.equal(
+      mani._integrity,
+      'sha_a_le_beef-this_is_a_very_bad_joke_im_so_sorry ' +
+      'sha512-5ZYe1LgwHIaag0p9loMwsf5N/wJ4XAuHVNhSO+qulQOXWnyJVuco6IZjo+5u4ZLF/GimdHJcX+QK892ONfOCqQ=='
+    ))
+})
+
+t.test('provide matching integrity, totes ok', async t => {
+  const f = new RegistryFetcher('@isaacs/namespace-test', {
+    registry,
+    cache,
+    integrity: 'sha512-5ZYe1LgwHIaag0p9loMwsf5N/wJ4XAuHVNhSO+qulQOXWnyJVuco6IZjo+5u4ZLF/GimdHJcX+QK892ONfOCqQ==',
+  })
+  return f.manifest().then(mani =>
+    t.equal(
+      mani._integrity,
+      'sha512-5ZYe1LgwHIaag0p9loMwsf5N/wJ4XAuHVNhSO+qulQOXWnyJVuco6IZjo+5u4ZLF/GimdHJcX+QK892ONfOCqQ=='
+    ))
+})
+
 t.test('404 fails with E404', t => {
   const f = new RegistryFetcher('thing-is-not-here', {registry, cache})
   return t.rejects(f.resolve(), { code: 'E404' }).then(() =>
