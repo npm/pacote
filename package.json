@@ -2,6 +2,9 @@
   "name": "pacote",
   "version": "9.5.10",
   "description": "JavaScript package downloader",
+  "publishConfig": {
+    "tag": "v9-legacy"
+  },
   "main": "index.js",
   "files": [
     "*.js",
