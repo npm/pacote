@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="9.5.10"></a>
+## [9.5.10](https://github.com/npm/pacote/compare/v9.5.9...v9.5.10) (2019-12-04)
+
+
+### Bug Fixes
+
+* Do not drop perms in git when not root ([5f33040](https://github.com/npm/pacote/commit/5f33040)), closes [#23](https://github.com/npm/pacote/issues/23)
+
+
+
 <a name="9.5.9"></a>
 ## [9.5.9](https://github.com/npm/pacote/compare/v9.5.8...v9.5.9) (2019-10-29)
 
