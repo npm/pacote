@@ -62,7 +62,7 @@ test('returns a manifest with the right fields', t => {
       peerDependencies: {},
       peerDependenciesMeta: {},
       bin: {
-        testing: './foo.js'
+        testing: 'foo.js'
       },
       _shasum: 'deadbeef1',
       _resolved: 'resolved.to.this',
@@ -96,7 +96,6 @@ test('defaults all field to expected types + values', t => {
       bundleDependencies: false, // because npm does boolean checks on this
       peerDependencies: {},
       peerDependenciesMeta: {},
-      bin: null,
       _resolved: base._resolved,
       _integrity: base._integrity,
       _shasum: base._shasum,
@@ -209,28 +208,6 @@ test('fills in `bin` if `directories.bin` string', t => {
         'a.js': path.join('foo', 'my', 'bin', 'z', 'a.js')
       }, 'bins successfully calculated')
     })
-  })
-})
-
-test('fills in `bin` if original was an array', t => {
-  const tarballPath = 'testing/tarball-1.2.3.tgz'
-  const base = {
-    name: 'testing',
-    version: '1.2.3',
-    bin: ['my/bin1', 'bin2.js'],
-    directories: {
-      bin: 'foo'
-    },
-    _integrity: 'sha1-deadbeefc0ffeebad1dea',
-    _shasum: '75e69d6de79f7347df79e6da77575e',
-    _resolved: OPTS.registry + tarballPath,
-    _hasShrinkwrap: false
-  }
-  return finalizeManifest(base, npa(base.name), OPTS).then(manifest => {
-    t.deepEqual(manifest.bin, {
-      'bin1': path.join('foo', 'my', 'bin1'),
-      'bin2.js': path.join('foo', 'bin2.js')
-    }, 'bins successfully calculated')
   })
 })
 
