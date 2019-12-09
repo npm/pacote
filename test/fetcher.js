@@ -273,26 +273,63 @@ t.test('extract', t => {
           process.removeListener('log', onlog)
         })
     })
+})
 
-    // extract into existing folder, for coverage of some other code paths
-    .then(() => mkdirp.sync(target + '/weird'))
-    // some weird thing with links and such
-    .then(() =>
-      new FileFetcher(weirdspec, { cache }).extract(target + '/weird'))
-    .then(() => {
-      const missing = [
-        'index-hardlink.js',
-        'index-symlink.js',
-        '.gitignore',
-        'lib/.gitignore',
-        'no-gitignore-here/.gitignore',
-      ]
-      const dir = target + '/weird/'
-      t.ok(fs.statSync(dir + '/no-gitignore-here/.npmignore'),
-        'renamed .gitignore')
-      missing.forEach(f =>
-        t.throws(() => fs.statSync(dir + '/' + f), 'excluded ' + f))
-    })
+t.test('extract into folder that already has a package in it', t => {
+  const dir = t.testdir({
+    'package.json': JSON.stringify({
+      name: 'weird',
+      version: '1.2.3',
+      bundleDependencies: ['foo'],
+      dependencies: {
+        foo: '*',
+        bar: '*',
+      }
+    }),
+    node_modules: {
+      '.bin': {
+        foo: 'foo',
+        bar: 'bar',
+      },
+      foo: {
+        'package.json': JSON.stringify({
+          bin: 'foo',
+          name: 'foo',
+          version:'1.2.3',
+        }),
+        'index.js': 'console.log("foo")',
+      },
+      bar: {
+        bin: 'bar',
+        'package.json': JSON.stringify({name: 'bar',version:'1.2.3'}),
+        'index.js': 'console.log("bar")',
+      },
+    },
+  })
+  // some weird thing with links and such
+  // will remove weird and weird/foo bundle dep, but not weird/bar
+  return new FileFetcher(weirdspec, {cache}).extract(dir).then(() => {
+    const missing = [
+      'index-hardlink.js',
+      'index-symlink.js',
+      '.gitignore',
+      'lib/.gitignore',
+      'no-gitignore-here/.gitignore',
+      'node_modules/foo',
+      'node_modules/.bin/foo',
+    ]
+    missing.forEach(f =>
+      t.throws(() => fs.statSync(dir + '/' + f), 'excluded or removed' + f))
+
+    const present = [
+      'no-gitignore-here/.npmignore',
+      'node_modules/bar/package.json',
+      'node_modules/bar/index.js',
+      'node_modules/.bin/bar',
+    ]
+    present.forEach(f =>
+      t.ok(fs.statSync(dir + '/' + f), 'still have file at ' + f))
+  })
 })
 
 t.test('a non-retriable cache error', t => {
