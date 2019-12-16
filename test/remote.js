@@ -37,7 +37,7 @@ t.test('start server', t => {
     } else if (req.url === '/timeout') {
       res.statusCode = 200
       res.write('just a second... ')
-      setTimeout(() => res.end('still there?'), 1000).unref()
+      setTimeout(() => res.end('still there?'), 10000).unref()
     } else {
       res.setHeader('content-type', 'application/octet-stream')
       res.setHeader('content-length', data.length)
