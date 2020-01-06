@@ -1,6 +1,6 @@
 {
   "name": "pacote",
-  "version": "9.5.11",
+  "version": "9.5.12",
   "description": "JavaScript package downloader",
   "publishConfig": {
     "tag": "v9-legacy"
