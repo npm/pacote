@@ -20,3 +20,5 @@
 !.gitattributes
 !map.js
 !index.js
+!*.swp
+!*.swo
