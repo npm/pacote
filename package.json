@@ -42,6 +42,7 @@
     "lru-cache": "^5.1.1",
     "minipass": "^3.0.1",
     "minipass-fetch": "^1.2.1",
+    "mkdirp": "^1.0.3",
     "npm-package-arg": "^8.0.0",
     "npm-packlist": "^2.0.3",
     "npm-pick-manifest": "^5.0.0",
