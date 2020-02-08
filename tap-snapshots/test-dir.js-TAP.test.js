@@ -17,7 +17,7 @@ exports[`test/dir.js TAP basic > manifest 1`] = `
 Object {
   "_from": "file:test/fixtures/abbrev",
   "_id": "abbrev@1.1.1",
-  "_integrity": "null",
+  "_integrity": null,
   "_resolved": "\${CWD}/test/fixtures/abbrev",
   "author": "Isaac Z. Schlueter <i@izs.me>",
   "description": "Like ruby's abbrev module, but in js",
@@ -75,7 +75,7 @@ Object {
     "1.1.1": Object {
       "_from": "file:test/fixtures/abbrev",
       "_id": "abbrev@1.1.1",
-      "_integrity": "null",
+      "_integrity": null,
       "_resolved": "\${CWD}/test/fixtures/abbrev",
       "author": "Isaac Z. Schlueter <i@izs.me>",
       "description": "Like ruby's abbrev module, but in js",
@@ -83,7 +83,7 @@ Object {
         "tap": "^10.1",
       },
       "dist": Object {
-        "integrity": "null",
+        "integrity": null,
         "tarball": "file:\${CWD}/test/fixtures/abbrev",
       },
       "files": Array [
@@ -109,7 +109,7 @@ exports[`test/dir.js TAP basic > saved package.json 1`] = `
 Object {
   "_from": "file:test/fixtures/abbrev",
   "_id": "abbrev@1.1.1",
-  "_integrity": "null",
+  "_integrity": null,
   "_resolved": "\${CWD}/test/fixtures/abbrev",
   "author": "Isaac Z. Schlueter <i@izs.me>",
   "description": "Like ruby's abbrev module, but in js",
@@ -130,6 +130,46 @@ Object {
     "test": "tap test.js --100",
   },
   "version": "1.1.1",
+}
+`
+
+exports[`test/dir.js TAP dir with integrity > packument 1`] = `
+Object {
+  "dist-tags": Object {
+    "latest": "1.1.1",
+  },
+  "name": "abbrev",
+  "versions": Object {
+    "1.1.1": Object {
+      "_from": "file:test/fixtures/abbrev",
+      "_id": "abbrev@1.1.1",
+      "_integrity": "sha512-whatever-this-is-only-checked-if-we-extract-it",
+      "_resolved": "\${CWD}/test/fixtures/abbrev",
+      "author": "Isaac Z. Schlueter <i@izs.me>",
+      "description": "Like ruby's abbrev module, but in js",
+      "devDependencies": Object {
+        "tap": "^10.1",
+      },
+      "dist": Object {
+        "integrity": "sha512-whatever-this-is-only-checked-if-we-extract-it",
+        "tarball": "file:\${CWD}/test/fixtures/abbrev",
+      },
+      "files": Array [
+        "abbrev.js",
+      ],
+      "license": "ISC",
+      "main": "abbrev.js",
+      "name": "abbrev",
+      "repository": "http://github.com/isaacs/abbrev-js",
+      "scripts": Object {
+        "postpublish": "git push origin --all; git push origin --tags",
+        "postversion": "npm publish",
+        "preversion": "npm test",
+        "test": "tap test.js --100",
+      },
+      "version": "1.1.1",
+    },
+  },
 }
 `
 
@@ -161,7 +201,7 @@ exports[`test/dir.js TAP with prepare script > manifest 1`] = `
 Object {
   "_from": "file:test/fixtures/prepare-script",
   "_id": "git-prepare-script@1.0.0",
-  "_integrity": "null",
+  "_integrity": null,
   "_resolved": "\${CWD}/test/fixtures/prepare-script",
   "devDependencies": Object {
     "abbrev": "^1.1.1",
@@ -186,13 +226,13 @@ Object {
     "1.0.0": Object {
       "_from": "file:test/fixtures/prepare-script",
       "_id": "git-prepare-script@1.0.0",
-      "_integrity": "null",
+      "_integrity": null,
       "_resolved": "\${CWD}/test/fixtures/prepare-script",
       "devDependencies": Object {
         "abbrev": "^1.1.1",
       },
       "dist": Object {
-        "integrity": "null",
+        "integrity": null,
         "tarball": "file:\${CWD}/test/fixtures/prepare-script",
       },
       "license": "ISC",

@@ -25,6 +25,15 @@ t.test('basic', t => {
     .then(() => f.manifest().then(mani => t.equal(mani, f.package)))
 })
 
+t.test('dir with integrity', t => {
+  const f = new DirFetcher(abbrevspec, {
+    integrity: 'sha512-whatever-this-is-only-checked-if-we-extract-it',
+  })
+  t.same(f.types, ['directory'])
+  t.resolveMatchSnapshot(f.packument(), 'packument')
+  return t.end()
+})
+
 const prepare = resolve(__dirname, 'fixtures/prepare-script')
 const preparespec = `file:${relative(process.cwd(), prepare)}`
 
