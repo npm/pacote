@@ -42,6 +42,24 @@ const Minipass = require('minipass')
 const FileFetcher = require('../lib/file.js')
 const cache = resolve(me, 'cache')
 
+t.test('do not mutate opts object passed in', t => {
+  const opts = {}
+  const f = new FileFetcher(abbrevspec, opts)
+  f.integrity = 'sha512-somekindofintegral'
+  t.strictSame(opts, {})
+  t.match(f.integrity, {
+    sha512: [
+      {
+        source: 'sha512-somekindofintegral',
+        digest: 'somekindofintegral',
+        algorithm: 'sha512',
+        options: [],
+      },
+    ],
+  })
+  t.end()
+})
+
 t.test('tarball data', t =>
   new FileFetcher(abbrevspec, { cache }).tarball()
   .then(data => {
@@ -434,7 +452,7 @@ t.test('set integrity, pick default algo', t => {
   }
   const f = new FileFetcher('pkg.tgz', opts)
   t.equal(f.pickIntegrityAlgorithm(), 'sha512')
-  t.isa(opts.integrity, Object)
+  t.isa(f.opts.integrity, Object)
   const i = f.integrity
   f.integrity = null
   t.equal(f.integrity, i, 'cannot remove integrity')
