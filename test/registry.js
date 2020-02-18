@@ -111,12 +111,12 @@ t.test('provide different type of integrity, concats', async t => {
   const f = new RegistryFetcher('@isaacs/namespace-test', {
     registry,
     cache,
-    integrity: 'sha_a_le_beef-this_is_a_very_bad_joke_im_so_sorry',
+    integrity: 'sha-a/la/beef/this/is/a/very/bad/joke/im/so/sorry',
   })
   return f.manifest().then(mani =>
     t.equal(
       mani._integrity,
-      'sha_a_le_beef-this_is_a_very_bad_joke_im_so_sorry ' +
+      'sha-a/la/beef/this/is/a/very/bad/joke/im/so/sorry ' +
       'sha512-5ZYe1LgwHIaag0p9loMwsf5N/wJ4XAuHVNhSO+qulQOXWnyJVuco6IZjo+5u4ZLF/GimdHJcX+QK892ONfOCqQ=='
     ))
 })
@@ -141,7 +141,7 @@ t.test('404 fails with E404', t => {
 })
 
 t.test('respect default tag', async t => {
-  const f = new RegistryFetcher('underscore', {registry, cache, tag: 'stable'})
+  const f = new RegistryFetcher('underscore', {registry, cache, defaultTag: 'stable'})
   t.equal(f.spec.raw, 'underscore@stable')
   t.equal(await f.resolve(), `${registry}underscore/-/underscore-1.5.1.tgz`)
 })

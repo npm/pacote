@@ -41,6 +41,7 @@ t.test('running bin runs main file', t => {
 
 t.test('parseArg', t => {
   t.same(parseArg('--foo-bar=baz=boo'), { key: 'fooBar', value: 'baz=boo' })
+  t.same(parseArg('--tag=boo'), { key: 'defaultTag', value: 'boo' })
   t.same(parseArg('--foo'), { key: 'foo', value: true })
   t.same(parseArg('--path=~'), { key: 'path', value: process.env.HOME })
   t.same(parseArg('--no-foo'), { key: 'foo', value: false })

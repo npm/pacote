@@ -373,8 +373,8 @@ if (!fakeSudo) {
 
   t.spawn(process.execPath, [__filename, 'fake-sudo'], 'fake sudo mode')
 
-  t.test('enjoyBy implies full metadata', t => {
-    const f = new Fetcher('foo', { enjoyBy: new Date('1979-07-01') })
+  t.test('before implies full metadata', t => {
+    const f = new Fetcher('foo', { before: new Date('1979-07-01') })
     t.equal(f.fullMetadata, true)
     t.end()
   })
