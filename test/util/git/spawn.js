@@ -36,11 +36,11 @@ process.exit(1)
         minTimeout: 1,
       },
     },
-    'namespaced fetch-retry-* configs': {
-      'fetch-retries': 2,
-      'fetch-retry-factor': 1,
-      'fetch-retry-maxtimeout': 1000,
-      'fetch-retry-mintimeout': 1,
+    'namespaced fetchRetry* configs': {
+      fetchRetries: 2,
+      fetchRetryFactor: 1,
+      fetchRetryMaxtimeout: 1000,
+      fetchRetryMintimeout: 1,
     }
   }
   const er = {
