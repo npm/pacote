@@ -137,6 +137,7 @@ t.test('get a timeout error from the http fetch', t => {
   const f = new RemoteFetcher(url, { cache: cache + '/fresh', timeout: 1 })
   return t.rejects(f.extract(me + '/timeout'), {
     name: 'FetchError',
-    message: `network timeout at: ${server}/timeout`,
+    message: /timeout/,
+    code: /FETCH_ERROR|ERR_SOCKET_TIMEOUT/,
   })
 })
