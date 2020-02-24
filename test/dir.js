@@ -73,6 +73,19 @@ t.test('make bins executable', async t => {
   const f = new DirFetcher(spec, {})
   const target = resolve(me, basename(file))
   const res = await f.extract(target)
-  t.matchSnapshot(res, 'results of unpack')
+  // node v13.8 swapped out their zlib implementation with chromium's
+  // This is slightly faster and results in better compression for most
+  // tarballs.  However, it does mean that the snapshotted integrity is
+  // not valid.  Check if it's the new one, and if so, use the old instead,
+  // so that the snapshot continues to be valid.  At some point, when we
+  // drop support for node versions prior to 14, we can just remove this
+  // and re-generate the snapshot.
+  const oldIntegrity = 'sha512-rlE32nBV7XgKCm0I7YqAewyVPbaRJWUQMZUFLlngGK3imG+som3Hin7d/zPTikWg64tHIxb8VXeeq6u0IRRfmQ=='
+  const newIntegrity = 'sha512-J9g/qC58EQ6h3xMyc1lPP2vlmjy6N5symUYih/l9M3A340A1OHPc88oMSAwVdLKj/lT3NbekLXVjU6ONnPbJYg=='
+  const resTest = {
+    ...res,
+    ...(res.integrity === newIntegrity ? { integrity: oldIntegrity }: {}),
+  }
+  t.matchSnapshot(resTest, 'results of unpack')
   t.equal(fs.statSync(target + '/script.js').mode & 0o111, 0o111)
 })
