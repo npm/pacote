@@ -52,14 +52,21 @@ t.test('start server', t => {
 t.test('packument', t => {
   //const url = 'https://registry.npmjs.org/abbrev/-/abbrev-1.1.1.tgz'
   const url = `${server}/abbrev.tgz`
-  const f = new RemoteFetcher(url, { cache })
+  const f = new RemoteFetcher(url, {
+    cache,
+    preferOffline: true,
+    headers: {
+      'not-referer': 'http://example.com',
+    },
+    projectScope: '@npmcli',
+    npmSession: 'foobarbaz',
+  })
   // run twice to pull from cache the second time
   return t.resolveMatchSnapshot(f.packument(), 'packument')
     .then(() => {
       const f2 = new RemoteFetcher(`abbrev@${url}`, {
-        cache,
         pkgid: `remote:abbrev@${url}`,
-        preferOffline: true,
+        cache,
       })
       return t.resolveMatchSnapshot(f2.packument(), 'packument 2')
     })
@@ -72,15 +79,16 @@ t.test('packument', t => {
           {
             connection: 'keep-alive',
             'user-agent': `pacote/${version} node/${process.version}`,
-            'npm-scope': 'undefined',
-            'npm-session': 'undefined',
-            referer: 'undefined',
             'pacote-version': version,
             'pacote-req-type': 'tarball',
             'pacote-pkg-id': `remote:${server}/abbrev.tgz`,
             accept: '*/*',
             'accept-encoding': 'gzip,deflate',
             host: require('url').parse(server).host,
+            'npm-session': 'foobarbaz',
+            'npm-scope': '@npmcli',
+            'npm-in-ci': String,
+            'not-referer': 'http://example.com',
           }
         ]
       ])
