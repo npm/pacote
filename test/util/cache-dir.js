@@ -1,8 +1,8 @@
 const t = require('tap')
-const osenv = require('osenv')
+const os = require('os')
 
-osenv.tmpdir = () => '/tmp'
-osenv.home = () => '/home/isaacs'
+os.tmpdir = () => '/tmp'
+os.homedir = () => '/home/isaacs'
 const path = require('path')
 path.resolve = path.posix.resolve
 process.getuid = () => 69420
@@ -21,7 +21,7 @@ t.ok(cacheDir(), 'a cache dir is ok')
 t.equal(cacheDir(posix), '/home/isaacs/.npm')
 t.equal(cacheDir(windows), '/home/isaacs/npm-cache')
 
-osenv.home = () => null
+os.homedir = () => null
 t.equal(cacheDir(posix), '/tmp/npm-69420/.npm')
 t.equal(cacheDir(windows), '/tmp/npm-69420/npm-cache')
 
