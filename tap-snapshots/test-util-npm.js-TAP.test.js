@@ -12,8 +12,11 @@ Object {
     "flerb",
   ],
   "cmd": "{NODE}",
+  "code": undefined,
+  "message": "oopsie",
+  "signal": undefined,
   "stderr": "",
-  "stdout": "[\\"{NODE}\\",[\\"/path/to/npm/bin/npm-cli.js\\",\\"flerb\\"],{\\"cwd\\":\\"/cwd\\"}]",
+  "stdout": "[\\"{NODE}\\",[\\"/path/to/npm/bin/npm-cli.js\\",\\"flerb\\"],{\\"cwd\\":\\"/cwd\\",\\"stdioString\\":true}]",
 }
 `
 
@@ -23,7 +26,10 @@ Object {
     "flerb",
   ],
   "cmd": "/path/to/npm",
+  "code": undefined,
+  "message": "oopsie",
+  "signal": undefined,
   "stderr": "",
-  "stdout": "[\\"/path/to/npm\\",[\\"flerb\\"],{\\"cwd\\":\\"/cwd\\"}]",
+  "stdout": "[\\"/path/to/npm\\",[\\"flerb\\"],{\\"cwd\\":\\"/cwd\\",\\"stdioString\\":true}]",
 }
 `

@@ -35,6 +35,7 @@
   ],
   "dependencies": {
     "@npmcli/installed-package-contents": "^1.0.5",
+    "@npmcli/promise-spawn": "^1.1.0",
     "cacache": "^15.0.0",
     "chownr": "^1.1.4",
     "fs-minipass": "^2.1.0",

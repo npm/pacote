@@ -44,7 +44,7 @@ process.exit(1)
     }
   }
   const er = {
-    message: `failed '${process.execPath} ${te}`,
+    message: 'command failed',
     cmd: process.execPath,
     args: [ te ],
     code: 1,
