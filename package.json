@@ -34,6 +34,7 @@
     "git"
   ],
   "dependencies": {
+    "@npmcli/git": "^1.0.1",
     "@npmcli/installed-package-contents": "^1.0.5",
     "@npmcli/promise-spawn": "^1.1.0",
     "cacache": "^15.0.0",

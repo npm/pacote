@@ -58,7 +58,7 @@ const cache = resolve(me, 'cache')
 
 const abbrevSpec = `file:${abbrev}`
 
-const spawnGit = require('../lib/util/git/spawn.js')
+const spawnGit = require('@npmcli/git').spawn
 const {spawn} = require('child_process')
 const spawnNpm = require('../lib/util/npm.js')
 
