@@ -140,7 +140,7 @@ t.test('setup', { bail: true }, t => {
     }, ['repo']))
 
     .then(() => git('rev-parse', '--revs-only', 'HEAD'))
-    .then(sha => REPO_HEAD = sha.trim())
+    .then(({stdout}) => REPO_HEAD = stdout.trim())
   })
 
   t.test('spawn daemon', t => {
