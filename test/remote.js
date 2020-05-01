@@ -51,8 +51,9 @@ t.test('start server', t => {
 
 t.test('packument', t => {
   //const url = 'https://registry.npmjs.org/abbrev/-/abbrev-1.1.1.tgz'
-  const url = `${server}/abbrev.tgz`
+  const url = `https://registry.npmjs.org/abbrev.tgz`
   const f = new RemoteFetcher(url, {
+    registry: server,
     cache,
     preferOffline: true,
     headers: {
@@ -65,6 +66,7 @@ t.test('packument', t => {
   return t.resolveMatchSnapshot(f.packument(), 'packument')
     .then(() => {
       const f2 = new RemoteFetcher(`abbrev@${url}`, {
+        registry: server,
         pkgid: `remote:abbrev@${url}`,
         cache,
       })

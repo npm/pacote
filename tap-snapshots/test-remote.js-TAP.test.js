@@ -13,7 +13,7 @@ Object {
   "name": "abbrev",
   "versions": Object {
     "1.1.1": Object {
-      "_from": "http://localhost:{PORT}/abbrev.tgz",
+      "_from": "https://registry.npmjs.org/abbrev.tgz",
       "_id": "abbrev@1.1.1",
       "_integrity": "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==",
       "_resolved": "http://localhost:{PORT}/abbrev.tgz",
@@ -53,7 +53,7 @@ Object {
   "name": "abbrev",
   "versions": Object {
     "1.1.1": Object {
-      "_from": "http://localhost:{PORT}/abbrev.tgz",
+      "_from": "https://registry.npmjs.org/abbrev.tgz",
       "_id": "abbrev@1.1.1",
       "_integrity": "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==",
       "_resolved": "http://localhost:{PORT}/abbrev.tgz",

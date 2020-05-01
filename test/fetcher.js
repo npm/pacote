@@ -435,7 +435,8 @@ if (!fakeSudo) {
 t.test('make bins executable', async t => {
   const file = resolve(__dirname, 'fixtures/bin-object.tgz')
   const spec = `file:${relative(process.cwd(), file)}`
-  const f = new FileFetcher(spec, {})
+  const f = new FileFetcher(spec, { registry: 'https://registry.npmjs.org///'})
+  t.equal(f.registry, 'https://registry.npmjs.org')
   // simulate a fetcher that already has a manifest
   const manifest = require('./fixtures/bin-object/package.json')
   f.package = manifest
