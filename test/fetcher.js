@@ -60,6 +60,29 @@ t.test('do not mutate opts object passed in', t => {
   t.end()
 })
 
+t.test('snapshot the npmInstallCmd and npmInstallConfig', async t => {
+  t.formatSnapshot = o => !Array.isArray(o) ? ou
+    : o.map(s => s.replace(/^--cache=.*/, '--cache={CACHE}'))
+  const def = new FileFetcher(abbrevspec, {})
+  t.equal(def.npmBin, 'npm', 'use default npm bin')
+  t.matchSnapshot(def.npmInstallCmd, 'default install cmd')
+  t.matchSnapshot(def.npmCliConfig, 'default install config')
+  const bef = new FileFetcher(abbrevspec, {
+    before: new Date('1979-07-01T19:10:00.000Z'),
+  })
+  t.equal(bef.npmBin, 'npm', 'use default npm bin')
+  t.matchSnapshot(bef.npmInstallCmd, 'default install cmd with before')
+  t.matchSnapshot(bef.npmCliConfig, 'default install config with before')
+  const yarn = new FileFetcher(abbrevspec, {
+    npmBin: 'yarn',
+    npmInstallCmd: ['install', 'blerg'],
+    npmCliConfig: ['--some', '--yarn', '--stuff'],
+  })
+  t.equal(yarn.npmBin, 'yarn', 'use default yarn bin')
+  t.matchSnapshot(yarn.npmInstallCmd, 'customized npmInstallCmd')
+  t.matchSnapshot(yarn.npmCliConfig, 'yarn style cli config stuff')
+})
+
 t.test('tarball data', t =>
   new FileFetcher(abbrevspec, { cache }).tarball()
   .then(data => {
