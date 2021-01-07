@@ -154,14 +154,39 @@ t.test('fail resolution if no dist.tarball', t => {
   })
 })
 
-t.test('a manifest that lacks integrity', t => {
-  const f = new RegistryFetcher('no-integrity', {registry, cache})
-  return f.manifest().then(mani => {
-    t.notOk(mani._integrity, 'should have no integrity')
-    return f.extract(me + '/no-integrity')
-  }).then(result => t.deepEqual(result, {
+t.test('a manifest that lacks integrity', async t => {
+  const packumentCache = new Map()
+  const f = new RegistryFetcher('no-integrity', {registry, cache, packumentCache})
+  const mani = await f.manifest()
+  t.notOk(mani._integrity, 'should have no integrity')
+  const result = await f.extract(me + '/no-integrity')
+  t.deepEqual(result, {
     resolved: `${registry}no-integrity/-/no-integrity-1.2.3.tgz`,
     integrity: 'sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==',
     from: "no-integrity@",
-  }, 'calculated integrity anyway'))
+  }, 'calculated integrity anyway')
+  // load a second one, but get the cached copy
+  const f2 = new RegistryFetcher('no-integrity', {registry, cache, packumentCache})
+  t.equal(await f.packument(), await f2.packument(), 'serve cached packument')
+})
+
+t.test('packument that has been cached', async t => {
+  const packumentUrl = `${registry}asdf`
+  const packument = {
+    cached: 'packument',
+    name: 'asdf',
+    versions: {
+      '1.2.3': {
+        name: 'asdf',
+        version: '1.2.3',
+        dist: {
+          tarball: `${registry}/asdf/-/asdf-1.2.3.tgz`,
+          integrity: 'sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==',
+        },
+      },
+    },
+  }
+  const packumentCache = new Map([[packumentUrl, packument]])
+  const f = new RegistryFetcher('asdf@1.2', { registry, cache, packumentCache })
+  t.equal(await f.packument(), packument, 'got cached packument')
 })
