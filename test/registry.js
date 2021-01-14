@@ -190,3 +190,43 @@ t.test('packument that has been cached', async t => {
   const f = new RegistryFetcher('asdf@1.2', { registry, cache, packumentCache })
   t.equal(await f.packument(), packument, 'got cached packument')
 })
+
+t.test('packument that falls back to fullMetadata', t => {
+  const http = require('http')
+  const packument = {
+    name: 'no-tarball',
+    'dist-tags': { latest: '1.2.3' },
+    versions: {
+      '1.2.3': {
+        name: 'no-tarball',
+        version: '1.2.3',
+      },
+    },
+  }
+
+  let sent404 = false
+  const server = http.createServer((req, res) => {
+    res.setHeader('connection', 'close')
+    if (req.headers.accept.includes('application/vnd.npm.install-v1+json')) {
+      sent404 = true
+      res.statusCode = 404
+      return res.end(JSON.stringify({error:'corgi not found, try again'}))
+    }
+    res.end(JSON.stringify(packument))
+  })
+
+  const packumentCache = new Map()
+  const registry = `http://localhost:${port + 1000}`
+  server.listen(port + 1000, async () => {
+    const f = new RegistryFetcher('no-tarball', {
+      registry,
+      cache,
+      packumentCache,
+    })
+    const paku = await f.packument()
+    t.match(paku, packument, 'got packument (eventually)')
+    t.equal(sent404, true, 'sent a 404 for the missing corgi doc')
+    server.close()
+    t.end()
+  })
+})
