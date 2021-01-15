@@ -1,0 +1,11 @@
+{
+  "name": "prepare-requires-gitignore",
+  "version": "1.2.3",
+  "files": [
+    "index.js",
+    "prepare_ran_successfully"
+  ],
+  "scripts": {
+    "prepare": "node prepare.js"
+  }
+}

@@ -45,7 +45,9 @@ const http = require('http')
 
 const {resolve} = require('path')
 const rimraf = require('rimraf')
-const abbrev = resolve(__dirname, 'fixtures/abbrev-1.1.1.tgz')
+const fixtures = resolve(__dirname, 'fixtures')
+const abbrev = resolve(fixtures, 'abbrev-1.1.1.tgz')
+const prepIgnore = resolve(fixtures, 'prepare-requires-gitignore-1.2.3.tgz')
 const npa = require('npm-package-arg')
 
 t.saveFixture = true
@@ -250,6 +252,13 @@ t.test('setup', { bail: true }, t => {
         case '/not-tar.tgz':
           res.statusCode = 200
           return res.end('this is not a gzipped tarball tho')
+        case '/prepare-requires-gitignore-1.2.3.tgz': try {
+          const data = fs.readFileSync(prepIgnore)
+          return res.end(data)
+        } catch (er) {
+          res.statusCode = 500
+          return res.end(er.stack)
+        }
         default:
           res.statusCode = 404
           return res.end('not found')
@@ -387,6 +396,20 @@ t.test('extract from tarball from hosted git service', t => {
     t.test('with repo@ on the spec', runTest('repo@'))
     t.test('without repo@on the spec', runTest(''))
   }))
+})
+
+t.test('include .gitignore in hosted tarballs for preparation', async t => {
+  const spec = npa(`localhost:foo/y#${REPO_HEAD}`)
+  spec.hosted.tarball = () =>
+    `http://localhost:${httpPort}/prepare-requires-gitignore-1.2.3.tgz`
+  const g = new GitFetcher(spec, {cache})
+  const dir = t.testdir()
+  await g.extract(dir)
+  t.strictSame(fs.readdirSync(dir).sort((a,b) => a.localeCompare(b)), [
+    'index.js',
+    'package.json',
+    'prepare_ran_successfully',
+  ])
 })
 
 t.test('add git sha to hosted git shorthand', t =>
