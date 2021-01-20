@@ -3,6 +3,7 @@ const httpPort = 18000 + (+process.env.TAP_CHILD_ID || 0)
 const hostedUrl = `http://localhost:${httpPort}`
 const ghi = require('hosted-git-info/git-host-info.js')
 const gitPort = 12345 + (+process.env.TAP_CHILD_ID || 0)
+
 ghi.localhost = {
   protocols: [ 'git+https', 'git+ssh' ],
   domain: `127.0.0.1:${gitPort}`,
@@ -16,6 +17,24 @@ ghi.localhost = {
   hashformat: h => h,
   protocols_re: /^(git):$/
 }
+
+ghi.localhosthttps = {
+  protocols: [ 'git+https', 'git+ssh' ],
+  domain: `127.0.0.1`,
+
+  httpstemplate: `git://127.0.0.1:${gitPort}/{user}{#committish}`,
+  sshtemplate: 'git://nope this should never be used',
+  sshurltemplate: 'git://nope this should never be used either',
+
+  treepath: 'not-implemented',
+  // shortcut MUST have a user and project, at least
+  shortcuttemplate: '{type}:{user}/x{#committish}',
+  pathtemplate: '/{user}{#committish}',
+  pathmatch: /^\/(repo|submodule-repo|no-repo-here)/,
+  hashformat: h => h,
+  protocols_re: /^(git|git\+https):|$/
+}
+
 ghi.localhostssh = {
   protocols: [ 'git+ssh' ],
   domain: `localhostssh:${gitPort}`,
@@ -30,7 +49,6 @@ ghi.localhostssh = {
   hashformat: h => h,
   protocols_re: /^(git):$/
 }
-
 
 const remote = `git://localhost:${gitPort}/repo`
 const remoteHosted = `git://127.0.0.1:${gitPort}/repo`
@@ -153,7 +171,7 @@ t.test('setup', { bail: true }, t => {
       '--verbose',
       '--informative-errors',
       '--reuseaddr',
-      `--base-path=.`,
+      '--base-path=.',
       '--listen=localhost',
     ], { cwd: me, stdio: ['pipe', 1, 'pipe' ] })
     const onDaemonData = c => {
@@ -398,6 +416,36 @@ t.test('extract from tarball from hosted git service', t => {
   }))
 })
 
+t.test('include auth with hosted https when provided', async t => {
+  const opt = {cache}
+  const spec = `git+https://user:pass@127.0.0.1/repo`
+  const g = new GitFetcher(spec, opt)
+  const resolved = await g.resolve()
+  // this weird url is because our fakey mock hosted service's
+  // https() method returns a git:// url, since the git daemon we
+  // spun up only responds to the git:// protocol, not https.
+  // But! we are verifying that it IS using the https() method,
+  // and not the sshurl() method, because that one returns a
+  // 'do not use this' string.
+  t.equal(resolved, `git+git://127.0.0.1:${gitPort}/repo#${REPO_HEAD}`)
+  t.equal(g.spec.hosted.shortcut(), 'localhosthttps:repo/x',
+    'using the correct dummy hosted service')
+
+  t.test('fail, but do not fall through to sshurl', async t => {
+    const spec = `git+https://user:pass@127.0.0.1/no-repo-here`
+    const failer = new GitFetcher(spec, {
+      cache,
+      resolved: resolved.replace(/\/repo/, '/no-repo-here'),
+    })
+    t.equal(failer.spec.hosted.shortcut(), 'localhosthttps:no-repo-here/x',
+      'using the correct dummy hosted service')
+    const path = t.testdir({})
+    await t.rejects(failer.extract(path), {
+      args: [ 'ls-remote', `git://127.0.0.1:${gitPort}/no-repo-here` ],
+    })
+  })
+})
+
 t.test('include .gitignore in hosted tarballs for preparation', async t => {
   const spec = npa(`localhost:foo/y#${REPO_HEAD}`)
   spec.hosted.tarball = () =>
@@ -464,4 +512,21 @@ t.test('fall back to ssh url if https url fails or is missing', t => {
   const gf = new GitFetcher(`localhostssh:repo/x`, {cache})
   return gf.extract(`${me}/localhostssh`).then(({resolved}) =>
     t.equal(resolved, `git+git://127.0.0.1:${gitPort}/repo#${REPO_HEAD}`))
+})
+
+t.test('repoUrl function', async t => {
+  const proj = 'isaacs/abbrev-js'
+  const { hosted: shortcut } = npa(`github:${proj}`)
+  const { hosted: hasAuth } = npa(`git+https://user:pass@github.com/${proj}`)
+  const { hosted: noAuth } = npa(`git+https://github.com/${proj}`)
+  const { hosted: ssh } = npa(`git+ssh://git@github.com/${proj}`)
+  const { hosted: git } = npa(`git://github.com/${proj}`)
+  const { repoUrl } = GitFetcher
+  const expectNoAuth = `git+ssh://git@github.com/${proj}`
+  const expectAuth = `git+https://user:pass@github.com/${proj}`
+  t.match(repoUrl(shortcut), expectNoAuth)
+  t.match(repoUrl(hasAuth), expectAuth)
+  t.match(repoUrl(noAuth), expectNoAuth)
+  t.match(repoUrl(ssh), expectNoAuth)
+  t.match(repoUrl(git), expectNoAuth)
 })
