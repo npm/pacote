@@ -23,12 +23,14 @@ Array [
 exports[`test/fetcher.js fake-sudo TAP snapshot the npmInstallCmd and npmInstallConfig > default install cmd 1`] = `
 Array [
   "install",
+  "--force",
 ]
 `
 
 exports[`test/fetcher.js fake-sudo TAP snapshot the npmInstallCmd and npmInstallConfig > default install cmd with before 1`] = `
 Array [
   "install",
+  "--force",
 ]
 `
 
