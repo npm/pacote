@@ -6,7 +6,7 @@ os.homedir = () => '/home/isaacs'
 const path = require('path')
 path.resolve = path.posix.resolve
 process.getuid = () => 69420
-process.env.APPDATA = ''
+process.env.LOCALAPPDATA = ''
 const isWindows = process.platform === 'win32'
 const posix = isWindows ? 'posix' : null
 const windows = isWindows ? null : 'win32'
@@ -18,15 +18,15 @@ const cacheDir = require('../../lib/util/cache-dir.js')
 // on all platforms.
 t.ok(cacheDir(), 'a cache dir is ok')
 
-t.equal(cacheDir(posix), '/home/isaacs/.npm')
-t.equal(cacheDir(windows), '/home/isaacs/npm-cache')
+t.equal(cacheDir(posix), '/home/isaacs/.npm/_cacache')
+t.equal(cacheDir(windows), '/home/isaacs/npm-cache/_cacache')
 
 os.homedir = () => null
-t.equal(cacheDir(posix), '/tmp/npm-69420/.npm')
-t.equal(cacheDir(windows), '/tmp/npm-69420/npm-cache')
+t.equal(cacheDir(posix), '/tmp/npm-69420/.npm/_cacache')
+t.equal(cacheDir(windows), '/tmp/npm-69420/npm-cache/_cacache')
 
-process.env.APPDATA = '/%APPDATA%'
-t.equal(cacheDir(windows), '/%APPDATA%/npm-cache')
+process.env.LOCALAPPDATA = '/%LOCALAPPDATA%'
+t.equal(cacheDir(windows), '/%LOCALAPPDATA%/npm-cache/_cacache')
 
 process.getuid = null
-t.equal(cacheDir(posix), `/tmp/npm-${process.pid}/.npm`)
+t.equal(cacheDir(posix), `/tmp/npm-${process.pid}/.npm/_cacache`)

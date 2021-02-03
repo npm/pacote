@@ -67,6 +67,10 @@ t.test('snapshot the npmInstallCmd and npmInstallConfig', async t => {
   t.equal(def.npmBin, 'npm', 'use default npm bin')
   t.matchSnapshot(def.npmInstallCmd, 'default install cmd')
   t.matchSnapshot(def.npmCliConfig, 'default install config')
+  t.notEqual(basename(def.npmCliConfig[0]), '_cacache',
+    'do not have a _cacache folder on cache config passed to npm cli')
+  t.equal(basename(def.cache), '_cacache',
+    'have a _cacache folder on default pacote config itself')
   const bef = new FileFetcher(abbrevspec, {
     before: new Date('1979-07-01T19:10:00.000Z'),
   })
