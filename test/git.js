@@ -61,7 +61,7 @@ const t = require('tap')
 const fs = require('fs')
 const http = require('http')
 
-const {resolve} = require('path')
+const {dirname, basename, resolve} = require('path')
 const rimraf = require('rimraf')
 const fixtures = resolve(__dirname, 'fixtures')
 const abbrev = resolve(fixtures, 'abbrev-1.1.1.tgz')
@@ -75,6 +75,8 @@ const me = t.testdir({
 })
 const repo = resolve(me, 'repo')
 const cache = resolve(me, 'cache')
+const cycleA = resolve(me, 'cycle-a')
+const cycleB = resolve(me, 'cycle-b')
 
 const abbrevSpec = `file:${abbrev}`
 
@@ -161,6 +163,45 @@ t.test('setup', { bail: true }, t => {
 
     .then(() => git('rev-parse', '--revs-only', 'HEAD'))
     .then(({stdout}) => REPO_HEAD = stdout.trim())
+  })
+
+  t.test('create cycle of git prepared deps', async t => {
+    for (const repo of [cycleA, cycleB]) {
+      const git = (...cmd) => spawnGit(cmd, { cwd: repo })
+      const write = (f, c) => fs.writeFileSync(`${repo}/${f}`, c)
+      const npm = (...cmd) => spawnNpm('npm', [
+        ...cmd,
+        '--no-sign-git-commit',
+        '--no-sign-git-tag',
+      ], repo)
+
+      const other = repo === cycleA ? `git://localhost:${gitPort}/cycle-b`
+      : `git://localhost:${gitPort}/cycle-a`
+      const name = basename(repo)
+      const otherName = basename(other)
+
+      mkdirp.sync(repo)
+      await git('init')
+      await git('config', 'user.name', 'pacotedev')
+      await git('config', 'user.email', 'i+pacotedev@izs.me')
+      await git('config', 'tag.gpgSign', 'false')
+      await git('config', 'commit.gpgSign', 'false')
+      await git('config', 'tag.forceSignAnnotated', 'false')
+      await write('package.json', JSON.stringify({
+        name,
+        version: '0.0.0',
+        description: 'just some random thing',
+        dependencies: {
+          [otherName]: other,
+        },
+        scripts: {
+          prepare: 'echo this is fine',
+        },
+      }))
+      await git('add', 'package.json')
+      await git('commit', '-m', 'package json file')
+      await npm('version', '1.0.0')
+    }
   })
 
   t.test('spawn daemon', t => {
@@ -529,4 +570,60 @@ t.test('repoUrl function', async t => {
   t.match(repoUrl(noAuth), expectNoAuth)
   t.match(repoUrl(ssh), expectNoAuth)
   t.match(repoUrl(git), expectNoAuth)
+})
+
+t.test('handle it when prepared git deps depend on each other', async t => {
+  // now we've created both repos, and they each depend on the other
+  // our mocked npm bin should safely prevent an infinite regress if
+  // this test fails, and just log that the appropriate env got set.
+  const npmBin = resolve(t.testdir(), 'npm-mock.js')
+  const path = t.testdir({
+    'npm-mock.js': `#!/usr/bin/env node
+const pnp = process.env._PACOTE_NO_PREPARE_ || ''
+const { argv } = process
+const data = {
+  argv,
+  noPrepare: pnp ? pnp.split('\\n') : [],
+  cwd: process.cwd(),
+}
+if (data.noPrepare.length > 5) {
+  throw new Error('infinite regress detected!')
+}
+
+// just an incredibly rudimentary package manager
+const pkg = require(process.cwd() + '/package.json')
+const pacote = require(${JSON.stringify(dirname(__dirname))})
+for (const [name, spec] of Object.entries(pkg.dependencies)) {
+  pacote.extract(spec, process.cwd() + '/' + name, {
+    npmBin: ${JSON.stringify(npmBin)},
+    cache: ${JSON.stringify(cache)},
+  })
+}
+require('fs').writeFileSync('log', JSON.stringify(data,0,2))
+`,
+  })
+  for (const project of ['cycle-a', 'cycle-b']) {
+    const remote = `git://localhost:${gitPort}/${project}`
+    const local = `${path}/${project}`
+    const g = new GitFetcher(remote, {cache, npmBin})
+    await g.extract(local)
+    const log = JSON.parse(fs.readFileSync(`${local}/log`, 'utf8'))
+    t.match(log, {
+      argv: [
+        process.execPath,
+        npmBin,
+      ],
+      noPrepare: [ g.resolved ],
+      cwd: new RegExp(`${me}/cache/tmp/git-clone-[a-f0-9]{8}`),
+    })
+    // our rudimentary package manager dumps the deps into the pkg root
+    // but it doesn't get installed once the loop is detected.
+    const base = basename(local)
+    const other = base === 'cycle-a' ? 'cycle-b' : 'cycle-a'
+    t.strictSame(require(`${path}/${base}/${other}/${base}/package.json`),
+      require(`${local}/package.json`))
+    t.throws(() => {
+      require(`${path}/${base}/${other}/${base}/${other}/package.json`)
+    }, 'does not continue installing once loop is detected')
+  }
 })
