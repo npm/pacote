@@ -1,4 +1,14 @@
-const DirFetcher = require('../lib/dir.js')
+const requireInject = require('require-inject')
+const runScript = require('@npmcli/run-script')
+const RUNS = []
+const DirFetcher = requireInject('../lib/dir.js', {
+  '@npmcli/run-script': (opts) => {
+    RUNS.push(opts)
+    // don't actually inherit or print banner in the test, though.
+    return runScript({ ...opts, stdio: 'pipe', banner: false })
+  },
+})
+
 const t = require('tap')
 const npa = require('npm-package-arg')
 const fs = require('fs')
@@ -38,6 +48,7 @@ const prepare = resolve(__dirname, 'fixtures/prepare-script')
 const preparespec = `file:${relative(process.cwd(), prepare)}`
 
 t.test('with prepare script', t => {
+  RUNS.length = 0
   const f = new DirFetcher(preparespec, {})
   t.resolveMatchSnapshot(f.packument(), 'packument')
   t.resolveMatchSnapshot(f.manifest(), 'manifest')
@@ -45,6 +56,19 @@ t.test('with prepare script', t => {
   return t.resolveMatchSnapshot(f.extract(me + '/prepare'), 'extract')
     .then(() => t.spawn(process.execPath, [index], 'test prepared result'))
     .then(() => t.matchSnapshot(fs.readdirSync(me + '/prepare').sort(), 'file list'))
+    .then(() => t.equal(RUNS[0].stdio, 'pipe', 'should pipe output'))
+})
+
+t.test('responds to foregroundScripts: true', t => {
+  RUNS.length = 0
+  const f = new DirFetcher(preparespec, { foregroundScripts: true })
+  t.resolveMatchSnapshot(f.packument(), 'packument')
+  t.resolveMatchSnapshot(f.manifest(), 'manifest')
+  const index = me + '/prepare/index.js'
+  return t.resolveMatchSnapshot(f.extract(me + '/prepare'), 'extract')
+    .then(() => t.spawn(process.execPath, [index], 'test prepared result'))
+    .then(() => t.matchSnapshot(fs.readdirSync(me + '/prepare').sort(), 'file list'))
+    .then(() => t.equal(RUNS[0].stdio, 'inherit', 'should inherit output'))
 })
 
 t.test('missing dir cannot be packed', t => {

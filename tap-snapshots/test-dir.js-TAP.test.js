@@ -181,6 +181,72 @@ Object {
 }
 `
 
+exports[`test/dir.js TAP responds to foregroundScripts: true > extract 1`] = `
+Object {
+  "from": "file:test/fixtures/prepare-script",
+  "integrity": "sha512-HTzPAt8wmXNchUdisnGDSCuUgrFee5v8F6GsLc5mQd29VXiNzv4PGz71jjLSIF1wWQSB+UjLTmSJSGznF/s/Lw==",
+  "resolved": "\${CWD}/test/fixtures/prepare-script",
+}
+`
+
+exports[`test/dir.js TAP responds to foregroundScripts: true > file list 1`] = `
+Array [
+  "index.js",
+  "package.json",
+  "prepare.js",
+]
+`
+
+exports[`test/dir.js TAP responds to foregroundScripts: true > manifest 1`] = `
+Object {
+  "_from": "file:test/fixtures/prepare-script",
+  "_id": "git-prepare-script@1.0.0",
+  "_integrity": null,
+  "_resolved": "\${CWD}/test/fixtures/prepare-script",
+  "devDependencies": Object {
+    "abbrev": "^1.1.1",
+  },
+  "license": "ISC",
+  "main": "index.js",
+  "name": "git-prepare-script",
+  "scripts": Object {
+    "prepare": "node prepare.js",
+  },
+  "version": "1.0.0",
+}
+`
+
+exports[`test/dir.js TAP responds to foregroundScripts: true > packument 1`] = `
+Object {
+  "dist-tags": Object {
+    "latest": "1.0.0",
+  },
+  "name": "git-prepare-script",
+  "versions": Object {
+    "1.0.0": Object {
+      "_from": "file:test/fixtures/prepare-script",
+      "_id": "git-prepare-script@1.0.0",
+      "_integrity": null,
+      "_resolved": "\${CWD}/test/fixtures/prepare-script",
+      "devDependencies": Object {
+        "abbrev": "^1.1.1",
+      },
+      "dist": Object {
+        "integrity": null,
+        "tarball": "file:\${CWD}/test/fixtures/prepare-script",
+      },
+      "license": "ISC",
+      "main": "index.js",
+      "name": "git-prepare-script",
+      "scripts": Object {
+        "prepare": "node prepare.js",
+      },
+      "version": "1.0.0",
+    },
+  },
+}
+`
+
 exports[`test/dir.js TAP with prepare script > extract 1`] = `
 Object {
   "from": "file:test/fixtures/prepare-script",
