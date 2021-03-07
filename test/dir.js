@@ -136,3 +136,18 @@ t.test('make bins executable', async t => {
   t.matchSnapshot(resTest, 'results of unpack')
   t.equal(fs.statSync(target + '/script.js').mode & 0o111, 0o111)
 })
+
+t.test('exposes tarCreateOptions method', async t => {
+  const simpleOpts = DirFetcher.tarCreateOptions({ _resolved: '/home/foo' })
+  t.match(
+    simpleOpts,
+    {
+      cwd: '/home/foo',
+      prefix: 'package/',
+      portable: true,
+      gzip: true,
+      mtime: new Date('1985-10-26T08:15:00.000Z'),
+    },
+    'should return standard options'
+  )
+})
