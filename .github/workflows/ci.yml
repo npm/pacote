@@ -10,7 +10,7 @@ jobs:
         # todo: add windows-latest to this list.
         # Right now, it's just too flaky and hard to get PWD and HOME out
         # of all the snapshots properly.
-        os: [ubuntu-latest, macOS-latest]
+        os: [ubuntu-latest, macOS-latest, windows-latest]
       fail-fast: false
 
     runs-on: ${{ matrix.os }}
