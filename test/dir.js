@@ -145,7 +145,9 @@ t.test('exposes tarCreateOptions method', async t => {
       cwd: '/home/foo',
       prefix: 'package/',
       portable: true,
-      gzip: true,
+      gzip: {
+        strategy: 3
+      },
       mtime: new Date('1985-10-26T08:15:00.000Z'),
     },
     'should return standard options'
