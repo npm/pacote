@@ -120,6 +120,28 @@ t.test('tarballFile', t => {
     t.end()
   })
 
+  t.test('fs read stream error', t => {
+    const fsm = require('fs-minipass')
+    const ReadStream = fsm.ReadStream
+    t.teardown(() => fsm.ReadStream = ReadStream)
+    fsm.ReadStream = class extends ReadStream {
+      emit (ev, data) {
+        if (ev === 'close')
+          super.emit('error', new Error('poop'))
+        else
+          super.emit(ev, data)
+      }
+    }
+
+    t.rejects(new FileFetcher(abbrevspec, {cache})
+      .tarballFile(target + '/err.tgz'), { message: 'poop' }, 'tarballFile')
+
+    t.rejects(new FileFetcher(abbrevspec, {cache})
+      .tarball(), { message: 'poop' }, 'tarball stream')
+
+    t.end()
+  })
+
   t.test('fs write stream error', t => {
     const fsm = require('fs-minipass')
     const WriteStream = fsm.WriteStream
