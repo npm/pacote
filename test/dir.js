@@ -1,7 +1,8 @@
-const requireInject = require('require-inject')
 const runScript = require('@npmcli/run-script')
 const RUNS = []
-const DirFetcher = requireInject('../lib/dir.js', {
+const t = require('tap')
+
+const DirFetcher = t.mock('../lib/dir.js', {
   '@npmcli/run-script': (opts) => {
     RUNS.push(opts)
     // don't actually inherit or print banner in the test, though.
@@ -9,7 +10,6 @@ const DirFetcher = requireInject('../lib/dir.js', {
   },
 })
 
-const t = require('tap')
 const npa = require('npm-package-arg')
 const fs = require('fs')
 const { promisify } = require('util')

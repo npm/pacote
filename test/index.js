@@ -17,7 +17,6 @@ const weirdspec = `file:${relative(process.cwd(), weird)}`
 const ignore = resolve(__dirname, 'fixtures/ignore-pkg.tgz')
 const ignorespec = `file:${relative(process.cwd(), ignore)}`
 
-const mkdirp = require('mkdirp')
 const me = t.testdir()
 
 t.cleanSnapshot = str => str

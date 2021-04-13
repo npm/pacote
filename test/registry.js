@@ -65,7 +65,7 @@ t.test('underscore, no tag or version', t => {
     return f.manifest().then(m2 => t.equal(m, m2, 'manifest cached'))
   })
   .then(() => f.extract(me + '/underscore'))
-  .then(result => t.deepEqual(result, {
+  .then(result => t.same(result, {
     resolved: `${registry}underscore/-/underscore-1.5.1.tgz`,
     integrity: 'sha1-0r3oF9F2/63olKtxRY5oKhS4bck= sha512-yOc7VukmA45a1D6clUn1mD7Mbc9LcVYAQEXNKSTblzha59hSFJ6cAt90JDoxh05GQnTPI9nk4wjT/I8C/nAMPw==',
     from: "underscore@",
@@ -78,7 +78,7 @@ t.test('scoped, no tag or version', t => {
   return f.resolve().then(r => t.equal(r, `${registry}@isaacs/namespace-test/-/namespace-test-1.0.0.tgz`))
   .then(() => f.manifest()).then(m => t.match(m, { version: '1.0.0' }))
   .then(() => f.extract(me + '/namespace-test'))
-  .then(result => t.deepEqual(result, {
+  .then(result => t.same(result, {
     resolved: `${registry}@isaacs/namespace-test/-/namespace-test-1.0.0.tgz`,
     integrity: 'sha512-5ZYe1LgwHIaag0p9loMwsf5N/wJ4XAuHVNhSO+qulQOXWnyJVuco6IZjo+5u4ZLF/GimdHJcX+QK892ONfOCqQ==',
     from: "@isaacs/namespace-test@",
@@ -160,7 +160,7 @@ t.test('a manifest that lacks integrity', async t => {
   const mani = await f.manifest()
   t.notOk(mani._integrity, 'should have no integrity')
   const result = await f.extract(me + '/no-integrity')
-  t.deepEqual(result, {
+  t.same(result, {
     resolved: `${registry}no-integrity/-/no-integrity-1.2.3.tgz`,
     integrity: 'sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==',
     from: "no-integrity@",

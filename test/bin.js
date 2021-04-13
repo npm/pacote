@@ -104,11 +104,10 @@ t.test('main', t => {
   const exitlog = []
   process.exit = code => exitlog.push(code)
 
-  t.beforeEach(cb => {
+  t.beforeEach(() => {
     errorlog.length = 0
     loglog.length = 0
     exitlog.length = 0
-    cb()
   })
 
   Object.defineProperty(process.stdout, 'isTTY', { value: false })

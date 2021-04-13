@@ -11,7 +11,39 @@ Object {
   "exitlog": Array [],
   "loglog": Array [
     Array [
-      "Pacote - The JavaScript Package Handler, v{VERSION}\\n\\nUsage:\\n\\n  pacote resolve <spec>\\n    Resolve a specifier and output the fully resolved target\\n    Returns integrity and from if '--long' flag is set.\\n\\n  pacote manifest <spec>\\n    Fetch a manifest and print to stdout\\n\\n  pacote packument <spec>\\n    Fetch a full packument and print to stdout\\n\\n  pacote tarball <spec> [<filename>]\\n    Fetch a package tarball and save to <filename>\\n    If <filename> is missing or '-', the tarball will be streamed to stdout.\\n\\n  pacote extract <spec> <folder>\\n    Extract a package to the destination folder.\\n\\nConfiguration values all match the names of configs passed to npm, or\\noptions passed to Pacote.  Additional flags for this executable:\\n\\n  --long     Print an object from 'resolve', including integrity and spec.\\n  --json     Print result objects as JSON rather than node's default.\\n             (This is the default if stdout is not a TTY.)\\n  --help -h  Print this helpful text.\\n\\nFor example '--cache=/path/to/folder' will use that folder as the cache.\\n",
+      String(
+        Pacote - The JavaScript Package Handler, v{VERSION}
+        
+        Usage:
+        
+          pacote resolve <spec>
+            Resolve a specifier and output the fully resolved target
+            Returns integrity and from if '--long' flag is set.
+        
+          pacote manifest <spec>
+            Fetch a manifest and print to stdout
+        
+          pacote packument <spec>
+            Fetch a full packument and print to stdout
+        
+          pacote tarball <spec> [<filename>]
+            Fetch a package tarball and save to <filename>
+            If <filename> is missing or '-', the tarball will be streamed to stdout.
+        
+          pacote extract <spec> <folder>
+            Extract a package to the destination folder.
+        
+        Configuration values all match the names of configs passed to npm, or
+        options passed to Pacote.  Additional flags for this executable:
+        
+          --long     Print an object from 'resolve', including integrity and spec.
+          --json     Print result objects as JSON rather than node's default.
+                     (This is the default if stdout is not a TTY.)
+          --help -h  Print this helpful text.
+        
+        For example '--cache=/path/to/folder' will use that folder as the cache.
+        
+      ),
     ],
   ],
 }
@@ -24,7 +56,39 @@ Object {
       "bad command: blerg",
     ],
     Array [
-      "Pacote - The JavaScript Package Handler, v{VERSION}\\n\\nUsage:\\n\\n  pacote resolve <spec>\\n    Resolve a specifier and output the fully resolved target\\n    Returns integrity and from if '--long' flag is set.\\n\\n  pacote manifest <spec>\\n    Fetch a manifest and print to stdout\\n\\n  pacote packument <spec>\\n    Fetch a full packument and print to stdout\\n\\n  pacote tarball <spec> [<filename>]\\n    Fetch a package tarball and save to <filename>\\n    If <filename> is missing or '-', the tarball will be streamed to stdout.\\n\\n  pacote extract <spec> <folder>\\n    Extract a package to the destination folder.\\n\\nConfiguration values all match the names of configs passed to npm, or\\noptions passed to Pacote.  Additional flags for this executable:\\n\\n  --long     Print an object from 'resolve', including integrity and spec.\\n  --json     Print result objects as JSON rather than node's default.\\n             (This is the default if stdout is not a TTY.)\\n  --help -h  Print this helpful text.\\n\\nFor example '--cache=/path/to/folder' will use that folder as the cache.\\n",
+      String(
+        Pacote - The JavaScript Package Handler, v{VERSION}
+        
+        Usage:
+        
+          pacote resolve <spec>
+            Resolve a specifier and output the fully resolved target
+            Returns integrity and from if '--long' flag is set.
+        
+          pacote manifest <spec>
+            Fetch a manifest and print to stdout
+        
+          pacote packument <spec>
+            Fetch a full packument and print to stdout
+        
+          pacote tarball <spec> [<filename>]
+            Fetch a package tarball and save to <filename>
+            If <filename> is missing or '-', the tarball will be streamed to stdout.
+        
+          pacote extract <spec> <folder>
+            Extract a package to the destination folder.
+        
+        Configuration values all match the names of configs passed to npm, or
+        options passed to Pacote.  Additional flags for this executable:
+        
+          --long     Print an object from 'resolve', including integrity and spec.
+          --json     Print result objects as JSON rather than node's default.
+                     (This is the default if stdout is not a TTY.)
+          --help -h  Print this helpful text.
+        
+        For example '--cache=/path/to/folder' will use that folder as the cache.
+        
+      ),
     ],
   ],
   "exitlog": Array [],
@@ -38,7 +102,22 @@ Object {
   "exitlog": Array [],
   "loglog": Array [
     Array [
-      "{\\n  \\"method\\": \\"extract\\",\\n  \\"spec\\": \\"npm@latest-6\\",\\n  \\"dest\\": \\"folder\\",\\n  \\"conf\\": {\\n    \\"_\\": [\\n      \\"extract\\",\\n      \\"npm@latest-6\\",\\n      \\"folder\\"\\n    ],\\n    \\"cache\\": \\"{HOME}/.npm/_cacache\\",\\n    \\"json\\": true\\n  }\\n}",
+      String(
+        {
+          "method": "extract",
+          "spec": "npm@latest-6",
+          "dest": "folder",
+          "conf": {
+            "_": [
+              "extract",
+              "npm@latest-6",
+              "folder"
+            ],
+            "cache": "{HOME}/.npm/_cacache",
+            "json": true
+          }
+        }
+      ),
     ],
   ],
 }
@@ -75,7 +154,22 @@ Object {
   "exitlog": Array [],
   "loglog": Array [
     Array [
-      "{\\n  \\"method\\": \\"manifest\\",\\n  \\"spec\\": \\"bar@foo\\",\\n  \\"conf\\": {\\n    \\"_\\": [\\n      \\"manifest\\",\\n      \\"bar@foo\\"\\n    ],\\n    \\"cache\\": \\"{HOME}/.npm/_cacache\\"\\n  },\\n  \\"_resolved\\": \\"manifest resolved\\",\\n  \\"_integrity\\": \\"manifest integrity\\",\\n  \\"_from\\": \\"manifest from\\"\\n}",
+      String(
+        {
+          "method": "manifest",
+          "spec": "bar@foo",
+          "conf": {
+            "_": [
+              "manifest",
+              "bar@foo"
+            ],
+            "cache": "{HOME}/.npm/_cacache"
+          },
+          "_resolved": "manifest resolved",
+          "_integrity": "manifest integrity",
+          "_from": "manifest from"
+        }
+      ),
     ],
   ],
 }
@@ -87,7 +181,19 @@ Object {
   "exitlog": Array [],
   "loglog": Array [
     Array [
-      "{\\n  \\"method\\": \\"packument\\",\\n  \\"spec\\": \\"paku@mint\\",\\n  \\"conf\\": {\\n    \\"_\\": [\\n      \\"packument\\",\\n      \\"paku@mint\\"\\n    ],\\n    \\"cache\\": \\"{HOME}/.npm/_cacache\\"\\n  }\\n}",
+      String(
+        {
+          "method": "packument",
+          "spec": "paku@mint",
+          "conf": {
+            "_": [
+              "packument",
+              "paku@mint"
+            ],
+            "cache": "{HOME}/.npm/_cacache"
+          }
+        }
+      ),
     ],
   ],
 }
@@ -113,7 +219,13 @@ Object {
   "exitlog": Array [],
   "loglog": Array [
     Array [
-      "{\\n  \\"resolved\\": \\"manifest resolved\\",\\n  \\"integrity\\": \\"manifest integrity\\",\\n  \\"from\\": \\"manifest from\\"\\n}",
+      String(
+        {
+          "resolved": "manifest resolved",
+          "integrity": "manifest integrity",
+          "from": "manifest from"
+        }
+      ),
     ],
   ],
 }
@@ -125,7 +237,19 @@ Object {
   "exitlog": Array [],
   "loglog": Array [
     Array [
-      "{\\n  \\"method\\": \\"resolve\\",\\n  \\"spec\\": \\"foo@bar\\",\\n  \\"conf\\": {\\n    \\"_\\": [\\n      \\"resolve\\",\\n      \\"foo@bar\\"\\n    ],\\n    \\"cache\\": \\"{HOME}/.npm/_cacache\\"\\n  }\\n}",
+      String(
+        {
+          "method": "resolve",
+          "spec": "foo@bar",
+          "conf": {
+            "_": [
+              "resolve",
+              "foo@bar"
+            ],
+            "cache": "{HOME}/.npm/_cacache"
+          }
+        }
+      ),
     ],
   ],
 }
@@ -161,7 +285,21 @@ Object {
   "exitlog": Array [],
   "loglog": Array [
     Array [
-      "{\\n  \\"method\\": \\"tarball\\",\\n  \\"spec\\": \\"tar@ball\\",\\n  \\"file\\": \\"file.tgz\\",\\n  \\"conf\\": {\\n    \\"_\\": [\\n      \\"tarball\\",\\n      \\"tar@ball\\",\\n      \\"file.tgz\\"\\n    ],\\n    \\"cache\\": \\"{HOME}/.npm/_cacache\\"\\n  }\\n}",
+      String(
+        {
+          "method": "tarball",
+          "spec": "tar@ball",
+          "file": "file.tgz",
+          "conf": {
+            "_": [
+              "tarball",
+              "tar@ball",
+              "file.tgz"
+            ],
+            "cache": "{HOME}/.npm/_cacache"
+          }
+        }
+      ),
     ],
   ],
 }

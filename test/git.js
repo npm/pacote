@@ -68,7 +68,6 @@ const abbrev = resolve(fixtures, 'abbrev-1.1.1.tgz')
 const prepIgnore = resolve(fixtures, 'prepare-requires-gitignore-1.2.3.tgz')
 const npa = require('npm-package-arg')
 
-t.saveFixture = true
 const me = t.testdir({
   repo: {},
   cache: {},
@@ -323,7 +322,7 @@ t.test('setup', { bail: true }, t => {
           return res.end('not found')
       }
     })
-    t.parent.parent.tearDown(() => s.close())
+    t.parent.parent.teardown(() => s.close())
     s.listen(httpPort, () => t.end())
   })
 
@@ -339,7 +338,7 @@ t.test('basic stuff', async t => {
   await g.resolve().then(resolved => t.equal(resolved, r.resolved))
   const s = new GitFetcher(remote + '#semver:1.x', {cache})
   t.equal(s.resolved, null)
-  await s.resolve().then(resolved => t.notEqual(resolved, r.resolved))
+  await s.resolve().then(resolved => t.not(resolved, r.resolved))
 
   const gx = await g.extract(me + '/g')
   const rx = await r.extract(me + '/r')
@@ -514,7 +513,7 @@ t.test('fetch a weird ref', t => {
       head3 = result.resolved.split('#').pop()
       t.match(result.resolved, /^git\+git:\/\/127\.0\.0\.1:[0-9]+\/repo#[a-z0-9]{40}$/,
         'got git url as resolved value')
-      t.notEqual(result.resolved, `${remoteHosted}#${REPO_HEAD}`,
+      t.not(result.resolved, `${remoteHosted}#${REPO_HEAD}`,
         'git url for HEAD~3 is not the same as HEAD')
     }))
 

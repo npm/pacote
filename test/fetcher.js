@@ -22,7 +22,6 @@ t.cleanSnapshot = s => s.split(process.cwd()).join('{CWD}')
 
 const npa = require('npm-package-arg')
 const { promisify } = require('util')
-const mkdirp = require('mkdirp')
 
 const _tarballFromResolved = Symbol.for('pacote.Fetcher._tarballFromResolved')
 
@@ -67,7 +66,7 @@ t.test('snapshot the npmInstallCmd and npmInstallConfig', async t => {
   t.equal(def.npmBin, 'npm', 'use default npm bin')
   t.matchSnapshot(def.npmInstallCmd, 'default install cmd')
   t.matchSnapshot(def.npmCliConfig, 'default install config')
-  t.notEqual(basename(def.npmCliConfig[0]), '_cacache',
+  t.not(basename(def.npmCliConfig[0]), '_cacache',
     'do not have a _cacache folder on cache config passed to npm cli')
   t.equal(basename(def.cache), '_cacache',
     'have a _cacache folder on default pacote config itself')
@@ -180,7 +179,7 @@ t.test('extract', t => {
     }).extract(target + '/cached'))
     .then(check('cached'))
     .then(!fakeSudo ? () => {} : () => {
-      t.notEqual(process.chownLog.length, 0, 'did some chowns')
+      t.not(process.chownLog.length, 0, 'did some chowns')
       const log = { uid: process.realUid, gid: process.getgid() }
       process.chownLog.forEach(entry => t.match(entry, log, 'chowned to me'))
       process.chownLog.length = 0
@@ -480,7 +479,7 @@ t.test('set integrity, pick default algo', t => {
   }
   const f = new FileFetcher('pkg.tgz', opts)
   t.equal(f.pickIntegrityAlgorithm(), 'sha512')
-  t.isa(f.opts.integrity, Object)
+  t.type(f.opts.integrity, Object)
   const i = f.integrity
   f.integrity = null
   t.equal(f.integrity, i, 'cannot remove integrity')
