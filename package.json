@@ -46,7 +46,7 @@
     "npm-package-arg": "^8.0.1",
     "npm-packlist": "^2.1.4",
     "npm-pick-manifest": "^6.0.0",
-    "npm-registry-fetch": "^9.0.0",
+    "npm-registry-fetch": "^10.0.0",
     "promise-retry": "^2.0.1",
     "read-package-json-fast": "^2.0.1",
     "rimraf": "^3.0.2",

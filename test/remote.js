@@ -89,7 +89,6 @@ t.test('packument', t => {
             host: require('url').parse(server).host,
             'npm-session': 'foobarbaz',
             'npm-scope': '@npmcli',
-            'npm-in-ci': String,
             'not-referer': 'http://example.com',
           }
         ]
