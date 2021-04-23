@@ -61,7 +61,7 @@ t.test('underscore, no tag or version', t => {
   return f.resolve().then(r => t.equal(r, `${registry}underscore/-/underscore-1.5.1.tgz`))
   .then(() => f.manifest()).then(m => {
     t.equal(m, f.package)
-    t.match(m, { version: '1.5.1' })
+    t.match(m, { version: '1.5.1', _id: 'underscore@1.5.1' })
     return f.manifest().then(m2 => t.equal(m, m2, 'manifest cached'))
   })
   .then(() => f.extract(me + '/underscore'))
