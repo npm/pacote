@@ -83,8 +83,6 @@ const spawnGit = require('@npmcli/git').spawn
 const {spawn} = require('child_process')
 const spawnNpm = require('../lib/util/npm.js')
 
-const mkdirp = require('mkdirp')
-
 const tar = require('tar')
 
 let REPO_HEAD = ''
@@ -98,7 +96,7 @@ t.test('setup', { bail: true }, t => {
       '--no-sign-git-tag',
     ], repo)
 
-    mkdirp.sync(repo)
+    fs.mkdirSync(repo, { recursive: true })
     return git('init')
     .then(() => git('config', 'user.name', 'pacotedev'))
     .then(() => git('config', 'user.email', 'i+pacotedev@izs.me'))
@@ -179,7 +177,7 @@ t.test('setup', { bail: true }, t => {
       const name = basename(repo)
       const otherName = basename(other)
 
-      mkdirp.sync(repo)
+      fs.mkdirSync(repo, { recursive: true })
       await git('init')
       await git('config', 'user.name', 'pacotedev')
       await git('config', 'user.email', 'i+pacotedev@izs.me')
@@ -233,7 +231,7 @@ t.test('setup', { bail: true }, t => {
     const repo = resolve(me, 'submodule-repo')
     const git = (...cmd) => spawnGit(cmd, { cwd: repo })
     const write = (f, c) => fs.writeFileSync(`${repo}/${f}`, c)
-    mkdirp.sync(repo)
+    fs.mkdirSync(repo, { recursive: true })
     return git('init')
       .then(() => git('config', 'user.name', 'pacotedev'))
       .then(() => git('config', 'user.email', 'i+pacotedev@izs.me'))
