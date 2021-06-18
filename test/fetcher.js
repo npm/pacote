@@ -14,6 +14,19 @@ if (fakeSudo) {
   fs.lchown = fakeChown('lchown')
 }
 
+fs.utimes = () => {
+  throw new Error('do not call utimes')
+}
+fs.futimes = () => {
+  throw new Error('do not call futimes')
+}
+fs.utimesSync = () => {
+  throw new Error('do not call utimesSync')
+}
+fs.futimesSync = () => {
+  throw new Error('do not call futimesSync')
+}
+
 const { relative, resolve, basename } = require('path')
 const t = require('tap')
 const me = t.testdir()
