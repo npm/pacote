@@ -46,6 +46,8 @@ Array [
   "--include=dev",
   "--include=peer",
   "--include=optional",
+  "--no-package-lock-only",
+  "--no-dry-run",
 ]
 `
 
@@ -62,6 +64,8 @@ Array [
   "--include=dev",
   "--include=peer",
   "--include=optional",
+  "--no-package-lock-only",
+  "--no-dry-run",
 ]
 `
 
