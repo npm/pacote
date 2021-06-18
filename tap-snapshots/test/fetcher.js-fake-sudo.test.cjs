@@ -43,6 +43,9 @@ Array [
   "--no-progress",
   "--no-save",
   "--no-audit",
+  "--include=dev",
+  "--include=peer",
+  "--include=optional",
 ]
 `
 
@@ -56,6 +59,9 @@ Array [
   "--no-progress",
   "--no-save",
   "--no-audit",
+  "--include=dev",
+  "--include=peer",
+  "--include=optional",
 ]
 `
 
