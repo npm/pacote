@@ -4,50 +4,42 @@ const hostedUrl = `http://localhost:${httpPort}`
 const ghi = require('hosted-git-info/git-host-info.js')
 const gitPort = 12345 + (+process.env.TAP_CHILD_ID || 0)
 
+ghi.byShortcut['localhost:'] = 'localhost'
+ghi.byDomain.localhost = 'localhost'
 ghi.localhost = {
-  protocols: [ 'git+https', 'git+ssh' ],
-  domain: `127.0.0.1:${gitPort}`,
-  httpstemplate: 'git://{domain}/{user}{#committish}',
-  treepath: 'not-implemented',
-  tarballtemplate: `${hostedUrl}/repo-HEAD.tgz`,
-  // shortcut MUST have a user and project, at least
-  shortcuttemplate: '{type}:{user}/x{#committish}',
-  pathtemplate: '/{user}{#committish}',
-  pathmatch: /^\/(repo|submodule-repo)/,
-  hashformat: h => h,
-  protocols_re: /^(git):$/
+  protocols: ['git+https:', 'git+ssh:'],
+  tarballtemplate: () => `${hostedUrl}/repo-HEAD.tgz`,
+  sshurltemplate: (h) => `git://127.0.0.1:${gitPort}/${h.user}${h.committish ? `#${h.committish}` : ''}`,
+  shortcuttemplate: (h) => `localhost:${h.user}/${h.project}${h.committish ? `#${h.committish}` : ''}`,
+  extract: (url) => {
+    const [, user, project] = url.pathname.split('/')
+    return { user, project, committish: url.hash.slice(1) }
+  }
 }
 
+ghi.byShortcut['localhosthttps:'] = 'localhosthttps'
+ghi.byDomain['127.0.0.1'] = 'localhosthttps'
 ghi.localhosthttps = {
-  protocols: [ 'git+https', 'git+ssh' ],
-  domain: `127.0.0.1`,
-
-  httpstemplate: `git://127.0.0.1:${gitPort}/{user}{#committish}`,
-  sshtemplate: 'git://nope this should never be used',
-  sshurltemplate: 'git://nope this should never be used either',
-
-  treepath: 'not-implemented',
-  // shortcut MUST have a user and project, at least
-  shortcuttemplate: '{type}:{user}/x{#committish}',
-  pathtemplate: '/{user}{#committish}',
-  pathmatch: /^\/(repo|submodule-repo|no-repo-here)/,
-  hashformat: h => h,
-  protocols_re: /^(git|git\+https):|$/
+  protocols: ['git+https:', 'git+ssh:', 'git:'],
+  httpstemplate: (h) => `git://127.0.0.1:${gitPort}/${h.user}${h.committish ? `#${h.committish}` : ''}`,
+  shortcuttemplate: (h) => `localhosthttps:${h.user}/x${h.committish ? `#${h.committish}` : ''}`,
+  extract: (url) => {
+    const [, user, project] = url.pathname.split('/')
+    return { user, project, committish: url.hash.slice(1) }
+  }
 }
 
+ghi.byShortcut['localhostssh:'] = 'localhostssh'
+ghi.byDomain.localhostssh = 'localhostssh'
 ghi.localhostssh = {
-  protocols: [ 'git+ssh' ],
-  domain: `localhostssh:${gitPort}`,
-  sshtemplate: `git://127.0.0.1:${gitPort}/{user}{#committish}`,
-  sshurltemplate: `git://127.0.0.1:${gitPort}/{user}{#committish}`,
-  treepath: 'not-implemented',
-  tarballtemplate: `${hostedUrl}/repo-HEAD.tgz`,
-  // shortcut MUST have a user and project, at least
-  shortcuttemplate: '{type}:{user}/x{#committish}',
-  pathtemplate: '/{user}{#committish}',
-  pathmatch: /^\/(repo|submodule-repo)/,
-  hashformat: h => h,
-  protocols_re: /^(git):$/
+  protocols: ['git+ssh:'],
+  tarballtemplate: () => `${hostedUrl}/repo-HEAD.tgz`,
+  sshurltemplate: (h) => `git://127.0.0.1:${gitPort}/${h.user}${h.committish ? `#${h.committish}` : ''}`,
+  shortcuttemplate: (h) => `localhostssh:${h.user}/${h.project}${h.committish ? `#${h.committish}` : ''}`,
+  extract: (url) => {
+    const [, user, project] = url.pathname.split('/')
+    return { user, project, committish: url.hash.slice(1) }
+  }
 }
 
 const remote = `git://localhost:${gitPort}/repo`
@@ -481,7 +473,7 @@ t.test('include auth with hosted https when provided', async t => {
       'using the correct dummy hosted service')
     const path = t.testdir({})
     await t.rejects(failer.extract(path), {
-      args: [ 'ls-remote', `git://127.0.0.1:${gitPort}/no-repo-here` ],
+      args: [ '--no-replace-objects', 'ls-remote', `git://127.0.0.1:${gitPort}/no-repo-here` ],
     })
   })
 })
