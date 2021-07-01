@@ -35,6 +35,7 @@ ghi.localhostssh = {
   protocols: ['git+ssh:'],
   tarballtemplate: () => `${hostedUrl}/repo-HEAD.tgz`,
   sshurltemplate: (h) => `git://127.0.0.1:${gitPort}/${h.user}${h.committish ? `#${h.committish}` : ''}`,
+  httpstemplate: (h) => `git://127.0.0.1:${gitPort}/${h.user}${h.committish ? `#${h.committish}` : ''}`,
   shortcuttemplate: (h) => `localhostssh:${h.user}/${h.project}${h.committish ? `#${h.committish}` : ''}`,
   extract: (url) => {
     const [, user, project] = url.pathname.split('/')
@@ -616,5 +617,18 @@ require('fs').writeFileSync('log', JSON.stringify(data,0,2))
     t.throws(() => {
       require(`${path}/${base}/${other}/${base}/${other}/package.json`)
     }, 'does not continue installing once loop is detected')
+  }
+})
+
+t.test('missing branch name throws pathspec error', async (t) => {
+  const domains = ['localhostssh', 'localhosthttps', 'localhost']
+
+  for (const domain of domains) {
+    await t.rejects(new GitFetcher(`${domain}:repo/x#this-branch-does-not-exist`, {cache}).resolve(), {
+      constructor: /GitPathspecError/
+    }, domain)
+    await t.rejects(new GitFetcher(`${domain}:repo/x#this-branch-does-not-exist`, {cache}).manifest(), {
+      constructor: /GitPathspecError/
+    }, domain)
   }
 })
