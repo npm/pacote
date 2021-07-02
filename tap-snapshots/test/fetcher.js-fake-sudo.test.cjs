@@ -43,6 +43,11 @@ Array [
   "--no-progress",
   "--no-save",
   "--no-audit",
+  "--include=dev",
+  "--include=peer",
+  "--include=optional",
+  "--no-package-lock-only",
+  "--no-dry-run",
 ]
 `
 
@@ -56,6 +61,11 @@ Array [
   "--no-progress",
   "--no-save",
   "--no-audit",
+  "--include=dev",
+  "--include=peer",
+  "--include=optional",
+  "--no-package-lock-only",
+  "--no-dry-run",
 ]
 `
 
