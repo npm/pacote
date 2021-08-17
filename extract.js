@@ -68,8 +68,6 @@ function extract (spec, dest, opts) {
 
 function tryExtract (spec, tarStream, dest, opts) {
   return new BB((resolve, reject) => {
-    tarStream.on('error', reject)
-
     rimraf(dest)
       .then(() => mkdirp(dest))
       .then((made) => {
@@ -82,6 +80,10 @@ function tryExtract (spec, tarStream, dest, opts) {
         }
       })
       .then(() => {
+        // we've waited till now to catch errors reading the stream because we
+        // don't want to reject while the previous steps are still running.
+        tarStream.on('error', reject)
+
         const xtractor = extractStream(spec, dest, opts)
         xtractor.on('error', reject)
         xtractor.on('close', resolve)
