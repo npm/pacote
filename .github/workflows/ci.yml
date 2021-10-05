@@ -1,39 +1,50 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - latest
 
 jobs:
-  build:
-    strategy:
-      matrix:
-        node-version: [10.x, 12.x, 14.x, 15.x, 16.x]
-        # todo: add windows-latest to this list.
-        # Right now, it's just too flaky and hard to get PWD and HOME out
-        # of all the snapshots properly.
-        os: [ubuntu-latest, macOS-latest]
-      fail-fast: false
-
-    runs-on: ${{ matrix.os }}
-
+  lint:
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v1.1.0
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: npm
+      - run: npm i --prefer-online -g npm@latest
+      - run: npm ci
+      - run: npm run lint
 
-      - name: Use Nodejs ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [12.13.0, 12.x, 14.15.0, 14.x, 16.x]
+        # todo: add windows-latest to this list.
+        # Right now, it's just too flaky and hard to get PWD and HOME out of
+        # all the snapshots properly.
+        os: [ubuntu-latest, macOS-latest]
+        platform:
+        - os: ubuntu-latest
+          shell: bash
+        - os: macos-latest
+          shell: bash
+    runs-on: ${{ matrix.platform.os }}
+    defaults:
+      run:
+        shell: ${{ matrix.platform.shell }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-
-      - name: Install dependencies
-        run: npm install
-
-      # Run for all environments
-      - name: Run Tap Tests
-        run: npm test
-
-      # Push coverage for specific environment
-      - name: Run Tap Tests (push coverage results)
-        if: matrix.os == 'macOS-latest' && matrix.node-version == '12.x'
-        run: npm test
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+          cache: npm
+      - run: npm i --prefer-online -g npm@latest
+      - run: npm ci
+      - run: npm test --ignore-scripts
+      - run: npm ls -a
