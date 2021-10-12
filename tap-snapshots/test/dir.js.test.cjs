@@ -8,7 +8,7 @@
 exports[`test/dir.js TAP basic > extract 1`] = `
 Object {
   "from": "file:test/fixtures/abbrev",
-  "integrity": "sha512-I3vTFC+lcj06Z/kKzfF46JRJ8Zo31JN0N5GkuyXETIiLpJjh5yrYXdXPC0ehnx2kgSG+kUYd3s1DyN3xam/PKg==",
+  "integrity": "sha512-OCm45DHz7n9f1SEllmg3Bf1zBCzsiOYxMuodMZ5ux+HMoupmkzOftyOCKH07DhAcoyfUlos2VGmYkPHDxH92yg==",
   "resolved": "\${CWD}/test/fixtures/abbrev",
 }
 `
@@ -176,7 +176,7 @@ Object {
 exports[`test/dir.js TAP make bins executable > results of unpack 1`] = `
 Object {
   "from": "file:test/fixtures/bin-object",
-  "integrity": "sha512-QKG5OrNXMNSXIPX88Eg/HqD34sltojvTV06g4X+9/sKRpBR7cpa4mOQrdwnz0HZl+gH4ciwWcfXSqknsIGznjQ==",
+  "integrity": "sha512-hvYyDtqhAkxg/NF7eOjCpDcIs7ksaZjk9vrBkktxTJ0liITA/FsnEgmbP9l8h3rp+zN1QIvKAUvyTCYRpyCqZQ==",
   "resolved": "\${CWD}/test/fixtures/bin-object",
 }
 `
@@ -184,7 +184,7 @@ Object {
 exports[`test/dir.js TAP responds to foregroundScripts: true > extract 1`] = `
 Object {
   "from": "file:test/fixtures/prepare-script",
-  "integrity": "sha512-bW57J7gdjHVIdnxmtEdgv9puPrNxSU6xO7pGCZkkPLsrgf5ArHKvg2CflypkNhq5d9oYyFfYfOOFDukn6nYL6Q==",
+  "integrity": "sha512-+bTA3RvkXgLMM1PIzfcwXkiiSYzCBHT6Jrqo8yt3owZtMhOnBomH1Dc0949tVurdyPk7WcrKitvsRnXRPCD4sQ==",
   "resolved": "\${CWD}/test/fixtures/prepare-script",
 }
 `
@@ -250,7 +250,7 @@ Object {
 exports[`test/dir.js TAP responds to foregroundScripts: true and log:{level: silent} > extract 1`] = `
 Object {
   "from": "file:test/fixtures/prepare-script",
-  "integrity": "sha512-bW57J7gdjHVIdnxmtEdgv9puPrNxSU6xO7pGCZkkPLsrgf5ArHKvg2CflypkNhq5d9oYyFfYfOOFDukn6nYL6Q==",
+  "integrity": "sha512-+bTA3RvkXgLMM1PIzfcwXkiiSYzCBHT6Jrqo8yt3owZtMhOnBomH1Dc0949tVurdyPk7WcrKitvsRnXRPCD4sQ==",
   "resolved": "\${CWD}/test/fixtures/prepare-script",
 }
 `
@@ -316,7 +316,7 @@ Object {
 exports[`test/dir.js TAP with prepare script > extract 1`] = `
 Object {
   "from": "file:test/fixtures/prepare-script",
-  "integrity": "sha512-bW57J7gdjHVIdnxmtEdgv9puPrNxSU6xO7pGCZkkPLsrgf5ArHKvg2CflypkNhq5d9oYyFfYfOOFDukn6nYL6Q==",
+  "integrity": "sha512-+bTA3RvkXgLMM1PIzfcwXkiiSYzCBHT6Jrqo8yt3owZtMhOnBomH1Dc0949tVurdyPk7WcrKitvsRnXRPCD4sQ==",
   "resolved": "\${CWD}/test/fixtures/prepare-script",
 }
 `
