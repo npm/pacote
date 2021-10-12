@@ -1,6 +1,6 @@
 {
   "name": "pacote",
-  "version": "12.0.1",
+  "version": "12.0.2",
   "description": "JavaScript package downloader",
   "author": "Isaac Z. Schlueter <i@izs.me> (https://izs.me)",
   "bin": {
