@@ -614,7 +614,7 @@ require('fs').writeFileSync('log', JSON.stringify(data,0,2))
         npmBin,
       ],
       noPrepare: [ g.resolved ],
-      cwd: new RegExp(`${me}/cache/tmp/git-clone-[a-f0-9]{8}`),
+      cwd: new RegExp(`${me}/cache/tmp/git-clone[a-zA-Z0-9]{6,8}`),
     })
     // our rudimentary package manager dumps the deps into the pkg root
     // but it doesn't get installed once the loop is detected.
