@@ -541,6 +541,14 @@ t.test('resolved is a git+ssh url for hosted repos that support it', t => {
   t.end()
 })
 
+t.test('resolved preserves git+ssh url for non-hosted repos', t => {
+  const hash = '0000000000000000000000000000000000000000'
+  const url = `git+ssh://git@test/x/y.git#${hash}`
+  const gf = new GitFetcher(url, {})
+  t.equal(gf.resolved, url)
+  t.end()
+})
+
 t.test('fall back to ssh url if https url fails or is missing', t => {
   const gf = new GitFetcher(`localhostssh:repo/x`, {cache})
   return gf.extract(`${me}/localhostssh`).then(({resolved}) =>
