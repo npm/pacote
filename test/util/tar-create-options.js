@@ -9,7 +9,7 @@ t.match(
     prefix: 'package/',
     portable: true,
     gzip: {
-      level: 9
+      level: 9,
     },
     mtime: new Date('1985-10-26T08:15:00.000Z'),
   },
@@ -20,7 +20,7 @@ t.ok(simpleOpts.filter('foo', {}), 'should not filter anything')
 
 const optsWithBins = tarCreateOptions({
   bin: { a: 'index.js' },
-  _resolved: '/foo'
+  _resolved: '/foo',
 })
 
 const stat = { mode: 0o644 }

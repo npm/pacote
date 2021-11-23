@@ -6,7 +6,7 @@ const { relative, resolve } = require('path')
 const me = t.testdir()
 const cache = resolve(me, 'cache')
 
-t.cleanSnapshot = str => str.split(''+port).join('{PORT}')
+t.cleanSnapshot = str => str.split('' + port).join('{PORT}')
 
 const fs = require('fs')
 const abbrev = resolve(__dirname, 'fixtures/abbrev-1.1.1.tgz')
@@ -50,7 +50,7 @@ t.test('start server', t => {
 })
 
 t.test('packument', t => {
-  //const url = 'https://registry.npmjs.org/abbrev/-/abbrev-1.1.1.tgz'
+  // const url = 'https://registry.npmjs.org/abbrev/-/abbrev-1.1.1.tgz'
   const url = `https://registry.npmjs.org/abbrev.tgz`
   const f = new RemoteFetcher(url, {
     registry: server,
@@ -90,8 +90,8 @@ t.test('packument', t => {
             'npm-session': 'foobarbaz',
             'npm-scope': '@npmcli',
             'not-referer': 'http://example.com',
-          }
-        ]
+          },
+        ],
       ])
       requestLog.length = 0
     })
@@ -101,7 +101,7 @@ t.test('bad integrity', t => {
   const url = `${server}/abbrev.tgz`
   const integrity = 'sha512-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=='
   const f = new RemoteFetcher(url, { cache, integrity })
-  //return t.rejects(f.packument(), {
+  // return t.rejects(f.packument(), {
   return t.rejects(f.extract(me + '/bad-integrity'), {
     code: 'EINTEGRITY',
     sri: {

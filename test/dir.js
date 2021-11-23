@@ -131,7 +131,7 @@ t.test('make bins executable', async t => {
   const newIntegrity = 'sha512-J9g/qC58EQ6h3xMyc1lPP2vlmjy6N5symUYih/l9M3A340A1OHPc88oMSAwVdLKj/lT3NbekLXVjU6ONnPbJYg=='
   const resTest = {
     ...res,
-    ...(res.integrity === newIntegrity ? { integrity: oldIntegrity }: {}),
+    ...(res.integrity === newIntegrity ? { integrity: oldIntegrity } : {}),
   }
   t.matchSnapshot(resTest, 'results of unpack')
   t.equal(fs.statSync(target + '/script.js').mode & 0o111, 0o111)
@@ -146,7 +146,7 @@ t.test('exposes tarCreateOptions method', async t => {
       prefix: 'package/',
       portable: true,
       gzip: {
-        level: 9
+        level: 9,
       },
       mtime: new Date('1985-10-26T08:15:00.000Z'),
     },

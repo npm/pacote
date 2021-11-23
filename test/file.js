@@ -2,7 +2,7 @@ const FileFetcher = require('../lib/file.js')
 const t = require('tap')
 const { relative, resolve, basename } = require('path')
 const npa = require('npm-package-arg')
-const me = t.testdir({cache: {}})
+const me = t.testdir({ cache: {} })
 const cache = resolve(me, 'cache')
 t.cleanSnapshot = str => str.split(process.cwd()).join('${CWD}')
 

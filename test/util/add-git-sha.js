@@ -32,5 +32,6 @@ const cases = [
 ]
 
 t.plan(cases.length)
-for (const [spec, sha, result] of cases)
+for (const [spec, sha, result] of cases) {
   t.equal(addGitSha(npa(spec), sha), result, `${spec} + ${sha} = ${result}`)
+}

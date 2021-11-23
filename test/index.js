@@ -30,14 +30,14 @@ t.resolveMatchSnapshot(pacote.packument(abbrevspec), 'packument')
 t.resolveMatch(pacote.tarball(abbrevspec), fs.readFileSync(abbrev), 'tarball')
 t.resolveMatchSnapshot(pacote.tarball.file(abbrevspec, me + '/tarball.tgz'),
   'tarball to file').then(() =>
-    t.match(fs.readFileSync(me + '/tarball.tgz'), fs.readFileSync(abbrev)))
+  t.match(fs.readFileSync(me + '/tarball.tgz'), fs.readFileSync(abbrev)))
 const stream = pacote.tarball.stream(abbrevspec, stream =>
   new Promise((res, rej) => {
     stream.on('end', res)
     stream.on('error', rej)
     stream.pipe(fs.createWriteStream(me + '/stream.tgz'))
   })).then(() =>
-    t.match(fs.readFileSync(me + '/stream.tgz'), fs.readFileSync(abbrev)))
+  t.match(fs.readFileSync(me + '/stream.tgz'), fs.readFileSync(abbrev)))
 
 t.resolveMatchSnapshot(pacote.manifest(abbrevspec), 'manifest')
 
