@@ -2,7 +2,7 @@
   "name": "pacote",
   "version": "12.0.2",
   "description": "JavaScript package downloader",
-  "author": "Isaac Z. Schlueter <i@izs.me> (https://izs.me)",
+  "author": "GitHub Inc.",
   "bin": {
     "pacote": "lib/bin.js"
   },
@@ -13,7 +13,11 @@
     "snap": "tap",
     "preversion": "npm test",
     "postversion": "npm publish",
-    "prepublishOnly": "git push origin --follow-tags"
+    "prepublishOnly": "git push origin --follow-tags",
+    "lint": "eslint '**/*.js'",
+    "postlint": "npm-template-check",
+    "lintfix": "npm run lint -- --fix",
+    "posttest": "npm run lint"
   },
   "tap": {
     "timeout": 300,
@@ -25,7 +29,8 @@
     "tap": "^15.0.4"
   },
   "files": [
-    "lib/**/*.js"
+    "bin",
+    "lib"
   ],
   "keywords": [
     "packages",
@@ -37,6 +42,7 @@
     "@npmcli/installed-package-contents": "^1.0.6",
     "@npmcli/promise-spawn": "^1.2.0",
     "@npmcli/run-script": "^2.0.0",
+    "@npmcli/template-oss": "^2.3.1",
     "cacache": "^15.0.5",
     "chownr": "^2.0.0",
     "fs-minipass": "^2.1.0",
@@ -56,5 +62,6 @@
   "engines": {
     "node": "^12.13.0 || ^14.15.0 || >=16"
   },
-  "repository": "git@github.com:npm/pacote"
+  "repository": "git@github.com:npm/pacote",
+  "templateVersion": "2.3.1"
 }
