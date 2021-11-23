@@ -10,9 +10,7 @@ const DirFetcher = t.mock('../lib/dir.js', {
   },
 })
 
-const npa = require('npm-package-arg')
 const fs = require('fs')
-const { promisify } = require('util')
 
 const { relative, resolve, basename } = require('path')
 
@@ -127,7 +125,9 @@ t.test('make bins executable', async t => {
   // so that the snapshot continues to be valid.  At some point, when we
   // drop support for node versions prior to 14, we can just remove this
   // and re-generate the snapshot.
+  /* eslint-disable-next-line max-len */
   const oldIntegrity = 'sha512-rlE32nBV7XgKCm0I7YqAewyVPbaRJWUQMZUFLlngGK3imG+som3Hin7d/zPTikWg64tHIxb8VXeeq6u0IRRfmQ=='
+  /* eslint-disable-next-line max-len */
   const newIntegrity = 'sha512-J9g/qC58EQ6h3xMyc1lPP2vlmjy6N5symUYih/l9M3A340A1OHPc88oMSAwVdLKj/lT3NbekLXVjU6ONnPbJYg=='
   const resTest = {
     ...res,

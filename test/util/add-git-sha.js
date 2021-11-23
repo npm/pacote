@@ -6,9 +6,11 @@ const cases = [
   // unknown host
   ['git+ssh://git@some-host:user/repo', 'sha', 'git+ssh://git@some-host:user/repo#sha'],
   ['git+ssh://git@some-host:user/repo#othersha', 'sha', 'git+ssh://git@some-host:user/repo#sha'],
+  /* eslint-disable-next-line max-len */
   ['git+ssh://git@some-host:user/repo#othersha#otherothersha', 'sha', 'git+ssh://git@some-host:user/repo#sha'],
   ['git+ssh://git@some-host/user/repo', 'sha', 'git+ssh://git@some-host/user/repo#sha'],
   ['git+ssh://git@some-host/user/repo#othersha', 'sha', 'git+ssh://git@some-host/user/repo#sha'],
+  /* eslint-disable-next-line max-len */
   ['git+ssh://git@some-host/user/repo#othersha#otherothersha', 'sha', 'git+ssh://git@some-host/user/repo#sha'],
   // github shorthand
   ['github:user/repo', 'sha', 'github:user/repo#sha'],
@@ -16,7 +18,9 @@ const cases = [
   ['github:user/repo#othersha#otherothersha', 'sha', 'github:user/repo#sha'],
   // github https with auth
   ['git+https://git@github.com/user/repo', 'sha', 'https://git@github.com/user/repo.git#sha'],
+  /* eslint-disable-next-line max-len */
   ['git+https://git@github.com/user/repo#othersha', 'sha', 'https://git@github.com/user/repo.git#sha'],
+  /* eslint-disable-next-line max-len */
   ['git+https://git@github.com/user/repo#othersha#otherothersha', 'sha', 'https://git@github.com/user/repo.git#sha'],
   // github https no auth
   ['git+https://github.com/user/repo', 'sha', 'github:user/repo#sha'],

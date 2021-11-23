@@ -1,5 +1,5 @@
 const bin = require.resolve('../lib/bin.js')
-const { main, run, usage, parseArg, parse } = require('../lib/bin.js')
+const { main, run, parseArg, parse } = require('../lib/bin.js')
 const { spawn } = require('child_process')
 const t = require('tap')
 const version = require('../package.json').version
@@ -8,7 +8,6 @@ t.cleanSnapshot = str =>
     .split(process.env.HOME).join('{HOME}')
 
 const pacote = require('../')
-const called = []
 pacote.resolve = (spec, conf) =>
   spec === 'fail' ? Promise.reject(new Error('fail'))
   : spec === 'string' ? Promise.resolve('just a string')
@@ -79,7 +78,6 @@ t.test('run', t => {
   t.throws(() => run({ ...conf, _: ['x'] }), { message: 'bad command: x' })
 
   const testStdout = new Minipass({ encoding: 'utf8' })
-  const testOutput = []
   return t.resolveMatchSnapshot(run({
     ...conf,
     _: ['tarball'],

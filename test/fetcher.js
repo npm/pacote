@@ -8,8 +8,6 @@ if (fakeSudo) {
     process.chownLog.push({ type, path, uid, gid })
     process.nextTick(cb)
   }
-  const chown = fs.chown
-  const lchown = fs.lchown
   fs.chown = fakeChown('chown')
   fs.lchown = fakeChown('lchown')
 }
@@ -34,17 +32,12 @@ const Fetcher = require('../lib/fetcher.js')
 t.cleanSnapshot = s => s.split(process.cwd()).join('{CWD}')
 
 const npa = require('npm-package-arg')
-const { promisify } = require('util')
-
-const _tarballFromResolved = Symbol.for('pacote.Fetcher._tarballFromResolved')
 
 const abbrev = resolve(__dirname, 'fixtures/abbrev-1.1.1.tgz')
 const abbrevspec = `file:${relative(process.cwd(), abbrev)}`
 const abbrevMani = require('./fixtures/abbrev-manifest-min.json')
 const weird = resolve(__dirname, 'fixtures/weird-pkg.tgz')
 const weirdspec = `file:${relative(process.cwd(), weird)}`
-const ignore = resolve(__dirname, 'fixtures/ignore-pkg.tgz')
-const ignorespec = `file:${relative(process.cwd(), ignore)}`
 
 const cacache = require('cacache')
 const byDigest = cacache.get.stream.byDigest
@@ -73,8 +66,7 @@ t.test('do not mutate opts object passed in', t => {
 })
 
 t.test('snapshot the npmInstallCmd and npmInstallConfig', async t => {
-  t.formatSnapshot = o => !Array.isArray(o) ? ou
-    : o.map(s => s.replace(/^--cache=.*/, '--cache={CACHE}'))
+  t.formatSnapshot = o => o.map(s => s.replace(/^--cache=.*/, '--cache={CACHE}'))
   const def = new FileFetcher(abbrevspec, {})
   t.equal(def.npmBin, 'npm', 'use default npm bin')
   t.matchSnapshot(def.npmInstallCmd, 'default install cmd')
@@ -416,8 +408,6 @@ t.test('extract into folder that already has a package in it', t => {
 })
 
 t.test('a non-retriable cache error', t => {
-  const res = {}
-  const target = resolve(me, 'non-retriable-failure')
   const mutateFS = require('mutate-fs')
   const cacache = require('cacache')
   const data = fs.readFileSync(abbrev)

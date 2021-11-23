@@ -18,7 +18,9 @@ t.cleanSnapshot = s => s.split(process.execPath).join('{NODE}')
 const npm = require('../../lib/util/npm.js')
 t.test('do the things', t => {
   const env = { environmental: 'variables' }
-  t.resolveMatchSnapshot(npm('/path/to/npm/bin/npm-cli.js', 'flerb', '/cwd', env, { message: 'oopsie' }))
+  t.resolveMatchSnapshot(
+    npm('/path/to/npm/bin/npm-cli.js', 'flerb', '/cwd', env, { message: 'oopsie' })
+  )
   t.resolveMatchSnapshot(npm('/path/to/npm', 'flerb', '/cwd', env, { message: 'oopsie' }))
   t.end()
 })

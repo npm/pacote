@@ -9,7 +9,9 @@ ghi.byDomain.localhost = 'localhost'
 ghi.localhost = {
   protocols: ['git+https:', 'git+ssh:'],
   tarballtemplate: () => `${hostedUrl}/repo-HEAD.tgz`,
+  /* eslint-disable-next-line max-len */
   sshurltemplate: (h) => `git://127.0.0.1:${gitPort}/${h.user}${h.committish ? `#${h.committish}` : ''}`,
+  /* eslint-disable-next-line max-len */
   shortcuttemplate: (h) => `localhost:${h.user}/${h.project}${h.committish ? `#${h.committish}` : ''}`,
   extract: (url) => {
     const [, user, project] = url.pathname.split('/')
@@ -21,6 +23,7 @@ ghi.byShortcut['localhosthttps:'] = 'localhosthttps'
 ghi.byDomain['127.0.0.1'] = 'localhosthttps'
 ghi.localhosthttps = {
   protocols: ['git+https:', 'git+ssh:', 'git:'],
+  /* eslint-disable-next-line max-len */
   httpstemplate: (h) => `git://127.0.0.1:${gitPort}/${h.user}${h.committish ? `#${h.committish}` : ''}`,
   shortcuttemplate: (h) => `localhosthttps:${h.user}/x${h.committish ? `#${h.committish}` : ''}`,
   extract: (url) => {
@@ -34,8 +37,11 @@ ghi.byDomain.localhostssh = 'localhostssh'
 ghi.localhostssh = {
   protocols: ['git+ssh:'],
   tarballtemplate: () => `${hostedUrl}/repo-HEAD.tgz`,
+  /* eslint-disable-next-line max-len */
   sshurltemplate: (h) => `git://127.0.0.1:${gitPort}/${h.user}${h.committish ? `#${h.committish}` : ''}`,
+  /* eslint-disable-next-line max-len */
   httpstemplate: (h) => `git://127.0.0.1:${gitPort}/${h.user}${h.committish ? `#${h.committish}` : ''}`,
+  /* eslint-disable-next-line max-len */
   shortcuttemplate: (h) => `localhostssh:${h.user}/${h.project}${h.committish ? `#${h.committish}` : ''}`,
   extract: (url) => {
     const [, user, project] = url.pathname.split('/')
@@ -46,8 +52,6 @@ ghi.localhostssh = {
 const remote = `git://localhost:${gitPort}/repo`
 const remoteHosted = `git://127.0.0.1:${gitPort}/repo`
 const submodsRemote = `git://localhost:${gitPort}/submodule-repo`
-
-const remoteHostedSSH = `git://localhostssh:${gitPort}/repo`
 
 const GitFetcher = require('../lib/git.js')
 const t = require('tap')
@@ -644,11 +648,19 @@ t.test('missing branch name throws pathspec error', async (t) => {
   const domains = ['localhostssh', 'localhosthttps', 'localhost']
 
   for (const domain of domains) {
-    await t.rejects(new GitFetcher(`${domain}:repo/x#this-branch-does-not-exist`, { cache }).resolve(), {
-      constructor: /GitPathspecError/,
-    }, domain)
-    await t.rejects(new GitFetcher(`${domain}:repo/x#this-branch-does-not-exist`, { cache }).manifest(), {
-      constructor: /GitPathspecError/,
-    }, domain)
+    await t.rejects(
+      new GitFetcher(`${domain}:repo/x#this-branch-does-not-exist`, { cache }).resolve(),
+      {
+        constructor: /GitPathspecError/,
+      },
+      domain
+    )
+    await t.rejects(
+      new GitFetcher(`${domain}:repo/x#this-branch-does-not-exist`, { cache }).manifest(),
+      {
+        constructor: /GitPathspecError/,
+      },
+      domain
+    )
   }
 })
