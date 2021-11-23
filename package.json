@@ -17,7 +17,7 @@
   },
   "tap": {
     "timeout": 300,
-    "coverage-map": "map.js"
+    "coverage-map": "test/map.js"
   },
   "devDependencies": {
     "mutate-fs": "^2.1.1",
