@@ -3,9 +3,15 @@ const { main, run, parseArg, parse } = require('../lib/bin.js')
 const { spawn } = require('child_process')
 const t = require('tap')
 const version = require('../package.json').version
+const path = require('path')
+// console.log escapes it
+const doubleEscapedHome = process.env.HOME.replace(/\\/g, '\\\\')
+// console.log of --json escapes it AGAIN
+const tripleEscapedHome = process.env.HOME.replace(/\\/g, '\\\\\\\\')
 t.cleanSnapshot = str =>
   str.split(version).join('{VERSION}')
-    .split(process.env.HOME).join('{HOME}')
+    .split(doubleEscapedHome).join('{HOME}')
+    .split(tripleEscapedHome).join('{HOME}')
 
 const pacote = require('../')
 pacote.resolve = (spec, conf) =>

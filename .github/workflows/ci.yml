@@ -10,34 +10,35 @@ on:
       - latest
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-          cache: npm
-      - run: npm i --prefer-online -g npm@latest
-      - run: npm ci
-      - run: npm run lint
+  # lint:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: actions/setup-node@v2
+  #       with:
+  #         node-version: '16'
+  #         cache: npm
+  #     - run: npm i --prefer-online -g npm@latest
+  #     - run: npm ci
+  #     - run: npm run lint
 
   test:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [12.13.0, 12.x, 14.15.0, 14.x, 16.13.0, 16.x]
+        # node-version: [12.13.0, 12.x, 14.15.0, 14.x, 16.13.0, 16.x]
+        node-version: [12.13.0]
         platform:
-        - os: ubuntu-latest
-          shell: bash
-        - os: macos-latest
-          shell: bash
+        # - os: ubuntu-latest
+        #   shell: bash
+        # - os: macos-latest
+        #   shell: bash
         - os: windows-latest
           shell: bash
-        - os: windows-latest
-          shell: cmd
-        - os: windows-latest
-          shell: powershell
+        # - os: windows-latest
+        #   shell: cmd
+        # - os: windows-latest
+        #   shell: powershell
     runs-on: ${{ matrix.platform.os }}
     defaults:
       run:

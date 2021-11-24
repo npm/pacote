@@ -1,5 +1,6 @@
 const t = require('tap')
 const os = require('os')
+const cacheDir = require('../../lib/util/cache-dir.js')
 
 os.tmpdir = () => '/tmp'
 os.homedir = () => '/home/isaacs'
@@ -11,7 +12,6 @@ const isWindows = process.platform === 'win32'
 const posix = isWindows ? 'posix' : null
 const windows = isWindows ? null : 'win32'
 
-const cacheDir = require('../../lib/util/cache-dir.js')
 
 // call it once just to cover the default arg setting
 // the tests all specify something, so they work predictably

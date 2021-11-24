@@ -16,90 +16,105 @@ const { relative, resolve, basename } = require('path')
 
 const me = t.testdir()
 
-t.cleanSnapshot = str => str.split(process.cwd()).join('${CWD}')
+const cwd = process.cwd()
+// console.log escapes it
+const doubleEscapedCwd = cwd.replace(/\\/g, '\\\\')
+// console.log of --json escapes it AGAIN
+const tripleEscapedCwd = cwd.replace(/\\/g, '\\\\\\\\')
+t.cleanSnapshot = str =>
+  str.split(version).join('{VERSION}')
+t.cleanSnapshot = str => str
+    .split(doubleEscapedCwd).join('${CWD}')
+    .split(tripleEscapedCwd).join('${CWD}')
+    //TODO this isn't ideal it would be nice to make sure paths in windows are right
+    .replace(/\\+/g, '/') // remaining backslashes that aren't part of cwd
 
 const abbrev = resolve(__dirname, 'fixtures/abbrev')
 const abbrevspec = `file:${relative(process.cwd(), abbrev)}`
 
-t.test('basic', t => {
+t.test('basic', async t => {
   const f = new DirFetcher(abbrevspec, {})
   t.same(f.types, ['directory'])
   t.resolveMatchSnapshot(f.packument(), 'packument')
   t.resolveMatchSnapshot(f.manifest(), 'manifest')
   const pj = me + '/abbrev/package.json'
-  return t.resolveMatchSnapshot(f.extract(me + '/abbrev'), 'extract')
-    .then(() => t.matchSnapshot(require(pj), 'package.json extracted'))
-    .then(() => t.matchSnapshot(f.package, 'saved package.json'))
-    .then(() => f.manifest().then(mani => t.equal(mani, f.package)))
+  const extract = await f.extract(me + '/abbrev')
+  extract.integrity = '{sha}'
+  t.matchSnapshot(extract, 'extract')
+  t.matchSnapshot(require(pj), 'package.json extracted')
+  t.matchSnapshot(f.package, 'saved package.json')
+  const mani = await f.manifest()
+  t.equal(mani, f.package)
 })
 
-t.test('dir with integrity', t => {
+t.test('dir with integrity', async t => {
   const f = new DirFetcher(abbrevspec, {
     integrity: 'sha512-whatever-this-is-only-checked-if-we-extract-it',
   })
   t.same(f.types, ['directory'])
   t.resolveMatchSnapshot(f.packument(), 'packument')
-  return t.end()
 })
 
 const prepare = resolve(__dirname, 'fixtures/prepare-script')
 const preparespec = `file:${relative(process.cwd(), prepare)}`
 
-t.test('with prepare script', t => {
+t.test('with prepare script', async t => {
   RUNS.length = 0
   const f = new DirFetcher(preparespec, {})
   t.resolveMatchSnapshot(f.packument(), 'packument')
   t.resolveMatchSnapshot(f.manifest(), 'manifest')
   const index = me + '/prepare/index.js'
-  return t.resolveMatchSnapshot(f.extract(me + '/prepare'), 'extract')
-    .then(() => t.spawn(process.execPath, [index], 'test prepared result'))
-    .then(() => t.matchSnapshot(fs.readdirSync(me + '/prepare').sort(), 'file list'))
-    .then(() => t.match(RUNS[0], {
-      stdio: 'pipe',
-      banner: false,
-    }, 'should run in background'))
+  const extract = await f.extract(me + '/prepare')
+  extract.integrity = '{sha}'
+  t.matchSnapshot(extract, 'extract')
+  await t.spawn(process.execPath, [index], 'test prepared result')
+  t.matchSnapshot(fs.readdirSync(me + '/prepare').sort(), 'file list')
+  t.match(RUNS[0], {
+    stdio: 'pipe',
+    banner: false,
+  }, 'should run in background')
 })
 
-t.test('responds to foregroundScripts: true', t => {
+t.test('responds to foregroundScripts: true', async t => {
   RUNS.length = 0
   const opt = { foregroundScripts: true }
   const f = new DirFetcher(preparespec, opt)
   t.resolveMatchSnapshot(f.packument(), 'packument')
   t.resolveMatchSnapshot(f.manifest(), 'manifest')
   const index = me + '/prepare/index.js'
-  return t.resolveMatchSnapshot(f.extract(me + '/prepare'), 'extract')
-    .then(() => t.spawn(process.execPath, [index], 'test prepared result'))
-    .then(() => t.matchSnapshot(fs.readdirSync(me + '/prepare').sort(), 'file list'))
-    .then(() => t.match(RUNS[0], {
-      stdio: 'inherit',
-      banner: true,
-    }, 'should run in foreground'))
+  const extract = await f.extract(me + '/prepare')
+  extract.integrity = '{sha}'
+  t.matchSnapshot(extract, 'extract')
+  await t.spawn(process.execPath, [index], 'test prepared result')
+  t.matchSnapshot(fs.readdirSync(me + '/prepare').sort(), 'file list')
+  t.match(RUNS[0], {
+    stdio: 'inherit',
+    banner: true,
+  }, 'should run in foreground')
 })
 
-t.test('responds to foregroundScripts: true and log:{level: silent}', t => {
+t.test('responds to foregroundScripts: true and log:{level: silent}', async t => {
   RUNS.length = 0
   const opt = { foregroundScripts: true, log: { level: 'silent' } }
   const f = new DirFetcher(preparespec, opt)
   t.resolveMatchSnapshot(f.packument(), 'packument')
   t.resolveMatchSnapshot(f.manifest(), 'manifest')
   const index = me + '/prepare/index.js'
-  return t.resolveMatchSnapshot(f.extract(me + '/prepare'), 'extract')
-    .then(() => t.spawn(process.execPath, [index], 'test prepared result'))
-    .then(() => t.matchSnapshot(fs.readdirSync(me + '/prepare').sort(), 'file list'))
-    .then(() => t.match(RUNS[0], {
-      stdio: 'inherit',
-      banner: false,
-    }, 'should run in foreground, but without banner'))
+  const extract = await f.extract(me + '/prepare')
+  extract.integrity = '{sha}'
+  t.matchSnapshot(extract, 'extract')
+  await t.spawn(process.execPath, [index], 'test prepared result')
+  t.matchSnapshot(fs.readdirSync(me + '/prepare').sort(), 'file list')
+  t.match(RUNS[0], {
+    stdio: 'inherit',
+    banner: false,
+  }, 'should run in foreground, but without banner')
 })
 
 t.test('missing dir cannot be packed', t => {
   const f = new DirFetcher('file:/this/dir/doesnt/exist', {})
   return t.rejects(f.extract(me + '/nope'), {
-    message: `no such file or directory, open '/this/dir/doesnt/exist/package.json`,
-    errno: Number,
     code: 'ENOENT',
-    syscall: 'open',
-    path: '/this/dir/doesnt/exist/package.json',
   })
 })
 
@@ -118,23 +133,14 @@ t.test('make bins executable', async t => {
   const f = new DirFetcher(spec, {})
   const target = resolve(me, basename(file))
   const res = await f.extract(target)
-  // node v13.8 swapped out their zlib implementation with chromium's
-  // This is slightly faster and results in better compression for most
-  // tarballs.  However, it does mean that the snapshotted integrity is
-  // not valid.  Check if it's the new one, and if so, use the old instead,
-  // so that the snapshot continues to be valid.  At some point, when we
-  // drop support for node versions prior to 14, we can just remove this
-  // and re-generate the snapshot.
-  /* eslint-disable-next-line max-len */
-  const oldIntegrity = 'sha512-rlE32nBV7XgKCm0I7YqAewyVPbaRJWUQMZUFLlngGK3imG+som3Hin7d/zPTikWg64tHIxb8VXeeq6u0IRRfmQ=='
-  /* eslint-disable-next-line max-len */
-  const newIntegrity = 'sha512-J9g/qC58EQ6h3xMyc1lPP2vlmjy6N5symUYih/l9M3A340A1OHPc88oMSAwVdLKj/lT3NbekLXVjU6ONnPbJYg=='
   const resTest = {
     ...res,
-    ...(res.integrity === newIntegrity ? { integrity: oldIntegrity } : {}),
+    integrity: '{sha}'
   }
   t.matchSnapshot(resTest, 'results of unpack')
-  t.equal(fs.statSync(target + '/script.js').mode & 0o111, 0o111)
+  if (process.platform !== 'win32') {
+    t.equal(fs.statSync(target + '/script.js').mode & 0o111, 0o111)
+  }
 })
 
 t.test('exposes tarCreateOptions method', async t => {
