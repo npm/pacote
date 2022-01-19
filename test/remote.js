@@ -59,7 +59,7 @@ t.test('packument', t => {
     headers: {
       'not-referer': 'http://example.com',
     },
-    projectScope: '@npmcli',
+    scope: '@npmcli',
     npmSession: 'foobarbaz',
   })
   // run twice to pull from cache the second time
