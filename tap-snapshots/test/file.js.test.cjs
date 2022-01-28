@@ -157,7 +157,6 @@ Object {
   "files": Array [
     "abbrev.js",
   ],
-  "gitHead": "c492926338fd3aa92c52a0a0d82c2b09eaa224d6",
   "homepage": "https://github.com/isaacs/abbrev-js#readme",
   "license": "ISC",
   "main": "abbrev.js",
@@ -257,7 +256,6 @@ Object {
       "files": Array [
         "abbrev.js",
       ],
-      "gitHead": "c492926338fd3aa92c52a0a0d82c2b09eaa224d6",
       "homepage": "https://github.com/isaacs/abbrev-js#readme",
       "license": "ISC",
       "main": "abbrev.js",

@@ -59,6 +59,7 @@ t.test('with readme', async t => {
   const f = new FileFetcher(abbrevspec, { cache, fullReadJson: true })
   t.same(f.types, ['file'])
   const fm = await f.manifest()
+  delete fm.gitHead
   t.matchSnapshot(fm, 'manifest-slow-json')
   t.equal(fm, f.package)
   t.equal(await f.manifest(), fm, 'cached manifest')
