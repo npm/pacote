@@ -1,8 +1,8 @@
 const FileFetcher = require('../lib/file.js')
 const t = require('tap')
 const { relative, resolve, basename } = require('path')
-const npa = require('npm-package-arg')
-const me = t.testdir({cache: {}})
+const fs = require('fs')
+const me = t.testdir({ cache: {} })
 const cache = resolve(me, 'cache')
 t.cleanSnapshot = str => str.split(process.cwd()).join('${CWD}')
 
@@ -23,6 +23,7 @@ t.test('basic', async t => {
   const fs = require('fs')
   // just verify that the file is there.
   t.same(fs.readdirSync(resolve(cache, 'content-v2/sha512/9e/77')), [
+    // eslint-disable-next-line max-len
     'bdfc8890fe1cc8858ea97439db06dcfb0e33d32ab634d0fff3bcf4a6e69385925eb1b86ac69d79ff56d4cd35f36d01f67dff546d7a192ccd4f6a7138a2d1',
   ], 'write cache content file')
 })
@@ -51,7 +52,7 @@ t.test('dont bork on missing script', async t => {
   const spec = `file:${relative(process.cwd(), file)}`
   const f = new FileFetcher(spec, {})
   const target = resolve(me, basename(file, '.tgz'))
-  const res = await f.extract(target)
+  await f.extract(target)
   t.throws(() => fs.statSync(target + '/script.js'), 'should be missing')
 })
 
@@ -70,6 +71,7 @@ t.test('with readme', async t => {
   const fs = require('fs')
   // just verify that the file is there.
   t.same(fs.readdirSync(resolve(cache, 'content-v2/sha512/9e/77')), [
+    // eslint-disable-next-line max-len
     'bdfc8890fe1cc8858ea97439db06dcfb0e33d32ab634d0fff3bcf4a6e69385925eb1b86ac69d79ff56d4cd35f36d01f67dff546d7a192ccd4f6a7138a2d1',
   ], 'write cache content file')
 })

@@ -9,24 +9,27 @@ ghi.byDomain.localhost = 'localhost'
 ghi.localhost = {
   protocols: ['git+https:', 'git+ssh:'],
   tarballtemplate: () => `${hostedUrl}/repo-HEAD.tgz`,
-  sshurltemplate: (h) => `git://127.0.0.1:${gitPort}/${h.user}${h.committish ? `#${h.committish}` : ''}`,
-  shortcuttemplate: (h) => `localhost:${h.user}/${h.project}${h.committish ? `#${h.committish}` : ''}`,
+  sshurltemplate: (h) =>
+    `git://127.0.0.1:${gitPort}/${h.user}${h.committish ? `#${h.committish}` : ''}`,
+  shortcuttemplate: (h) =>
+    `localhost:${h.user}/${h.project}${h.committish ? `#${h.committish}` : ''}`,
   extract: (url) => {
     const [, user, project] = url.pathname.split('/')
     return { user, project, committish: url.hash.slice(1) }
-  }
+  },
 }
 
 ghi.byShortcut['localhosthttps:'] = 'localhosthttps'
 ghi.byDomain['127.0.0.1'] = 'localhosthttps'
 ghi.localhosthttps = {
   protocols: ['git+https:', 'git+ssh:', 'git:'],
-  httpstemplate: (h) => `git://127.0.0.1:${gitPort}/${h.user}${h.committish ? `#${h.committish}` : ''}`,
+  httpstemplate: (h) =>
+    `git://127.0.0.1:${gitPort}/${h.user}${h.committish ? `#${h.committish}` : ''}`,
   shortcuttemplate: (h) => `localhosthttps:${h.user}/x${h.committish ? `#${h.committish}` : ''}`,
   extract: (url) => {
     const [, user, project] = url.pathname.split('/')
     return { user, project, committish: url.hash.slice(1) }
-  }
+  },
 }
 
 ghi.byShortcut['localhostssh:'] = 'localhostssh'
@@ -34,27 +37,28 @@ ghi.byDomain.localhostssh = 'localhostssh'
 ghi.localhostssh = {
   protocols: ['git+ssh:'],
   tarballtemplate: () => `${hostedUrl}/repo-HEAD.tgz`,
-  sshurltemplate: (h) => `git://127.0.0.1:${gitPort}/${h.user}${h.committish ? `#${h.committish}` : ''}`,
-  httpstemplate: (h) => `git://127.0.0.1:${gitPort}/${h.user}${h.committish ? `#${h.committish}` : ''}`,
-  shortcuttemplate: (h) => `localhostssh:${h.user}/${h.project}${h.committish ? `#${h.committish}` : ''}`,
+  sshurltemplate: (h) =>
+    `git://127.0.0.1:${gitPort}/${h.user}${h.committish ? `#${h.committish}` : ''}`,
+  httpstemplate: (h) =>
+    `git://127.0.0.1:${gitPort}/${h.user}${h.committish ? `#${h.committish}` : ''}`,
+  shortcuttemplate: (h) =>
+    `localhostssh:${h.user}/${h.project}${h.committish ? `#${h.committish}` : ''}`,
   extract: (url) => {
     const [, user, project] = url.pathname.split('/')
     return { user, project, committish: url.hash.slice(1) }
-  }
+  },
 }
 
 const remote = `git://localhost:${gitPort}/repo`
 const remoteHosted = `git://127.0.0.1:${gitPort}/repo`
 const submodsRemote = `git://localhost:${gitPort}/submodule-repo`
 
-const remoteHostedSSH = `git://localhostssh:${gitPort}/repo`
-
 const GitFetcher = require('../lib/git.js')
 const t = require('tap')
 const fs = require('fs')
 const http = require('http')
 
-const {dirname, basename, resolve} = require('path')
+const { dirname, basename, resolve } = require('path')
 const rimraf = require('rimraf')
 const fixtures = resolve(__dirname, 'fixtures')
 const abbrev = resolve(fixtures, 'abbrev-1.1.1.tgz')
@@ -73,7 +77,7 @@ const cycleB = resolve(me, 'cycle-b')
 const abbrevSpec = `file:${abbrev}`
 
 const spawnGit = require('@npmcli/git').spawn
-const {spawn} = require('child_process')
+const { spawn } = require('child_process')
 const spawnNpm = require('../lib/util/npm.js')
 
 const mkdirp = require('mkdirp')
@@ -93,68 +97,68 @@ t.test('setup', { bail: true }, t => {
 
     mkdirp.sync(repo)
     return git('init')
-    .then(() => git('config', 'user.name', 'pacotedev'))
-    .then(() => git('config', 'user.email', 'i+pacotedev@izs.me'))
-    .then(() => git('config', 'tag.gpgSign', 'false'))
-    .then(() => git('config', 'commit.gpgSign', 'false'))
-    .then(() => git('config', 'tag.forceSignAnnotated', 'false'))
-    .then(() => write('package.json', JSON.stringify({
-      name: 'repo',
-      version: '0.0.0',
-      description: 'just some random thing',
-      devDependencies: {
-        abbrev: abbrevSpec,
-      },
-      scripts: {
-        prepare: 'node prepare.js',
-        test: 'node index.js',
-      },
-      files: [
-        'index.js'
-      ],
-    })))
-    .then(() => git('add', 'package.json'))
-    .then(() => git('commit', '-m', 'package json file'))
+      .then(() => git('config', 'user.name', 'pacotedev'))
+      .then(() => git('config', 'user.email', 'i+pacotedev@izs.me'))
+      .then(() => git('config', 'tag.gpgSign', 'false'))
+      .then(() => git('config', 'commit.gpgSign', 'false'))
+      .then(() => git('config', 'tag.forceSignAnnotated', 'false'))
+      .then(() => write('package.json', JSON.stringify({
+        name: 'repo',
+        version: '0.0.0',
+        description: 'just some random thing',
+        devDependencies: {
+          abbrev: abbrevSpec,
+        },
+        scripts: {
+          prepare: 'node prepare.js',
+          test: 'node index.js',
+        },
+        files: [
+          'index.js',
+        ],
+      })))
+      .then(() => git('add', 'package.json'))
+      .then(() => git('commit', '-m', 'package json file'))
 
-    .then(() => write('.gitignore', 'index.js'))
-    .then(() => git('add', '.gitignore'))
-    .then(() => git('commit', '-m', 'ignore file'))
+      .then(() => write('.gitignore', 'index.js'))
+      .then(() => git('add', '.gitignore'))
+      .then(() => git('commit', '-m', 'ignore file'))
 
-    .then(() => write('prepare.js', `
+      .then(() => write('prepare.js', `
     const fs = require('fs')
     require('abbrev')
     fs.writeFileSync(__dirname + '/index.js', 'console.log("ok")')
     `))
-    .then(() => git('add', 'prepare.js'))
-    .then(() => git('commit', '-m', 'prepare script'))
+      .then(() => git('add', 'prepare.js'))
+      .then(() => git('commit', '-m', 'prepare script'))
 
-    .then(() => write('README.md', 'some docs'))
-    .then(() => git('add', 'README.md'))
-    .then(() => git('commit', '-m', 'docs'))
+      .then(() => write('README.md', 'some docs'))
+      .then(() => git('add', 'README.md'))
+      .then(() => git('commit', '-m', 'docs'))
 
-    .then(() => npm('version', '1.0.0'))
+      .then(() => npm('version', '1.0.0'))
 
     // for our hosted service
-    .then(() => tar.c({
-      file: me + '/repo-1.0.0.tgz',
-      gzip: true,
-      cwd: me,
-      portable: true,
-    }, ['repo']))
+      .then(() => tar.c({
+        file: me + '/repo-1.0.0.tgz',
+        gzip: true,
+        cwd: me,
+        portable: true,
+      }, ['repo']))
 
-    .then(() => write('README.md', 'some docs and some more docs'))
-    .then(() => git('add', 'README.md'))
-    .then(() => git('commit', '-m', 'some more docs'))
+      .then(() => write('README.md', 'some docs and some more docs'))
+      .then(() => git('add', 'README.md'))
+      .then(() => git('commit', '-m', 'some more docs'))
 
-    .then(() => tar.c({
-      file: me + '/repo-HEAD.tgz',
-      gzip: true,
-      cwd: me,
-      portable: true,
-    }, ['repo']))
+      .then(() => tar.c({
+        file: me + '/repo-HEAD.tgz',
+        gzip: true,
+        cwd: me,
+        portable: true,
+      }, ['repo']))
 
-    .then(() => git('rev-parse', '--revs-only', 'HEAD'))
-    .then(({stdout}) => REPO_HEAD = stdout.trim())
+      .then(() => git('rev-parse', '--revs-only', 'HEAD'))
+      .then(({ stdout }) => REPO_HEAD = stdout.trim())
   })
 
   t.test('create cycle of git prepared deps', async t => {
@@ -168,7 +172,7 @@ t.test('setup', { bail: true }, t => {
       ], repo)
 
       const other = repo === cycleA ? `git://localhost:${gitPort}/cycle-b`
-      : `git://localhost:${gitPort}/cycle-a`
+        : `git://localhost:${gitPort}/cycle-a`
       const name = basename(repo)
       const otherName = basename(other)
 
@@ -206,7 +210,7 @@ t.test('setup', { bail: true }, t => {
       '--reuseaddr',
       '--base-path=.',
       '--listen=localhost',
-    ], { cwd: me, stdio: ['pipe', 1, 'pipe' ] })
+    ], { cwd: me, stdio: ['pipe', 1, 'pipe'] })
     const onDaemonData = c => {
       // prepare to slay the daemon
       const cpid = c.toString().match(/^\[(\d+)\]/)
@@ -323,13 +327,13 @@ t.test('setup', { bail: true }, t => {
 })
 
 t.test('basic stuff', async t => {
-  const g = new GitFetcher(remote, {cache})
+  const g = new GitFetcher(remote, { cache })
   t.same(g.types, ['git'])
   t.equal(g.resolved, null)
-  const r = new GitFetcher(remote + '#' + REPO_HEAD, {cache})
+  const r = new GitFetcher(remote + '#' + REPO_HEAD, { cache })
   t.equal(r.resolved, remote + '#' + REPO_HEAD)
   await g.resolve().then(resolved => t.equal(resolved, r.resolved))
-  const s = new GitFetcher(remote + '#semver:1.x', {cache})
+  const s = new GitFetcher(remote + '#semver:1.x', { cache })
   t.equal(s.resolved, null)
   await s.resolve().then(resolved => t.not(resolved, r.resolved))
 
@@ -352,7 +356,7 @@ t.test('basic stuff', async t => {
       abbrev: abbrevSpec,
     },
     scripts: { prepare: 'node prepare.js', test: 'node index.js' },
-    files: [ 'index.js' ],
+    files: ['index.js'],
     _id: 'repo@1.0.0',
     _integrity: `${g.integrity}`,
     _resolved: `${remote}#${g.resolvedSha}`,
@@ -360,30 +364,42 @@ t.test('basic stuff', async t => {
   t.equal(await g.manifest(), gm, 'cached manifest')
 
   // one that doesn't have an npm install step, but does have submods
-  const subs = new GitFetcher(submodsRemote, {cache})
+  const subs = new GitFetcher(submodsRemote, { cache })
   await subs.extract(me + '/s')
   fs.statSync(me + '/s/fooblz/package.json')
 })
 
 t.test('weird hosted that doesnt provide any fetch targets', t => {
   const hosted = {
-    git () { return null },
-    ssh () { return null },
-    sshurl () { return null },
-    https () { return null },
-    tarball () { return null },
-    shortcut () { return `weird:${remote}` },
+    git () {
+      return null
+    },
+    ssh () {
+      return null
+    },
+    sshurl () {
+      return null
+    },
+    https () {
+      return null
+    },
+    tarball () {
+      return null
+    },
+    shortcut () {
+      return `weird:${remote}`
+    },
   }
 
   const spec = npa(remote)
   spec.hosted = hosted
-  t.rejects(new GitFetcher(Object.assign(spec, {hosted}), {cache}).resolve(), {
+  t.rejects(new GitFetcher(Object.assign(spec, { hosted }), { cache }).resolve(), {
     message: `No git url for ${remote}`,
   })
 
-  const resSpec= npa(`${remote}#${REPO_HEAD}`)
+  const resSpec = npa(`${remote}#${REPO_HEAD}`)
   resSpec.hosted = hosted
-  t.rejects(new GitFetcher(Object.assign(resSpec, {hosted}), {cache})
+  t.rejects(new GitFetcher(Object.assign(resSpec, { hosted }), { cache })
     .extract(`${me}/weird-hosted-extract`), {
     message: `No git url for ${remote}`,
   })
@@ -401,46 +417,46 @@ t.test('extract from tarball from hosted git service', t => {
   domains.forEach(domain => t.test(domain, t => {
     const runTest = nameat => t => {
       const spec = npa(`${nameat}${domain}:repo/x#${REPO_HEAD}`)
-      const g = new GitFetcher(spec, {cache})
+      const g = new GitFetcher(spec, { cache })
       return g.manifest().then(m => t.match(m, {
         name: 'repo',
         version: '1.0.0',
         description: 'just some random thing',
         devDependencies: {
-          abbrev: abbrevSpec
+          abbrev: abbrevSpec,
         },
         scripts: { prepare: 'node prepare.js', test: 'node index.js' },
-        files: [ 'index.js' ],
+        files: ['index.js'],
         _id: 'repo@1.0.0',
         _integrity: /^sha512-/,
         _resolved: `${remoteHosted}#${REPO_HEAD}`,
       }))
-      .then(() => g.packument())
-      .then(p => t.match(p, {
-        name: 'repo',
-        'dist-tags': { latest: '1.0.0' },
-        versions: {
-          '1.0.0': {
-            name: 'repo',
-            version: '1.0.0',
-            description: 'just some random thing',
-            devDependencies: {
-              abbrev: abbrevSpec,
+        .then(() => g.packument())
+        .then(p => t.match(p, {
+          name: 'repo',
+          'dist-tags': { latest: '1.0.0' },
+          versions: {
+            '1.0.0': {
+              name: 'repo',
+              version: '1.0.0',
+              description: 'just some random thing',
+              devDependencies: {
+                abbrev: abbrevSpec,
+              },
+              scripts: { prepare: 'node prepare.js', test: 'node index.js' },
+              files: ['index.js'],
+              _id: 'repo@1.0.0',
+              _integrity: /^sha512-/,
+              _resolved: `${remoteHosted}#${REPO_HEAD}`,
+              dist: {},
             },
-            scripts: { prepare: 'node prepare.js', test: 'node index.js' },
-            files: [ 'index.js' ],
-            _id: 'repo@1.0.0',
-            _integrity: /^sha512-/,
-            _resolved: `${remoteHosted}#${REPO_HEAD}`,
-            dist: {},
-          }
-        }
-      }))
-      .then(() => g.extract(me + '/hosted'))
-      .then(result => {
-        t.throws(() => fs.statSync(me + '/hosted/prepare.js'))
-        fs.statSync(me + '/hosted/index.js')
-      })
+          },
+        }))
+        .then(() => g.extract(me + '/hosted'))
+        .then(result => {
+          t.throws(() => fs.statSync(me + '/hosted/prepare.js'))
+          fs.statSync(me + '/hosted/index.js')
+        })
     }
 
     t.plan(2)
@@ -450,7 +466,7 @@ t.test('extract from tarball from hosted git service', t => {
 })
 
 t.test('include auth with hosted https when provided', async t => {
-  const opt = {cache}
+  const opt = { cache }
   const spec = `git+https://user:pass@127.0.0.1/repo`
   const g = new GitFetcher(spec, opt)
   const resolved = await g.resolve()
@@ -474,7 +490,7 @@ t.test('include auth with hosted https when provided', async t => {
       'using the correct dummy hosted service')
     const path = t.testdir({})
     await t.rejects(failer.extract(path), {
-      args: [ '--no-replace-objects', 'ls-remote', `git://127.0.0.1:${gitPort}/no-repo-here` ],
+      args: ['--no-replace-objects', 'ls-remote', `git://127.0.0.1:${gitPort}/no-repo-here`],
     })
   })
 })
@@ -483,10 +499,10 @@ t.test('include .gitignore in hosted tarballs for preparation', async t => {
   const spec = npa(`localhost:foo/y#${REPO_HEAD}`)
   spec.hosted.tarball = () =>
     `http://localhost:${httpPort}/prepare-requires-gitignore-1.2.3.tgz`
-  const g = new GitFetcher(spec, {cache})
+  const g = new GitFetcher(spec, { cache })
   const dir = t.testdir()
   await g.extract(dir)
-  t.strictSame(fs.readdirSync(dir).sort((a,b) => a.localeCompare(b)), [
+  t.strictSame(fs.readdirSync(dir).sort((a, b) => a.localeCompare(b)), [
     'index.js',
     'package.json',
     'prepare_ran_successfully',
@@ -494,39 +510,39 @@ t.test('include .gitignore in hosted tarballs for preparation', async t => {
 })
 
 t.test('add git sha to hosted git shorthand', t =>
-  new GitFetcher('localhost:repo/x', {cache})
+  new GitFetcher('localhost:repo/x', { cache })
     // it adds the git+ because it thinks it's https
     .resolve().then(r => t.equal(r, `git+${remoteHosted}#${REPO_HEAD}`)))
 
 t.test('fetch a weird ref', t => {
   let head3 = ''
   t.test('hosted', t =>
-    new GitFetcher('localhost:repo/x#HEAD~3', {cache}).extract(me + '/h3h')
-    .then(result => {
-      head3 = result.resolved.split('#').pop()
-      t.match(result.resolved, /^git\+git:\/\/127\.0\.0\.1:[0-9]+\/repo#[a-z0-9]{40}$/,
-        'got git url as resolved value')
-      t.not(result.resolved, `${remoteHosted}#${REPO_HEAD}`,
-        'git url for HEAD~3 is not the same as HEAD')
-    }))
+    new GitFetcher('localhost:repo/x#HEAD~3', { cache }).extract(me + '/h3h')
+      .then(result => {
+        head3 = result.resolved.split('#').pop()
+        t.match(result.resolved, /^git\+git:\/\/127\.0\.0\.1:[0-9]+\/repo#[a-z0-9]{40}$/,
+          'got git url as resolved value')
+        t.not(result.resolved, `${remoteHosted}#${REPO_HEAD}`,
+          'git url for HEAD~3 is not the same as HEAD')
+      }))
 
   t.test('reglar', t =>
-    new GitFetcher(`${remote}#HEAD~3`, {cache}).extract(me + '/h3r')
-    .then(result => t.equal(result.resolved, `${remote}#${head3}`,
-      'got the same HEAD~3 sha as before')))
+    new GitFetcher(`${remote}#HEAD~3`, { cache }).extract(me + '/h3r')
+      .then(result => t.equal(result.resolved, `${remote}#${head3}`,
+        'got the same HEAD~3 sha as before')))
 
   t.end()
 })
 
 t.test('fetch a private repo where the tgz is a 404', t => {
-  const gf = new GitFetcher(`localhost:repo/x#${REPO_HEAD}`, {cache})
+  const gf = new GitFetcher(`localhost:repo/x#${REPO_HEAD}`, { cache })
   gf.spec.hosted.tarball = () => `${hostedUrl}/not-found.tgz`
   // should fetch it by falling back to ssh when it gets an http error
   return gf.extract(me + '/no-tgz')
 })
 
 t.test('fetch a private repo where the tgz is not a tarball', t => {
-  const gf = new GitFetcher(`localhost:repo/x#${REPO_HEAD}`, {cache})
+  const gf = new GitFetcher(`localhost:repo/x#${REPO_HEAD}`, { cache })
   gf.spec.hosted.tarball = () => `${hostedUrl}/not-tar.tgz`
   // should NOT retry, because the error was not an HTTP fetch error
   return t.rejects(gf.extract(me + '/bad-tgz'), {
@@ -550,8 +566,8 @@ t.test('resolved preserves git+ssh url for non-hosted repos', t => {
 })
 
 t.test('fall back to ssh url if https url fails or is missing', t => {
-  const gf = new GitFetcher(`localhostssh:repo/x`, {cache})
-  return gf.extract(`${me}/localhostssh`).then(({resolved}) =>
+  const gf = new GitFetcher(`localhostssh:repo/x`, { cache })
+  return gf.extract(`${me}/localhostssh`).then(({ resolved }) =>
     t.equal(resolved, `git+git://127.0.0.1:${gitPort}/repo#${REPO_HEAD}`))
 })
 
@@ -605,7 +621,7 @@ require('fs').writeFileSync('log', JSON.stringify(data,0,2))
   for (const project of ['cycle-a', 'cycle-b']) {
     const remote = `git://localhost:${gitPort}/${project}`
     const local = `${path}/${project}`
-    const g = new GitFetcher(remote, {cache, npmBin})
+    const g = new GitFetcher(remote, { cache, npmBin })
     await g.extract(local)
     const log = JSON.parse(fs.readFileSync(`${local}/log`, 'utf8'))
     t.match(log, {
@@ -613,7 +629,7 @@ require('fs').writeFileSync('log', JSON.stringify(data,0,2))
         process.execPath,
         npmBin,
       ],
-      noPrepare: [ g.resolved ],
+      noPrepare: [g.resolved],
       cwd: new RegExp(`${me}/cache/tmp/git-clone[a-zA-Z0-9]{6,8}`),
     })
     // our rudimentary package manager dumps the deps into the pkg root
@@ -632,11 +648,23 @@ t.test('missing branch name throws pathspec error', async (t) => {
   const domains = ['localhostssh', 'localhosthttps', 'localhost']
 
   for (const domain of domains) {
-    await t.rejects(new GitFetcher(`${domain}:repo/x#this-branch-does-not-exist`, {cache}).resolve(), {
-      constructor: /GitPathspecError/
-    }, domain)
-    await t.rejects(new GitFetcher(`${domain}:repo/x#this-branch-does-not-exist`, {cache}).manifest(), {
-      constructor: /GitPathspecError/
-    }, domain)
+    await t.rejects(
+      new GitFetcher(
+        `${domain}:repo/x#this-branch-does-not-exist`,
+        { cache }
+      ).resolve(),
+      {
+        constructor: /GitPathspecError/,
+      },
+      domain
+    )
+    await t.rejects(
+      new GitFetcher(
+        `${domain}:repo/x#this-branch-does-not-exist`,
+        { cache }
+      ).manifest(),
+      {
+        constructor: /GitPathspecError/,
+      }, domain)
   }
 })

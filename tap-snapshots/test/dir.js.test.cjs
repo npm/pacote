@@ -8,7 +8,7 @@
 exports[`test/dir.js TAP basic > extract 1`] = `
 Object {
   "from": "file:test/fixtures/abbrev",
-  "integrity": "sha512-OCm45DHz7n9f1SEllmg3Bf1zBCzsiOYxMuodMZ5ux+HMoupmkzOftyOCKH07DhAcoyfUlos2VGmYkPHDxH92yg==",
+  "integrity": "sha512-TP/sks9uY1WtzkFdIg2xVCud1JfysnFoNeA2P7J3CHd7l9Zlcllrk4gXfw/ABzyRU2aVrTKzoS9Bkrre6YqAFw==",
   "resolved": "\${CWD}/test/fixtures/abbrev",
 }
 `
@@ -184,7 +184,7 @@ Object {
 exports[`test/dir.js TAP responds to foregroundScripts: true > extract 1`] = `
 Object {
   "from": "file:test/fixtures/prepare-script",
-  "integrity": "sha512-+bTA3RvkXgLMM1PIzfcwXkiiSYzCBHT6Jrqo8yt3owZtMhOnBomH1Dc0949tVurdyPk7WcrKitvsRnXRPCD4sQ==",
+  "integrity": "sha512-shf/7QYgFII06kJbyyqj4u86uLuyJnD0xVGLm0XDkC6nuVU+GBHwQ9uogbLUQnBu0gSvcWYVnO1TyPxj+YQDdw==",
   "resolved": "\${CWD}/test/fixtures/prepare-script",
 }
 `
@@ -250,7 +250,7 @@ Object {
 exports[`test/dir.js TAP responds to foregroundScripts: true and log:{level: silent} > extract 1`] = `
 Object {
   "from": "file:test/fixtures/prepare-script",
-  "integrity": "sha512-+bTA3RvkXgLMM1PIzfcwXkiiSYzCBHT6Jrqo8yt3owZtMhOnBomH1Dc0949tVurdyPk7WcrKitvsRnXRPCD4sQ==",
+  "integrity": "sha512-shf/7QYgFII06kJbyyqj4u86uLuyJnD0xVGLm0XDkC6nuVU+GBHwQ9uogbLUQnBu0gSvcWYVnO1TyPxj+YQDdw==",
   "resolved": "\${CWD}/test/fixtures/prepare-script",
 }
 `
@@ -316,7 +316,7 @@ Object {
 exports[`test/dir.js TAP with prepare script > extract 1`] = `
 Object {
   "from": "file:test/fixtures/prepare-script",
-  "integrity": "sha512-+bTA3RvkXgLMM1PIzfcwXkiiSYzCBHT6Jrqo8yt3owZtMhOnBomH1Dc0949tVurdyPk7WcrKitvsRnXRPCD4sQ==",
+  "integrity": "sha512-shf/7QYgFII06kJbyyqj4u86uLuyJnD0xVGLm0XDkC6nuVU+GBHwQ9uogbLUQnBu0gSvcWYVnO1TyPxj+YQDdw==",
   "resolved": "\${CWD}/test/fixtures/prepare-script",
 }
 `

@@ -5,11 +5,9 @@ if (fakeSudo) {
   process.realUid = process.getuid()
   process.getuid = () => 0
   const fakeChown = type => (path, uid, gid, cb) => {
-    process.chownLog.push({type, path, uid, gid})
+    process.chownLog.push({ type, path, uid, gid })
     process.nextTick(cb)
   }
-  const chown = fs.chown
-  const lchown = fs.lchown
   fs.chown = fakeChown('chown')
   fs.lchown = fakeChown('lchown')
 }
@@ -34,17 +32,12 @@ const Fetcher = require('../lib/fetcher.js')
 t.cleanSnapshot = s => s.split(process.cwd()).join('{CWD}')
 
 const npa = require('npm-package-arg')
-const { promisify } = require('util')
-
-const _tarballFromResolved = Symbol.for('pacote.Fetcher._tarballFromResolved')
 
 const abbrev = resolve(__dirname, 'fixtures/abbrev-1.1.1.tgz')
 const abbrevspec = `file:${relative(process.cwd(), abbrev)}`
 const abbrevMani = require('./fixtures/abbrev-manifest-min.json')
 const weird = resolve(__dirname, 'fixtures/weird-pkg.tgz')
 const weirdspec = `file:${relative(process.cwd(), weird)}`
-const ignore = resolve(__dirname, 'fixtures/ignore-pkg.tgz')
-const ignorespec = `file:${relative(process.cwd(), ignore)}`
 
 const cacache = require('cacache')
 const byDigest = cacache.get.stream.byDigest
@@ -73,7 +66,7 @@ t.test('do not mutate opts object passed in', t => {
 })
 
 t.test('snapshot the npmInstallCmd and npmInstallConfig', async t => {
-  t.formatSnapshot = o => !Array.isArray(o) ? ou
+  t.formatSnapshot = o => !Array.isArray(o) ? undefined
     : o.map(s => s.replace(/^--cache=.*/, '--cache={CACHE}'))
   const def = new FileFetcher(abbrevspec, { fullReadJson: true })
   t.equal(def.npmBin, 'npm', 'use default npm bin')
@@ -101,20 +94,21 @@ t.test('snapshot the npmInstallCmd and npmInstallConfig', async t => {
 
 t.test('tarball data', t =>
   new FileFetcher(abbrevspec, { cache }).tarball()
-  .then(data => {
-    t.equal(data.toString('hex'), fs.readFileSync(abbrev, 'hex'), 'without integrity')
-    t.equal(data.integrity, abbrevMani._integrity, 'integrity calculated')
-  })
-  .then(() => new FileFetcher(abbrevspec, {
-    cache,
-    integrity: abbrevMani._integrity,
-  }).tarball())
-  .then(data => t.same(data, fs.readFileSync(abbrev), 'with integrity')))
+    .then(data => {
+      t.equal(data.toString('hex'), fs.readFileSync(abbrev, 'hex'), 'without integrity')
+      t.equal(data.integrity, abbrevMani._integrity, 'integrity calculated')
+    })
+    .then(() => new FileFetcher(abbrevspec, {
+      cache,
+      integrity: abbrevMani._integrity,
+    }).tarball())
+    .then(data => t.same(data, fs.readFileSync(abbrev), 'with integrity')))
 
 t.test('tarballFile', t => {
   const target = resolve(me, 'tarball-file')
-  if (fakeSudo)
+  if (fakeSudo) {
     process.chownLog.length = 0
+  }
 
   t.test('basic copy', t =>
     new FileFetcher(abbrevspec, { cache })
@@ -139,17 +133,18 @@ t.test('tarballFile', t => {
     t.teardown(() => fsm.ReadStream = ReadStream)
     fsm.ReadStream = class extends ReadStream {
       emit (ev, data) {
-        if (ev === 'close')
+        if (ev === 'close') {
           super.emit('error', new Error('poop'))
-        else
+        } else {
           super.emit(ev, data)
+        }
       }
     }
 
-    t.rejects(new FileFetcher(abbrevspec, {cache})
+    t.rejects(new FileFetcher(abbrevspec, { cache })
       .tarballFile(target + '/err.tgz'), { message: 'poop' }, 'tarballFile')
 
-    t.rejects(new FileFetcher(abbrevspec, {cache})
+    t.rejects(new FileFetcher(abbrevspec, { cache })
       .tarball(), { message: 'poop' }, 'tarball stream')
 
     t.end()
@@ -160,28 +155,29 @@ t.test('tarballFile', t => {
     const WriteStream = fsm.WriteStream
     fsm.WriteStream = class extends WriteStream {
       emit (ev, data) {
-        if (ev === 'close')
+        if (ev === 'close') {
           super.emit('error', new Error('poop'))
-        else
+        } else {
           super.emit(ev, data)
+        }
       }
     }
 
-    return t.rejects(new FileFetcher(abbrevspec, {cache})
+    return t.rejects(new FileFetcher(abbrevspec, { cache })
       .tarballFile(target + '/err.tgz'), { message: 'poop' })
       .then(() => fsm.WriteStream = WriteStream)
   })
 
   t.test('file not found', t => {
     const f = abbrev + '-not-found.tgz'
-    return t.rejects(new FileFetcher(f, {cache})
+    return t.rejects(new FileFetcher(f, { cache })
       .tarballFile(target + '/not-found.tgz'), {
-        message: `no such file or directory, open '${f}'`,
-        errno: Number,
-        code: 'ENOENT',
-        syscall: 'open',
-        path: f,
-      })
+      message: `no such file or directory, open '${f}'`,
+      errno: Number,
+      code: 'ENOENT',
+      syscall: 'open',
+      path: f,
+    })
   })
 
   t.end()
@@ -202,8 +198,9 @@ t.test('extract', t => {
     })
   }
 
-  if (fakeSudo)
+  if (fakeSudo) {
     process.chownLog.length = 0
+  }
 
   return new FileFetcher(abbrevspec, { cache }).extract(target + '/uncached')
     .then(check('uncached'))
@@ -236,9 +233,9 @@ t.test('extract', t => {
         integrity: abbrevMani._integrity,
         preferOnline: false,
       }).extract(target + '/badcache')
-        .then(({resolved, integrity}) => {
+        .then(({ resolved, integrity }) => {
           t.match(logs, [
-            [ 'warn', 'tar', 'zlib: incorrect header check' ],
+            ['warn', 'tar', 'zlib: incorrect header check'],
             [
               'silly',
               'tar',
@@ -246,8 +243,8 @@ t.test('extract', t => {
                 errno: Number,
                 code: 'Z_DATA_ERROR',
                 recoverable: false,
-                tarCode: 'TAR_ABORT'
-              }
+                tarCode: 'TAR_ABORT',
+              },
             ],
             [
               'warn',
@@ -255,18 +252,18 @@ t.test('extract', t => {
               'cached data for file:test/fixtures/abbrev-1.1.1.tgz (sha512-' +
               'nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTN' +
               'NfNtAfZ9/1RtehkszU9qcTii0Q==) seems to be corrupted. ' +
-              'Refreshing cache.'
+              'Refreshing cache.',
             ],
             [
               'silly',
               'tarball',
               'no local data for file:test/fixtures/abbrev-1.1.1.tgz. ' +
-              'Extracting by manifest.'
-            ]
+              'Extracting by manifest.',
+            ],
           ], 'got expected logs')
           process.removeListener('log', onlog)
           cacache.get.stream.byDigest = byDigest
-          return check('badcache')({resolved, integrity})
+          return check('badcache')({ resolved, integrity })
         })
     })
     .then(() => {
@@ -292,12 +289,12 @@ t.test('extract', t => {
       // a non-retriable error that doesn't come from the cache
       return t.rejects(new FileFetcher(f, { cache })
         .extract(target + '/file-not-found'), {
-          message: `no such file or directory, open '${f}'`,
-          errno: Number,
-          code: 'ENOENT',
-          syscall: 'open',
-          path: f,
-        })
+        message: `no such file or directory, open '${f}'`,
+        errno: Number,
+        code: 'ENOENT',
+        syscall: 'open',
+        path: f,
+      })
     })
 
     .then(() => {
@@ -323,8 +320,8 @@ t.test('extract', t => {
                 source: 'sha512-0',
                 algorithm: 'sha512',
                 digest: '0',
-                options: []
-              }
+                options: [],
+              },
             ],
             algorithm: 'sha512',
             sri: Object,
@@ -334,20 +331,20 @@ t.test('extract', t => {
               'silly',
               'tarball',
               'no local data for file:test/fixtures/abbrev-1.1.1.tgz. ' +
-              'Extracting by manifest.'
+              'Extracting by manifest.',
             ],
             [
               'warn',
               'tarball',
               'tarball data for file:test/fixtures/abbrev-1.1.1.tgz ' +
-              '(sha512-0) seems to be corrupted. Trying again.'
+              '(sha512-0) seems to be corrupted. Trying again.',
             ],
             [
               'warn',
               'tarball',
               'tarball data for file:test/fixtures/abbrev-1.1.1.tgz ' +
-              '(sha512-0) seems to be corrupted. Trying again.'
-            ]
+              '(sha512-0) seems to be corrupted. Trying again.',
+            ],
           ], 'got expected logs')
           process.removeListener('log', onlog)
         })
@@ -363,7 +360,7 @@ t.test('extract into folder that already has a package in it', t => {
       dependencies: {
         foo: '*',
         bar: '*',
-      }
+      },
     }),
     node_modules: {
       '.bin': {
@@ -374,20 +371,20 @@ t.test('extract into folder that already has a package in it', t => {
         'package.json': JSON.stringify({
           bin: 'foo',
           name: 'foo',
-          version:'1.2.3',
+          version: '1.2.3',
         }),
         'index.js': 'console.log("foo")',
       },
       bar: {
         bin: 'bar',
-        'package.json': JSON.stringify({name: 'bar',version:'1.2.3'}),
+        'package.json': JSON.stringify({ name: 'bar', version: '1.2.3' }),
         'index.js': 'console.log("bar")',
       },
     },
   })
   // some weird thing with links and such
   // will remove weird and weird/foo bundle dep, but not weird/bar
-  return new FileFetcher(weirdspec, {cache}).extract(dir).then(() => {
+  return new FileFetcher(weirdspec, { cache }).extract(dir).then(() => {
     const missing = [
       'index-hardlink.js',
       'index-symlink.js',
@@ -412,8 +409,6 @@ t.test('extract into folder that already has a package in it', t => {
 })
 
 t.test('a non-retriable cache error', t => {
-  const res = {}
-  const target = resolve(me, 'non-retriable-failure')
   const mutateFS = require('mutate-fs')
   const cacache = require('cacache')
   const data = fs.readFileSync(abbrev)
@@ -431,7 +426,6 @@ t.test('a non-retriable cache error', t => {
 
 // no need to do some of these basic tests in sudo mode
 if (!fakeSudo) {
-
   t.spawn(process.execPath, [__filename, 'fake-sudo'], 'fake sudo mode')
 
   t.test('before implies full metadata', t => {
@@ -445,7 +439,7 @@ if (!fakeSudo) {
     const f = new Fetcher('foo', {})
     // base class doesn't implement functionality
     const expect = {
-      message: 'not implemented in this fetcher type: FetcherBase'
+      message: 'not implemented in this fetcher type: FetcherBase',
     }
     t.rejects(f.resolve(), expect)
     f.resolved = 'fooblz'
@@ -457,21 +451,23 @@ if (!fakeSudo) {
     const foo = npa('foo@bar')
     foo.type = 'blerg'
     t.throws(() => Fetcher.get(foo, {}), {
-      message: 'Unknown spec type: blerg'
+      message: 'Unknown spec type: blerg',
     })
 
     class KidFetcher extends Fetcher {
-      get types () { return ['kid'] }
+      get types () {
+        return ['kid']
+      }
     }
     t.throws(() => new KidFetcher('foo', {}), {
-      message: `Wrong spec type (tag) for KidFetcher. Supported types: kid`
+      message: `Wrong spec type (tag) for KidFetcher. Supported types: kid`,
     })
     t.end()
   })
 
   t.test('fetcher.get', t => {
     const specToType = {
-      'foo': 'RegistryFetcher',
+      foo: 'RegistryFetcher',
       'foo@bar': 'RegistryFetcher',
       'foo@1.2': 'RegistryFetcher',
       'foo@1.2.3': 'RegistryFetcher',
@@ -496,7 +492,7 @@ if (!fakeSudo) {
 t.test('make bins executable', async t => {
   const file = resolve(__dirname, 'fixtures/bin-object.tgz')
   const spec = `file:${relative(process.cwd(), file)}`
-  const f = new FileFetcher(spec, { registry: 'https://registry.npmjs.org///'})
+  const f = new FileFetcher(spec, { registry: 'https://registry.npmjs.org///' })
   t.equal(f.registry, 'https://registry.npmjs.org')
   // simulate a fetcher that already has a manifest
   const manifest = require('./fixtures/bin-object/package.json')

@@ -3,14 +3,23 @@ module.exports = exports = abbrev.abbrev = abbrev
 abbrev.monkeyPatch = monkeyPatch
 
 function monkeyPatch () {
+  // eslint-disable-next-line no-extend-native
   Object.defineProperty(Array.prototype, 'abbrev', {
-    value: function () { return abbrev(this) },
-    enumerable: false, configurable: true, writable: true
+    value: function () {
+      return abbrev(this)
+    },
+    enumerable: false,
+    configurable: true,
+    writable: true,
   })
-
+  // eslint-disable-next-line no-extend-native
   Object.defineProperty(Object.prototype, 'abbrev', {
-    value: function () { return abbrev(Object.keys(this)) },
-    enumerable: false, configurable: true, writable: true
+    value: function () {
+      return abbrev(Object.keys(this))
+    },
+    enumerable: false,
+    configurable: true,
+    writable: true,
   })
 }
 
@@ -18,8 +27,9 @@ function abbrev (list) {
   if (arguments.length !== 1 || !Array.isArray(list)) {
     list = Array.prototype.slice.call(arguments, 0)
   }
-  for (var i = 0, l = list.length, args = [] ; i < l ; i ++) {
-    args[i] = typeof list[i] === "string" ? list[i] : String(list[i])
+  let args = []
+  for (let i = 0, l = list.length; i < l; i++) {
+    args[i] = typeof list[i] === 'string' ? list[i] : String(list[i])
   }
 
   // sort them lexicographically, so that they're next to their nearest kin
@@ -27,19 +37,21 @@ function abbrev (list) {
 
   // walk through each, seeing how much it has in common with the next and previous
   var abbrevs = {}
-    , prev = ""
-  for (var i = 0, l = args.length ; i < l ; i ++) {
+  var prev = ''
+  for (var i = 0, l = args.length; i < l; i++) {
     var current = args[i]
-      , next = args[i + 1] || ""
-      , nextMatches = true
-      , prevMatches = true
-    if (current === next) continue
-    for (var j = 0, cl = current.length ; j < cl ; j ++) {
+    var next = args[i + 1] || ''
+    var nextMatches = true
+    var prevMatches = true
+    if (current === next) {
+      continue
+    }
+    for (var j = 0, cl = current.length; j < cl; j++) {
       var curChar = current.charAt(j)
       nextMatches = nextMatches && curChar === next.charAt(j)
       prevMatches = prevMatches && curChar === prev.charAt(j)
       if (!nextMatches && !prevMatches) {
-        j ++
+        j++
         break
       }
     }
@@ -48,7 +60,7 @@ function abbrev (list) {
       abbrevs[current] = current
       continue
     }
-    for (var a = current.substr(0, j) ; j <= cl ; j ++) {
+    for (var a = current.substr(0, j); j <= cl; j++) {
       abbrevs[a] = current
       a += current.charAt(j)
     }

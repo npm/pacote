@@ -1,6 +1,7 @@
 require('./node_modules/abbrev')
 const fs = require('fs')
-fs.writeFileSync(__dirname + '/index.js', `
+const { join } = require('path')
+fs.writeFileSync(join(__dirname, 'index.js'), `
 // abbrev should not be here in production!
 console.log('TAP version 13')
 console.log('1..1')
