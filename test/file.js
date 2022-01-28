@@ -54,3 +54,21 @@ t.test('dont bork on missing script', async t => {
   const res = await f.extract(target)
   t.throws(() => fs.statSync(target + '/script.js'), 'should be missing')
 })
+
+t.test('with readme', async t => {
+  const f = new FileFetcher(abbrevspec, { cache, fullReadJson: true })
+  t.same(f.types, ['file'])
+  const fm = await f.manifest()
+  t.matchSnapshot(fm, 'manifest-slow-json')
+  t.equal(fm, f.package)
+  t.equal(await f.manifest(), fm, 'cached manifest')
+  t.matchSnapshot(await f.packument(), 'packument-slow-json')
+  const pj = me + '/extract/package.json'
+  t.matchSnapshot(await f.extract(me + '/extract'), 'extract-slow-json')
+  t.matchSnapshot(require(pj), 'package.json extracted slow json')
+  const fs = require('fs')
+  // just verify that the file is there.
+  t.same(fs.readdirSync(resolve(cache, 'content-v2/sha512/9e/77')), [
+    'bdfc8890fe1cc8858ea97439db06dcfb0e33d32ab634d0fff3bcf4a6e69385925eb1b86ac69d79ff56d4cd35f36d01f67dff546d7a192ccd4f6a7138a2d1',
+  ], 'write cache content file')
+})
