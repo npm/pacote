@@ -162,6 +162,9 @@ resolved, and other properties, as they are determined.
   including information not strictly required for installation (author,
   description, etc.)  Defaults to `true` when `before` is set, since the
   version publish time is part of the extended packument metadata.
+* `fullReadJson` Use the slower `read-package-json` package insted of
+  `read-package-json-fast` in order to include extra fields like "readme" in
+  the manifest. Defaults to `false`.
 * `packumentCache` For registry packuments only, you may provide a `Map`
   object which will be used to cache packument requests between pacote
   calls.  This allows you to easily avoid hitting the registry multiple
