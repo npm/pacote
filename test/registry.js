@@ -56,7 +56,7 @@ const registry = `http://localhost:${port}/`
 const cache = me + '/cache'
 
 t.test('underscore, no tag or version', t => {
-  const f = new RegistryFetcher('underscore', {registry, cache})
+  const f = new RegistryFetcher('underscore', {registry, cache, fullReadJson: true })
 
   return f.resolve().then(r => t.equal(r, `${registry}underscore/-/underscore-1.5.1.tgz`))
   .then(() => f.manifest()).then(m => {

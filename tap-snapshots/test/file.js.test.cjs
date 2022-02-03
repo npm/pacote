@@ -128,3 +128,177 @@ Object {
   "resolved": "\${CWD}/test/fixtures/bin-string.tgz",
 }
 `
+
+exports[`test/file.js TAP with readme > extract-slow-json 1`] = `
+Object {
+  "from": "file:test/fixtures/abbrev-1.1.1.tgz",
+  "integrity": "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==",
+  "resolved": "\${CWD}/test/fixtures/abbrev-1.1.1.tgz",
+}
+`
+
+exports[`test/file.js TAP with readme > manifest-slow-json 1`] = `
+Object {
+  "_from": "file:test/fixtures/abbrev-1.1.1.tgz",
+  "_id": "abbrev@1.1.1",
+  "_integrity": "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==",
+  "_resolved": "\${CWD}/test/fixtures/abbrev-1.1.1.tgz",
+  "author": Object {
+    "email": "i@izs.me",
+    "name": "Isaac Z. Schlueter",
+  },
+  "bugs": Object {
+    "url": "https://github.com/isaacs/abbrev-js/issues",
+  },
+  "description": "Like ruby's abbrev module, but in js",
+  "devDependencies": Object {
+    "tap": "^10.1",
+  },
+  "files": Array [
+    "abbrev.js",
+  ],
+  "homepage": "https://github.com/isaacs/abbrev-js#readme",
+  "license": "ISC",
+  "main": "abbrev.js",
+  "name": "abbrev",
+  "readme": String(
+    # abbrev-js
+    
+    Just like [ruby's Abbrev](http://apidock.com/ruby/Abbrev).
+    
+    Usage:
+    
+        var abbrev = require("abbrev");
+        abbrev("foo", "fool", "folding", "flop");
+        
+        // returns:
+        { fl: 'flop'
+        , flo: 'flop'
+        , flop: 'flop'
+        , fol: 'folding'
+        , fold: 'folding'
+        , foldi: 'folding'
+        , foldin: 'folding'
+        , folding: 'folding'
+        , foo: 'foo'
+        , fool: 'fool'
+        }
+    
+    This is handy for command-line scripts, or other cases where you want to be able to accept shorthands.
+    
+  ),
+  "readmeFilename": "README.md",
+  "repository": Object {
+    "type": "git",
+    "url": "git+ssh://git@github.com/isaacs/abbrev-js.git",
+  },
+  "scripts": Object {
+    "postpublish": "git push origin --all; git push origin --tags",
+    "postversion": "npm publish",
+    "preversion": "npm test",
+    "test": "tap test.js --100",
+  },
+  "version": "1.1.1",
+}
+`
+
+exports[`test/file.js TAP with readme > package.json extracted slow json 1`] = `
+Object {
+  "author": "Isaac Z. Schlueter <i@izs.me>",
+  "description": "Like ruby's abbrev module, but in js",
+  "devDependencies": Object {
+    "tap": "^10.1",
+  },
+  "files": Array [
+    "abbrev.js",
+  ],
+  "license": "ISC",
+  "main": "abbrev.js",
+  "name": "abbrev",
+  "repository": "http://github.com/isaacs/abbrev-js",
+  "scripts": Object {
+    "postpublish": "git push origin --all; git push origin --tags",
+    "postversion": "npm publish",
+    "preversion": "npm test",
+    "test": "tap test.js --100",
+  },
+  "version": "1.1.1",
+}
+`
+
+exports[`test/file.js TAP with readme > packument-slow-json 1`] = `
+Object {
+  "dist-tags": Object {
+    "latest": "1.1.1",
+  },
+  "name": "abbrev",
+  "versions": Object {
+    "1.1.1": Object {
+      "_from": "file:test/fixtures/abbrev-1.1.1.tgz",
+      "_id": "abbrev@1.1.1",
+      "_integrity": "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==",
+      "_resolved": "\${CWD}/test/fixtures/abbrev-1.1.1.tgz",
+      "author": Object {
+        "email": "i@izs.me",
+        "name": "Isaac Z. Schlueter",
+      },
+      "bugs": Object {
+        "url": "https://github.com/isaacs/abbrev-js/issues",
+      },
+      "description": "Like ruby's abbrev module, but in js",
+      "devDependencies": Object {
+        "tap": "^10.1",
+      },
+      "dist": Object {
+        "integrity": "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==",
+        "tarball": "file:\${CWD}/test/fixtures/abbrev-1.1.1.tgz",
+      },
+      "files": Array [
+        "abbrev.js",
+      ],
+      "homepage": "https://github.com/isaacs/abbrev-js#readme",
+      "license": "ISC",
+      "main": "abbrev.js",
+      "name": "abbrev",
+      "readme": String(
+        # abbrev-js
+        
+        Just like [ruby's Abbrev](http://apidock.com/ruby/Abbrev).
+        
+        Usage:
+        
+            var abbrev = require("abbrev");
+            abbrev("foo", "fool", "folding", "flop");
+            
+            // returns:
+            { fl: 'flop'
+            , flo: 'flop'
+            , flop: 'flop'
+            , fol: 'folding'
+            , fold: 'folding'
+            , foldi: 'folding'
+            , foldin: 'folding'
+            , folding: 'folding'
+            , foo: 'foo'
+            , fool: 'fool'
+            }
+        
+        This is handy for command-line scripts, or other cases where you want to be able to accept shorthands.
+        
+      ),
+      "readmeFilename": "README.md",
+      "repository": Object {
+        "type": "git",
+        "url": "git+ssh://git@github.com/isaacs/abbrev-js.git",
+      },
+      "scripts": Object {
+        "postpublish": "git push origin --all; git push origin --tags",
+        "postversion": "npm publish",
+        "preversion": "npm test",
+        "test": "tap test.js --100",
+      },
+      "version": "1.1.1",
+    },
+  },
+}
+`

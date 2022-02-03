@@ -75,7 +75,7 @@ t.test('do not mutate opts object passed in', t => {
 t.test('snapshot the npmInstallCmd and npmInstallConfig', async t => {
   t.formatSnapshot = o => !Array.isArray(o) ? ou
     : o.map(s => s.replace(/^--cache=.*/, '--cache={CACHE}'))
-  const def = new FileFetcher(abbrevspec, {})
+  const def = new FileFetcher(abbrevspec, { fullReadJson: true })
   t.equal(def.npmBin, 'npm', 'use default npm bin')
   t.matchSnapshot(def.npmInstallCmd, 'default install cmd')
   t.matchSnapshot(def.npmCliConfig, 'default install config')
