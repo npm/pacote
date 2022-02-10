@@ -100,7 +100,6 @@ t.test('bad integrity', t => {
   // eslint-disable-next-line max-len
   const integrity = 'sha512-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=='
   const f = new RemoteFetcher(url, { cache, integrity })
-  // return t.rejects(f.packument(), {
   return t.rejects(f.extract(me + '/bad-integrity'), {
     code: 'EINTEGRITY',
     sri: {
