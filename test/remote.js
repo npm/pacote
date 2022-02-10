@@ -2,16 +2,14 @@ const RemoteFetcher = require('../lib/remote.js')
 const http = require('http')
 const t = require('tap')
 
-const { relative, resolve } = require('path')
+const { resolve } = require('path')
 const me = t.testdir()
 const cache = resolve(me, 'cache')
 
-t.cleanSnapshot = str => str.split(''+port).join('{PORT}')
+t.cleanSnapshot = str => str.split('' + port).join('{PORT}')
 
 const fs = require('fs')
 const abbrev = resolve(__dirname, 'fixtures/abbrev-1.1.1.tgz')
-const abbrevspec = `file:${relative(process.cwd(), abbrev)}`
-const abbrevMani = require('./fixtures/abbrev-manifest-min.json')
 const port = 12345 + (+process.env.TAP_CHILD_ID || 0)
 const server = `http://localhost:${port}`
 const requestLog = []
@@ -50,7 +48,7 @@ t.test('start server', t => {
 })
 
 t.test('packument', t => {
-  //const url = 'https://registry.npmjs.org/abbrev/-/abbrev-1.1.1.tgz'
+  // const url = 'https://registry.npmjs.org/abbrev/-/abbrev-1.1.1.tgz'
   const url = `https://registry.npmjs.org/abbrev.tgz`
   const f = new RemoteFetcher(url, {
     registry: server,
@@ -86,12 +84,12 @@ t.test('packument', t => {
             'pacote-pkg-id': `remote:${server}/abbrev.tgz`,
             accept: '*/*',
             'accept-encoding': 'gzip,deflate',
-            host: require('url').parse(server).host,
+            host: new URL(server).host,
             'npm-session': 'foobarbaz',
             'npm-scope': '@npmcli',
             'not-referer': 'http://example.com',
-          }
-        ]
+          },
+        ],
       ])
       requestLog.length = 0
     })
@@ -99,14 +97,15 @@ t.test('packument', t => {
 
 t.test('bad integrity', t => {
   const url = `${server}/abbrev.tgz`
+  // eslint-disable-next-line max-len
   const integrity = 'sha512-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=='
   const f = new RemoteFetcher(url, { cache, integrity })
-  //return t.rejects(f.packument(), {
   return t.rejects(f.extract(me + '/bad-integrity'), {
     code: 'EINTEGRITY',
     sri: {
       sha512: [
         // create a buffer of nulls, the base64 is an endless scream
+        // eslint-disable-next-line max-len
         { digest: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==' },
       ],
     },
