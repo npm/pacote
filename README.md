@@ -146,10 +146,6 @@ resolved, and other properties, as they are determined.
   `0o666`.  See "Extracted File Modes" below.
 * `dmode` Minimum permission mode for extracted directories.  Defaults to
   `0o777`.  See "Extracted File Modes" below.
-* `log` A logger object with methods for various log levels.  Typically,
-  this will be [`npmlog`](http://npm.im/npmlog) in the npm CLI use case,
-  but if not specified, the default is a logger that emits `'log'` events
-  on the `process` object.
 * `preferOnline` Prefer to revalidate cache entries, even when it would not
   be strictly necessary.  Default `false`.
 * `before` When picking a manifest from a packument, only consider
@@ -170,6 +166,8 @@ resolved, and other properties, as they are determined.
   calls.  This allows you to easily avoid hitting the registry multiple
   times (even just to validate the cache) for a given packument, since it
   is unlikely to change in the span of a single command.
+* `silent` A boolean that determines whether the banner is displayed
+  when calling `@npmcli/run-script`.
 
 
 ### Advanced API
