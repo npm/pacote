@@ -75,9 +75,9 @@ t.test('responds to foregroundScripts: true', t => {
     }, 'should run in foreground'))
 })
 
-t.test('responds to foregroundScripts: true and log:{level: silent}', t => {
+t.test('responds to foregroundScripts: true and silent: true', t => {
   RUNS.length = 0
-  const opt = { foregroundScripts: true, log: { level: 'silent' } }
+  const opt = { foregroundScripts: true, silent: true }
   const f = new DirFetcher(preparespec, opt)
   t.resolveMatchSnapshot(f.packument(), 'packument')
   t.resolveMatchSnapshot(f.manifest(), 'manifest')

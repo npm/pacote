@@ -247,7 +247,7 @@ Object {
 }
 `
 
-exports[`test/dir.js TAP responds to foregroundScripts: true and log:{level: silent} > extract 1`] = `
+exports[`test/dir.js TAP responds to foregroundScripts: true and silent: true > extract 1`] = `
 Object {
   "from": "file:test/fixtures/prepare-script",
   "integrity": "sha512-shf/7QYgFII06kJbyyqj4u86uLuyJnD0xVGLm0XDkC6nuVU+GBHwQ9uogbLUQnBu0gSvcWYVnO1TyPxj+YQDdw==",
@@ -255,7 +255,7 @@ Object {
 }
 `
 
-exports[`test/dir.js TAP responds to foregroundScripts: true and log:{level: silent} > file list 1`] = `
+exports[`test/dir.js TAP responds to foregroundScripts: true and silent: true > file list 1`] = `
 Array [
   "index.js",
   "package.json",
@@ -263,7 +263,7 @@ Array [
 ]
 `
 
-exports[`test/dir.js TAP responds to foregroundScripts: true and log:{level: silent} > manifest 1`] = `
+exports[`test/dir.js TAP responds to foregroundScripts: true and silent: true > manifest 1`] = `
 Object {
   "_from": "file:test/fixtures/prepare-script",
   "_id": "git-prepare-script@1.0.0",
@@ -282,7 +282,7 @@ Object {
 }
 `
 
-exports[`test/dir.js TAP responds to foregroundScripts: true and log:{level: silent} > packument 1`] = `
+exports[`test/dir.js TAP responds to foregroundScripts: true and silent: true > packument 1`] = `
 Object {
   "dist-tags": Object {
     "latest": "1.0.0",
