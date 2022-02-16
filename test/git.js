@@ -53,6 +53,7 @@ const remote = `git://localhost:${gitPort}/repo`
 const remoteHosted = `git://127.0.0.1:${gitPort}/repo`
 const submodsRemote = `git://localhost:${gitPort}/submodule-repo`
 const workspacesRemote = `git://localhost:${gitPort}/workspaces-repo`
+const prepackRemote = `git://localhost:${gitPort}/prepack-repo`
 
 const GitFetcher = require('../lib/git.js')
 const t = require('tap')
@@ -313,6 +314,28 @@ t.test('setup', { bail: true }, t => {
       })))
       .then(() => git('add', 'a/package.json'))
       .then(() => git('commit', '-m', 'a/package.json'))
+  })
+
+  t.test('create a repo with only a prepack script', t => {
+    const repo = resolve(me, 'prepack-repo')
+    const git = (...cmd) => spawnGit(cmd, { cwd: repo })
+    const write = (f, c) => fs.writeFileSync(`${repo}/${f}`, c)
+    mkdirp.sync(repo)
+    return git('init')
+      .then(() => git('config', 'user.name', 'pacotedev'))
+      .then(() => git('config', 'user.email', 'i+pacotedev@github.com'))
+      .then(() => git('config', 'tag.gpgSign', 'false'))
+      .then(() => git('config', 'commit.gpgSign', 'false'))
+      .then(() => git('config', 'tag.forceSignAnnotated', 'false'))
+      .then(() => write('package.json', JSON.stringify({
+        name: 'prepack-root',
+        version: '1.0.0',
+        scripts: {
+          prepare: 'touch foo',
+        },
+      })))
+      .then(() => git('add', 'package.json'))
+      .then(() => git('commit', '-m', 'package.json'))
   })
 
   t.test('hosted service', t => {
@@ -709,5 +732,17 @@ t.test('simple repo with workspaces', async t => {
   t.ok(
     fs.statSync(me + '/extract-workspaces/a/foo'),
     'should run prepare phase when finding workspaces'
+  )
+})
+
+t.test('simple repo with only a prepack script', async t => {
+  const ws = new GitFetcher(prepackRemote, { cache })
+  const extract = resolve(me, 'extract-prepack')
+  await ws.extract(extract)
+  // the file ./foo does not exist in the original repo
+  // and should have been created when running prepack
+  t.ok(
+    fs.statSync(me + '/extract-prepack/foo'),
+    'should run prepack lifecycle script'
   )
 })
