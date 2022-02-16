@@ -1,5 +1,17 @@
 # Changelog
 
+### [13.0.1](https://www.github.com/npm/pacote/compare/v13.0.0...v13.0.1) (2022-02-16)
+
+
+### Bug Fixes
+
+* reify git dependencies that have workspaces ([#103](https://www.github.com/npm/pacote/issues/103)) ([08348fa](https://www.github.com/npm/pacote/commit/08348faa6516382262e2199f19a0865df9f11735))
+
+
+### Dependencies
+
+* bump npm-registry-fetch from 12.0.2 to 13.0.0 ([#118](https://www.github.com/npm/pacote/issues/118)) ([25eeb97](https://www.github.com/npm/pacote/commit/25eeb97cdbe5285ff09230ece9e5be61d86ccbeb))
+
 ## [13.0.0](https://www.github.com/npm/pacote/compare/v12.0.3...v13.0.0) (2022-02-14)
 
 
