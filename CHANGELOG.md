@@ -1,5 +1,17 @@
 # Changelog
 
+### [13.0.2](https://www.github.com/npm/pacote/compare/v13.0.1...v13.0.2) (2022-02-16)
+
+
+### Bug Fixes
+
+* run prepack lifecycle scripts on git fetcher ([#121](https://www.github.com/npm/pacote/issues/121)) ([82d8afc](https://www.github.com/npm/pacote/commit/82d8afccf6d17e584e281089edc727a8523eee77))
+
+
+### Dependencies
+
+* bump @npmcli/git from 2.1.0 to 3.0.0 ([#120](https://www.github.com/npm/pacote/issues/120)) ([56d0c62](https://www.github.com/npm/pacote/commit/56d0c62295d726fe9482a669a50cff92775b9ead))
+
 ### [13.0.1](https://www.github.com/npm/pacote/compare/v13.0.0...v13.0.1) (2022-02-16)
 
 
