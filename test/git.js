@@ -52,6 +52,7 @@ ghi.localhostssh = {
 const remote = `git://localhost:${gitPort}/repo`
 const remoteHosted = `git://127.0.0.1:${gitPort}/repo`
 const submodsRemote = `git://localhost:${gitPort}/submodule-repo`
+const workspacesRemote = `git://localhost:${gitPort}/workspaces-repo`
 
 const GitFetcher = require('../lib/git.js')
 const t = require('tap')
@@ -282,6 +283,36 @@ t.test('setup', { bail: true }, t => {
       })))
       .then(() => git('add', 'package.json'))
       .then(() => git('commit', '-m', 'package'))
+  })
+
+  t.test('create a repo with workspaces', t => {
+    const repo = resolve(me, 'workspaces-repo')
+    const wsfolder = resolve(me, 'workspaces-repo/a')
+    const git = (...cmd) => spawnGit(cmd, { cwd: repo })
+    const write = (f, c) => fs.writeFileSync(`${repo}/${f}`, c)
+    mkdirp.sync(wsfolder)
+    return git('init')
+      .then(() => git('config', 'user.name', 'pacotedev'))
+      .then(() => git('config', 'user.email', 'i+pacotedev@github.com'))
+      .then(() => git('config', 'tag.gpgSign', 'false'))
+      .then(() => git('config', 'commit.gpgSign', 'false'))
+      .then(() => git('config', 'tag.forceSignAnnotated', 'false'))
+      .then(() => write('package.json', JSON.stringify({
+        name: 'workspaces-root',
+        version: '1.2.3',
+        workspaces: ['a'],
+      })))
+      .then(() => git('add', 'package.json'))
+      .then(() => git('commit', '-m', 'package'))
+      .then(() => write('a/package.json', JSON.stringify({
+        name: 'a',
+        version: '1.0.0',
+        scripts: {
+          prepare: 'touch foo',
+        },
+      })))
+      .then(() => git('add', 'a/package.json'))
+      .then(() => git('commit', '-m', 'a/package.json'))
   })
 
   t.test('hosted service', t => {
@@ -667,4 +698,16 @@ t.test('missing branch name throws pathspec error', async (t) => {
         constructor: /GitPathspecError/,
       }, domain)
   }
+})
+
+t.test('simple repo with workspaces', async t => {
+  const ws = new GitFetcher(workspacesRemote, { cache })
+  const extract = resolve(me, 'extract-workspaces')
+  await ws.extract(extract)
+  // the file ./a/foo does not exist in the original repo
+  // and should have been created during prepare phase
+  t.ok(
+    fs.statSync(me + '/extract-workspaces/a/foo'),
+    'should run prepare phase when finding workspaces'
+  )
 })
