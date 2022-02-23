@@ -412,7 +412,7 @@ t.test('basic stuff', async t => {
     scripts: { prepare: 'node prepare.js', test: 'node index.js' },
     files: ['index.js'],
     _id: 'repo@1.0.0',
-    _integrity: `${g.integrity}`,
+    _integrity: undefined, // _integrity should never be present for git deps npm/rfcs#525
     _resolved: `${remote}#${g.resolvedSha}`,
   })
   t.equal(await g.manifest(), gm, 'cached manifest')
@@ -421,6 +421,29 @@ t.test('basic stuff', async t => {
   const subs = new GitFetcher(submodsRemote, { cache })
   await subs.extract(me + '/s')
   fs.statSync(me + '/s/fooblz/package.json')
+})
+
+t.test('ignores integrity for git deps', async (t) => {
+  t.plan(3)
+  const logHandler = (level, msg) => {
+    t.equal(level, 'warn')
+    t.match(msg, /^skipping integrity check for/)
+  }
+
+  process.on('log', logHandler)
+  t.teardown(() => {
+    process.removeListener('log', logHandler)
+  })
+
+  // known invalid integrity
+  const fetcher = new GitFetcher(remote + '#' + REPO_HEAD, { cache, integrity: 'sha512-beeffeed' })
+  const manifest = await fetcher.manifest()
+  t.match(manifest, {
+    _id: 'repo@1.0.0',
+    _integrity: undefined, // _integrity should never be present for git deps npm/rfcs#525
+    _resolved: `${remote}#${fetcher.resolvedSha}`,
+  })
+  t.end()
 })
 
 t.test('weird hosted that doesnt provide any fetch targets', t => {
