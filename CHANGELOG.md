@@ -1,5 +1,17 @@
 # Changelog
 
+### [13.0.3](https://www.github.com/npm/pacote/compare/v13.0.2...v13.0.3) (2022-02-23)
+
+
+### Bug Fixes
+
+* ignore integrity values for git dependencies ([#123](https://www.github.com/npm/pacote/issues/123)) ([3417714](https://www.github.com/npm/pacote/commit/3417714f84a7599adffdd3a19730c8643103282f))
+
+
+### Dependencies
+
+* bump @npmcli/run-script from 2.0.0 to 3.0.0 ([#124](https://www.github.com/npm/pacote/issues/124)) ([6026b73](https://www.github.com/npm/pacote/commit/6026b736442d703fb650b605e22125e926b9a03c))
+
 ### [13.0.2](https://www.github.com/npm/pacote/compare/v13.0.1...v13.0.2) (2022-02-16)
 
 
