@@ -67,7 +67,7 @@
   },
   "repository": "git@github.com:npm/pacote",
   "templateOSS": {
-    "version": "2.7.1",
+    "version": "2.8.1",
     "windowsCI": false
   }
 }
