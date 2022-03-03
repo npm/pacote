@@ -53,7 +53,7 @@
     "npm-package-arg": "^9.0.0",
     "npm-packlist": "^3.0.0",
     "npm-pick-manifest": "^7.0.0",
-    "npm-registry-fetch": "^13.0.0",
+    "npm-registry-fetch": "^13.0.1",
     "proc-log": "^2.0.0",
     "promise-retry": "^2.0.1",
     "read-package-json": "^4.1.1",
