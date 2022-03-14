@@ -1,5 +1,16 @@
 # Changelog
 
+### [13.0.4](https://www.github.com/npm/pacote/compare/v13.0.3...v13.0.4) (2022-03-14)
+
+
+### Dependencies
+
+* bump cacache from 15.3.0 to 16.0.0 ([#136](https://www.github.com/npm/pacote/issues/136)) ([ed3a069](https://www.github.com/npm/pacote/commit/ed3a069d6aad378cf35a24d64db6eea778b833a2))
+* bump npm-packlist from 3.0.0 to 4.0.0 ([#132](https://www.github.com/npm/pacote/issues/132)) ([1634e9d](https://www.github.com/npm/pacote/commit/1634e9d2deac45297e4a120b4ccb4984119e41e4))
+* update @npmcli/run-script requirement from ^3.0.0 to ^3.0.1 ([#130](https://www.github.com/npm/pacote/issues/130)) ([7c84792](https://www.github.com/npm/pacote/commit/7c84792bef5b0f3825682ec97d14006638c1ed78))
+* update npm-registry-fetch requirement from ^13.0.0 to ^13.0.1 ([#129](https://www.github.com/npm/pacote/issues/129)) ([d639ed6](https://www.github.com/npm/pacote/commit/d639ed6b6ff11f0e24efa27bf77b1b17269ae98d))
+* update read-package-json requirement from ^4.1.1 to ^4.1.2 ([#134](https://www.github.com/npm/pacote/issues/134)) ([31093a1](https://www.github.com/npm/pacote/commit/31093a17fca24b33a259cef54a166cf2141f71d4))
+
 ### [13.0.3](https://www.github.com/npm/pacote/compare/v13.0.2...v13.0.3) (2022-02-23)
 
 
