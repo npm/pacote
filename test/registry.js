@@ -1,6 +1,7 @@
 const RegistryFetcher = require('../lib/registry.js')
 const t = require('tap')
 const mr = require('npm-registry-mock')
+const tnock = require('./fixtures/tnock')
 const port = 18000 + (+process.env.TAP_CHILD_ID || 0)
 const me = t.testdir()
 
@@ -239,4 +240,94 @@ t.test('packument that falls back to fullMetadata', t => {
     server.close()
     t.end()
   })
+})
+
+t.test('option replaceRegistryHost', rhTest => {
+  const { join, resolve } = require('path')
+  const fs = require('fs')
+
+  const abbrev = resolve(__dirname, 'fixtures/abbrev-1.1.1.tgz')
+  const abbrevTGZ = fs.readFileSync(abbrev)
+
+  const abbrevPackument = JSON.stringify({
+    _id: 'abbrev',
+    _rev: 'lkjadflkjasdf',
+    name: 'abbrev',
+    'dist-tags': { latest: '1.1.1' },
+    versions: {
+      '1.1.1': {
+        name: 'abbrev',
+        version: '1.1.1',
+        dist: {
+          tarball: 'https://registry.npmjs.org/abbrev/-/abbrev-1.1.1.tgz',
+        },
+      },
+    },
+  })
+
+  rhTest.test('host should not be replaced', async ct => {
+    const testdir = t.testdir()
+    tnock(ct, 'https://registry.github.com')
+      .get('/abbrev')
+      .reply(200, abbrevPackument)
+
+    tnock(ct, 'https://registry.npmjs.org')
+      .get('/abbrev/-/abbrev-1.1.1.tgz')
+      .reply(200, abbrevTGZ)
+
+    const fetcher = new RegistryFetcher('abbrev', {
+      registry: 'https://registry.github.com',
+      cache: join(testdir, 'cache'),
+      fullReadJson: true,
+      replaceRegistryHost: 'never',
+    })
+    ct.equal(fetcher.replaceRegistryHost, 'never')
+    const manifest = await fetcher.manifest()
+    ct.equal(manifest.dist.tarball, 'https://registry.npmjs.org/abbrev/-/abbrev-1.1.1.tgz')
+    const tarball = await fetcher.tarball()
+    ct.match(tarball, abbrevTGZ)
+  })
+
+  rhTest.test('host should be replaced', async ct => {
+    const testdir = t.testdir()
+    tnock(ct, 'https://registry.github.com')
+      .get('/abbrev')
+      .reply(200, abbrevPackument)
+      .get('/abbrev/-/abbrev-1.1.1.tgz')
+      .reply(200, abbrevTGZ)
+
+    const fetcher = new RegistryFetcher('abbrev', {
+      registry: 'https://registry.github.com',
+      cache: join(testdir, 'cache'),
+      fullReadJson: true,
+    })
+    ct.equal(fetcher.replaceRegistryHost, 'npmjs')
+    const manifest = await fetcher.manifest()
+    ct.equal(manifest.dist.tarball, 'https://registry.npmjs.org/abbrev/-/abbrev-1.1.1.tgz')
+    const tarball = await fetcher.tarball()
+    ct.match(tarball, abbrevTGZ)
+  })
+
+  rhTest.test('host should be replaced if set to npmjs', async ct => {
+    const testdir = t.testdir()
+    tnock(ct, 'https://registry.github.com')
+      .get('/abbrev')
+      .reply(200, abbrevPackument)
+      .get('/abbrev/-/abbrev-1.1.1.tgz')
+      .reply(200, abbrevTGZ)
+
+    const fetcher = new RegistryFetcher('abbrev', {
+      registry: 'https://registry.github.com',
+      cache: join(testdir, 'cache'),
+      fullReadJson: true,
+      replaceRegistryHost: 'npmjs',
+    })
+    ct.equal(fetcher.replaceRegistryHost, 'npmjs')
+    const manifest = await fetcher.manifest()
+    ct.equal(manifest.dist.tarball, 'https://registry.npmjs.org/abbrev/-/abbrev-1.1.1.tgz')
+    const tarball = await fetcher.tarball()
+    ct.match(tarball, abbrevTGZ)
+  })
+
+  rhTest.end()
 })
