@@ -1,5 +1,12 @@
 # Changelog
 
+### [13.0.5](https://www.github.com/npm/pacote/compare/v13.0.4...v13.0.5) (2022-03-15)
+
+
+### Dependencies
+
+* bump read-package-json from 4.1.2 to 5.0.0 ([#138](https://www.github.com/npm/pacote/issues/138)) ([f28c891](https://www.github.com/npm/pacote/commit/f28c8911c4e7af0368dba07be7492eaa109bc08b))
+
 ### [13.0.4](https://www.github.com/npm/pacote/compare/v13.0.3...v13.0.4) (2022-03-14)
 
 
