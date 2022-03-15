@@ -1,7 +1,7 @@
 // set this up first, so we can use 127.0.0.1 as our "hosted git" service
 const httpPort = 18000 + (+process.env.TAP_CHILD_ID || 0)
 const hostedUrl = `http://localhost:${httpPort}`
-const ghi = require('hosted-git-info/git-host-info.js')
+const ghi = require('hosted-git-info/lib/git-host-info.js')
 const gitPort = 12345 + (+process.env.TAP_CHILD_ID || 0)
 
 ghi.byShortcut['localhost:'] = 'localhost'
