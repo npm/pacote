@@ -164,21 +164,21 @@ t.test('setup', { bail: true }, t => {
   })
 
   t.test('create cycle of git prepared deps', async t => {
-    for (const repo of [cycleA, cycleB]) {
-      const git = (...cmd) => spawnGit(cmd, { cwd: repo })
-      const write = (f, c) => fs.writeFileSync(`${repo}/${f}`, c)
+    for (const repoDir of [cycleA, cycleB]) {
+      const git = (...cmd) => spawnGit(cmd, { cwd: repoDir })
+      const write = (f, c) => fs.writeFileSync(`${repoDir}/${f}`, c)
       const npm = (...cmd) => spawnNpm('npm', [
         ...cmd,
         '--no-sign-git-commit',
         '--no-sign-git-tag',
-      ], repo)
+      ], repoDir)
 
-      const other = repo === cycleA ? `git://localhost:${gitPort}/cycle-b`
+      const other = repoDir === cycleA ? `git://localhost:${gitPort}/cycle-b`
         : `git://localhost:${gitPort}/cycle-a`
-      const name = basename(repo)
+      const name = basename(repoDir)
       const otherName = basename(other)
 
-      mkdirp.sync(repo)
+      mkdirp.sync(repoDir)
       await git('init')
       await git('config', 'user.name', 'pacotedev')
       await git('config', 'user.email', 'i+pacotedev@izs.me')
@@ -229,10 +229,10 @@ t.test('setup', { bail: true }, t => {
   })
 
   t.test('create a repo with a submodule', t => {
-    const repo = resolve(me, 'submodule-repo')
-    const git = (...cmd) => spawnGit(cmd, { cwd: repo })
-    const write = (f, c) => fs.writeFileSync(`${repo}/${f}`, c)
-    mkdirp.sync(repo)
+    const submoduleRepo = resolve(me, 'submodule-repo')
+    const git = (...cmd) => spawnGit(cmd, { cwd: submoduleRepo })
+    const write = (f, c) => fs.writeFileSync(`${submoduleRepo}/${f}`, c)
+    mkdirp.sync(submoduleRepo)
     return git('init')
       .then(() => git('config', 'user.name', 'pacotedev'))
       .then(() => git('config', 'user.email', 'i+pacotedev@izs.me'))
@@ -287,10 +287,10 @@ t.test('setup', { bail: true }, t => {
   })
 
   t.test('create a repo with workspaces', t => {
-    const repo = resolve(me, 'workspaces-repo')
+    const workspacesRepo = resolve(me, 'workspaces-repo')
     const wsfolder = resolve(me, 'workspaces-repo/a')
-    const git = (...cmd) => spawnGit(cmd, { cwd: repo })
-    const write = (f, c) => fs.writeFileSync(`${repo}/${f}`, c)
+    const git = (...cmd) => spawnGit(cmd, { cwd: workspacesRepo })
+    const write = (f, c) => fs.writeFileSync(`${workspacesRepo}/${f}`, c)
     mkdirp.sync(wsfolder)
     return git('init')
       .then(() => git('config', 'user.name', 'pacotedev'))
@@ -317,10 +317,10 @@ t.test('setup', { bail: true }, t => {
   })
 
   t.test('create a repo with only a prepack script', t => {
-    const repo = resolve(me, 'prepack-repo')
-    const git = (...cmd) => spawnGit(cmd, { cwd: repo })
-    const write = (f, c) => fs.writeFileSync(`${repo}/${f}`, c)
-    mkdirp.sync(repo)
+    const prepackRepo = resolve(me, 'prepack-repo')
+    const git = (...cmd) => spawnGit(cmd, { cwd: prepackRepo })
+    const write = (f, c) => fs.writeFileSync(`${prepackRepo}/${f}`, c)
+    mkdirp.sync(prepackRepo)
     return git('init')
       .then(() => git('config', 'user.name', 'pacotedev'))
       .then(() => git('config', 'user.email', 'i+pacotedev@github.com'))
@@ -558,8 +558,8 @@ t.test('include auth with hosted https when provided', async t => {
     'using the correct dummy hosted service')
 
   t.test('fail, but do not fall through to sshurl', async t => {
-    const spec = `git+https://user:pass@127.0.0.1/no-repo-here`
-    const failer = new GitFetcher(spec, {
+    const badSpec = `git+https://user:pass@127.0.0.1/no-repo-here`
+    const failer = new GitFetcher(badSpec, {
       cache,
       resolved: resolved.replace(/\/repo/, '/no-repo-here'),
     })
@@ -696,9 +696,9 @@ require('fs').writeFileSync('log', JSON.stringify(data,0,2))
 `,
   })
   for (const project of ['cycle-a', 'cycle-b']) {
-    const remote = `git://localhost:${gitPort}/${project}`
+    const localRemote = `git://localhost:${gitPort}/${project}`
     const local = `${path}/${project}`
-    const g = new GitFetcher(remote, { cache, npmBin })
+    const g = new GitFetcher(localRemote, { cache, npmBin })
     await g.extract(local)
     const log = JSON.parse(fs.readFileSync(`${local}/log`, 'utf8'))
     t.match(log, {

@@ -226,10 +226,9 @@ t.test('packument that falls back to fullMetadata', t => {
   })
 
   const packumentCache = new Map()
-  const registry = `http://localhost:${port + 1000}`
   server.listen(port + 1000, async () => {
     const f = new RegistryFetcher('no-tarball', {
-      registry,
+      registry: `http://localhost:${port + 1000}`,
       cache,
       packumentCache,
     })
