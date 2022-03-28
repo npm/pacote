@@ -20,7 +20,6 @@ t.test('basic', async t => {
   const pj = me + '/extract/package.json'
   t.matchSnapshot(await f.extract(me + '/extract'), 'extract')
   t.matchSnapshot(require(pj), 'package.json extracted')
-  const fs = require('fs')
   // just verify that the file is there.
   t.same(fs.readdirSync(resolve(cache, 'content-v2/sha512/9e/77')), [
     // eslint-disable-next-line max-len
@@ -34,7 +33,6 @@ const binObject = resolve(__dirname, 'fixtures/bin-object.tgz')
 const binGood = resolve(__dirname, 'fixtures/bin-good.tgz')
 
 t.test('make bins executable', t => {
-  const fs = require('fs')
   const files = [binString, binObject, binGood]
   t.plan(files.length)
   files.forEach(file => t.test(basename(file, '.tgz'), async t => {
@@ -68,7 +66,6 @@ t.test('with readme', async t => {
   const pj = me + '/extract/package.json'
   t.matchSnapshot(await f.extract(me + '/extract'), 'extract-slow-json')
   t.matchSnapshot(require(pj), 'package.json extracted slow json')
-  const fs = require('fs')
   // just verify that the file is there.
   t.same(fs.readdirSync(resolve(cache, 'content-v2/sha512/9e/77')), [
     // eslint-disable-next-line max-len

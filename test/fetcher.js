@@ -410,7 +410,6 @@ t.test('extract into folder that already has a package in it', t => {
 
 t.test('a non-retriable cache error', t => {
   const mutateFS = require('mutate-fs')
-  const cacache = require('cacache')
   const data = fs.readFileSync(abbrev)
   const poop = new Error('poop')
   poop.code = 'LE_POOP'

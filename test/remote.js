@@ -15,7 +15,7 @@ const server = `http://localhost:${port}`
 const requestLog = []
 t.test('start server', t => {
   const data = fs.readFileSync(abbrev)
-  const server = http.createServer((req, res) => {
+  const httpServer = http.createServer((req, res) => {
     res.setHeader('cache-control', 'max-age=432000')
     res.setHeader('accept-ranges', 'bytes')
     res.setHeader('etag', '"a2177e7d2ad8d263e6c38e6fe8dd6f79"')
@@ -28,9 +28,9 @@ t.test('start server', t => {
       res.setHeader('content-type', 'application/json')
       res.end(JSON.stringify({ error: 'not found' }))
     } else if (req.url === '/not-tgz') {
-      const data = Buffer.from('this is lovely data but not a tarball')
-      res.setHeader('content-length', data.length + 2048)
-      res.write(data)
+      const nonTarData = Buffer.from('this is lovely data but not a tarball')
+      res.setHeader('content-length', nonTarData.length + 2048)
+      res.write(nonTarData)
       res.end(Buffer.alloc(2048))
     } else if (req.url === '/timeout') {
       res.statusCode = 200
@@ -41,8 +41,8 @@ t.test('start server', t => {
       res.end(data)
     }
   })
-  server.listen(port, () => {
-    t.parent.teardown(() => server.close())
+  httpServer.listen(port, () => {
+    t.parent.teardown(() => httpServer.close())
     t.end()
   })
 })
