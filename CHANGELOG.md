@@ -1,5 +1,18 @@
 # Changelog
 
+### [13.0.6](https://github.com/npm/pacote/compare/v13.0.5...v13.0.6) (2022-04-05)
+
+
+### Bug Fixes
+
+* replace deprecated String.prototype.substr() ([e307e17](https://github.com/npm/pacote/commit/e307e17e0784cd9d5f5965dc4c20a7ce228b3f46))
+
+
+### Dependencies
+
+* bump @npmcli/promise-spawn from 1.3.2 to 3.0.0 ([#154](https://github.com/npm/pacote/issues/154)) ([9a0ec63](https://github.com/npm/pacote/commit/9a0ec63d1c78a34bfef00e0c58f24151d2409975))
+* bump ssri from 8.0.1 to 9.0.0 ([#157](https://github.com/npm/pacote/issues/157)) ([0993b18](https://github.com/npm/pacote/commit/0993b186d538795fa72d392308494aecb729d315))
+
 ### [13.0.5](https://www.github.com/npm/pacote/compare/v13.0.4...v13.0.5) (2022-03-15)
 
 
