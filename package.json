@@ -61,7 +61,7 @@
     "read-package-json": "^5.0.0",
     "read-package-json-fast": "^2.0.3",
     "rimraf": "^3.0.2",
-    "ssri": "^8.0.1",
+    "ssri": "^9.0.0",
     "tar": "^6.1.11"
   },
   "engines": {
