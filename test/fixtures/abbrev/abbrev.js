@@ -60,7 +60,7 @@ function abbrev (list) {
       abbrevs[current] = current
       continue
     }
-    for (var a = current.substr(0, j); j <= cl; j++) {
+    for (var a = current.slice(0, j); j <= cl; j++) {
       abbrevs[a] = current
       a += current.charAt(j)
     }
