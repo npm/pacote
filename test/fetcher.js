@@ -517,3 +517,17 @@ t.test('set integrity, pick default algo', t => {
   t.equal(g.pickIntegrityAlgorithm(), 'sha256')
   t.end()
 })
+
+t.test('replace opts defaults to npmjs', t => {
+  const f = new FileFetcher('pkg.tgz', {
+  })
+  t.equal(f.replaceRegistryHost, 'npmjs')
+  t.end()
+})
+t.test('replace opts never', t => {
+  const f = new FileFetcher('pkg.tgz', {
+    replaceRegistryHost: 'never',
+  })
+  t.equal(f.replaceRegistryHost, 'never')
+  t.end()
+})
