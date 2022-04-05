@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.1.0](https://github.com/npm/pacote/compare/v13.0.6...v13.1.0) (2022-04-05)
+
+
+### Features
+
+* add option to not replace magic registry host ([#143](https://github.com/npm/pacote/issues/143)) ([f519cf4](https://github.com/npm/pacote/commit/f519cf42fc4f033398701fa7f9f8db8f1c08c53d))
+
 ### [13.0.6](https://github.com/npm/pacote/compare/v13.0.5...v13.0.6) (2022-04-05)
 
 
