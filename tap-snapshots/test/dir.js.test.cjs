@@ -8,7 +8,7 @@
 exports[`test/dir.js TAP basic > extract 1`] = `
 Object {
   "from": "file:test/fixtures/abbrev",
-  "integrity": "sha512-TP/sks9uY1WtzkFdIg2xVCud1JfysnFoNeA2P7J3CHd7l9Zlcllrk4gXfw/ABzyRU2aVrTKzoS9Bkrre6YqAFw==",
+  "integrity": "sha512-4LQrO8XIPkwgx2wanFZU5bCNmzB1dzTbDtgozDs2uqGLj0x1De97lOP3BFEtlsZDFOquwrJt0IHsjEFfgfDyVA==",
   "resolved": "\${CWD}/test/fixtures/abbrev",
 }
 `
