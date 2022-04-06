@@ -1,5 +1,12 @@
 # Changelog
 
+### [13.1.1](https://github.com/npm/pacote/compare/v13.1.0...v13.1.1) (2022-04-06)
+
+
+### Dependencies
+
+* bump npm-packlist from 4.0.0 to 5.0.0 ([#159](https://github.com/npm/pacote/issues/159)) ([d7f07d6](https://github.com/npm/pacote/commit/d7f07d6dcbdd148c614f3dc52181af7d6203c40a))
+
 ## [13.1.0](https://github.com/npm/pacote/compare/v13.0.6...v13.1.0) (2022-04-05)
 
 
