@@ -141,3 +141,49 @@ t.test('get a timeout error from the http fetch', t => {
     code: /FETCH_ERROR|ERR_SOCKET_TIMEOUT/,
   })
 })
+
+t.test('option replaceRegistryHost', rhTest => {
+  const tnock = require('./fixtures/tnock')
+  const { join } = require('path')
+  const abbrevTGZ = fs.readFileSync(abbrev)
+
+  rhTest.test('host should be replaced if set to always on npmjs registry', async ct => {
+    const testdir = t.testdir()
+    tnock(ct, 'https://registry.github.com')
+      .get('/abbrev/-/abbrev-1.1.1.tgz')
+      .reply(200, abbrevTGZ)
+
+    const fetcher = new RemoteFetcher(
+      'https://registry.npmjs.org/abbrev/-/abbrev-1.1.1.tgz',
+      {
+        registry: 'https://registry.github.com',
+        cache: join(testdir, 'cache'),
+        fullReadJson: true,
+        replaceRegistryHost: 'always',
+      })
+    ct.equal(fetcher.replaceRegistryHost, 'always')
+    const tarball = await fetcher.tarball()
+    ct.match(tarball, abbrevTGZ)
+  })
+
+  rhTest.test('host should be replaced if set to always on other registry', async ct => {
+    const testdir = t.testdir()
+    tnock(ct, 'https://registry.github.com')
+      .get('/abbrev/-/abbrev-1.1.1.tgz')
+      .reply(200, abbrevTGZ)
+
+    const fetcher = new RemoteFetcher(
+      'https://registry.somethingelse.org/abbrev/-/abbrev-1.1.1.tgz',
+      {
+        registry: 'https://registry.github.com',
+        cache: join(testdir, 'cache'),
+        fullReadJson: true,
+        replaceRegistryHost: 'always',
+      })
+    ct.equal(fetcher.replaceRegistryHost, 'always')
+    const tarball = await fetcher.tarball()
+    ct.match(tarball, abbrevTGZ)
+  })
+
+  rhTest.end()
+})
