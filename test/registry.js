@@ -128,19 +128,26 @@ t.test('provide different type of integrity, concats', async t => {
     ))
 })
 
-t.test('provide matching integrity, totes ok', async t => {
+t.test('provide matching integrity, totes ok, includes signature', async t => {
   const f = new RegistryFetcher('@isaacs/namespace-test', {
     registry,
     cache,
     // eslint-disable-next-line max-len
     integrity: 'sha512-5ZYe1LgwHIaag0p9loMwsf5N/wJ4XAuHVNhSO+qulQOXWnyJVuco6IZjo+5u4ZLF/GimdHJcX+QK892ONfOCqQ==',
   })
-  return f.manifest().then(mani =>
-    t.equal(
-      mani._integrity,
+  return f.manifest().then(mani => {
+    t.match(mani, {
       // eslint-disable-next-line max-len
-      'sha512-5ZYe1LgwHIaag0p9loMwsf5N/wJ4XAuHVNhSO+qulQOXWnyJVuco6IZjo+5u4ZLF/GimdHJcX+QK892ONfOCqQ=='
-    ))
+      _integrity: 'sha512-5ZYe1LgwHIaag0p9loMwsf5N/wJ4XAuHVNhSO+qulQOXWnyJVuco6IZjo+5u4ZLF/GimdHJcX+QK892ONfOCqQ==',
+      _signatures: [
+        {
+          keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+          // eslint-disable-next-line max-len
+          sig: 'MEQCIHXwKYe70+xcDOvFhM1etZQFUKEwz9VarppUbp5/Ie1+AiAM7aZcT1a2JR0oF/XwjNb13YEHwiagnDapLgYbklRvtA==',
+        },
+      ],
+    })
+  })
 })
 
 t.test('404 fails with E404', t => {
