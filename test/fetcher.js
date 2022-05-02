@@ -531,3 +531,10 @@ t.test('replace opts never', t => {
   t.equal(f.replaceRegistryHost, 'never')
   t.end()
 })
+t.test('replace opts always', t => {
+  const f = new FileFetcher('pkg.tgz', {
+    replaceRegistryHost: 'always',
+  })
+  t.equal(f.replaceRegistryHost, 'always')
+  t.end()
+})
