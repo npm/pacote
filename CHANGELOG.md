@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.2.0](https://github.com/npm/pacote/compare/v13.1.1...v13.2.0) (2022-05-02)
+
+
+### Features
+
+* add always option to replaceRegistryHost ([#164](https://github.com/npm/pacote/issues/164)) ([edd1ee5](https://github.com/npm/pacote/commit/edd1ee53915c14bdeed8b3dcbf066be82b26a9ff))
+
 ### [13.1.1](https://github.com/npm/pacote/compare/v13.1.0...v13.1.1) (2022-04-06)
 
 
