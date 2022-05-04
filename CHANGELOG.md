@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.3.0](https://github.com/npm/pacote/compare/v13.2.0...v13.3.0) (2022-05-04)
+
+
+### Features
+
+* add _signatures to manifest ([3ae73f2](https://github.com/npm/pacote/commit/3ae73f22cc875f3e6d1a61ad887ed5a3fc74343f))
+
 ## [13.2.0](https://github.com/npm/pacote/compare/v13.1.1...v13.2.0) (2022-05-02)
 
 
