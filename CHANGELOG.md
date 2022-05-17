@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.4.0](https://github.com/npm/pacote/compare/v13.3.0...v13.4.0) (2022-05-17)
+
+
+### Features
+
+* add verifySignatures to registry.manifest ([#170](https://github.com/npm/pacote/issues/170)) ([4401c58](https://github.com/npm/pacote/commit/4401c58633023c54c7605443a0399cbde01c7b70))
+
 ## [13.3.0](https://github.com/npm/pacote/compare/v13.2.0...v13.3.0) (2022-05-04)
 
 
