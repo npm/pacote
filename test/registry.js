@@ -150,6 +150,132 @@ t.test('provide matching integrity, totes ok, includes signature', async t => {
   })
 })
 
+t.test('verifySignatures valid signature', async t => {
+  const f = new RegistryFetcher('@isaacs/namespace-test', {
+    registry,
+    cache,
+    verifySignatures: true,
+    [`//localhost:${port}/:_keys`]: [{
+      expires: null,
+      keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+      keytype: 'ecdsa-sha2-nistp256',
+      scheme: 'ecdsa-sha2-nistp256',
+      // eslint-disable-next-line max-len
+      key: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==',
+      // eslint-disable-next-line max-len
+      pemkey: '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==\n-----END PUBLIC KEY-----',
+    }],
+  })
+  return f.manifest().then(mani => {
+    t.ok(mani._signatures)
+    t.ok(mani._integrity)
+  })
+})
+
+t.test('verifySignatures expired signature', async t => {
+  const f = new RegistryFetcher('@isaacs/namespace-test', {
+    registry,
+    cache,
+    verifySignatures: true,
+    [`//localhost:${port}/:_keys`]: [{
+      expires: '2010-01-01',
+      keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+      keytype: 'ecdsa-sha2-nistp256',
+      scheme: 'ecdsa-sha2-nistp256',
+      // eslint-disable-next-line max-len
+      key: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==',
+      // eslint-disable-next-line max-len
+      pemkey: '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==\n-----END PUBLIC KEY-----',
+    }],
+  })
+  return t.rejects(
+    f.manifest(),
+    {
+      code: 'EEXPIREDSIGNATUREKEY',
+    }
+  )
+})
+
+t.test('verifySignatures invalid signature', async t => {
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/abbrev')
+    .reply(200, {
+      _id: 'abbrev',
+      _rev: 'deadbeef',
+      name: 'abbrev',
+      'dist-tags': { latest: '1.1.1' },
+      versions: {
+        '1.1.1': {
+          name: 'abbrev',
+          version: '1.1.1',
+          dist: {
+            // eslint-disable-next-line max-len
+            integrity: 'sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==',
+            shasum: 'f8f2c887ad10bf67f634f005b6987fed3179aac8',
+            tarball: 'https://registry.npmjs.org/abbrev/-/abbrev-1.1.1.tgz',
+            signatures: [
+              {
+                keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+                sig: 'nope',
+              },
+            ],
+          },
+        },
+      },
+    })
+
+  const f = new RegistryFetcher('abbrev', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifySignatures: true,
+    [`//registry.npmjs.org/:_keys`]: [{
+      expires: null,
+      keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+      keytype: 'ecdsa-sha2-nistp256',
+      scheme: 'ecdsa-sha2-nistp256',
+      // eslint-disable-next-line max-len
+      key: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==',
+      // eslint-disable-next-line max-len
+      pemkey: '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==\n-----END PUBLIC KEY-----',
+    }],
+  })
+  return t.rejects(
+    f.manifest(),
+    {
+      code: 'EINTEGRITYSIGNATURE',
+    }
+  )
+})
+
+t.test('verifySignatures no valid key', async t => {
+  const f = new RegistryFetcher('@isaacs/namespace-test', {
+    registry,
+    cache,
+    verifySignatures: true,
+    [`//localhost:${port}/:_keys`]: [{
+      keyid: 'someotherid',
+    }],
+  })
+  return t.rejects(
+    f.manifest(),
+    {
+      code: 'EMISSINGSIGNATUREKEY',
+    }
+  )
+})
+
+t.test('verifySignatures no registry keys at all', async t => {
+  const f = new RegistryFetcher('@isaacs/namespace-test', {
+    registry,
+    cache,
+    verifySignatures: true,
+    [`//localhost:${port}/:_keys`]: null,
+  })
+  return f.manifest().then(mani => {
+    t.notOk(mani._signatures)
+  })
+})
+
 t.test('404 fails with E404', t => {
   const f = new RegistryFetcher('thing-is-not-here', { registry, cache })
   return t.rejects(f.resolve(), { code: 'E404' }).then(() =>
