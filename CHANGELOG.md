@@ -1,5 +1,12 @@
 # Changelog
 
+### [13.4.1](https://github.com/npm/pacote/compare/v13.4.0...v13.4.1) (2022-05-19)
+
+
+### Bug Fixes
+
+* pass prefix and workspaces to npm-packlist ([#173](https://github.com/npm/pacote/issues/173)) ([6de3a2b](https://github.com/npm/pacote/commit/6de3a2b4bbe1444d8e116637cb086ae559fe02ee))
+
 ## [13.4.0](https://github.com/npm/pacote/compare/v13.3.0...v13.4.0) (2022-05-17)
 
 
