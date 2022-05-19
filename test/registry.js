@@ -3,75 +3,80 @@ const t = require('tap')
 const mr = require('npm-registry-mock')
 const tnock = require('./fixtures/tnock')
 const port = 18000 + (+process.env.TAP_CHILD_ID || 0)
+const registry = `http://localhost:${port}/`
+
 const me = t.testdir()
+const cache = me + '/cache'
 
-t.test('start mock registry', { bail: true }, t => {
-  mr({
-    port,
-    mocks: {
-      get: {
-        '/no-integrity/-/no-integrity-1.2.3.tgz': [
-          200,
-          `${__dirname}/fixtures/abbrev-1.1.1.tgz`,
-        ],
-      },
-    },
-
-    plugin (server) {
-      server.get('/thing-is-not-here').many().reply(404, { error: 'not found' })
-      server.get('/no-tarball').many().reply(200, {
-        name: 'no-tarball',
-        'dist-tags': { latest: '1.2.3' },
-        versions: {
-          '1.2.3': {
-            name: 'no-tarball',
-            version: '1.2.3',
-          },
+t.before(() => {
+  return new Promise((resolve, reject) => {
+    mr({
+      port,
+      mocks: {
+        get: {
+          '/no-integrity/-/no-integrity-1.2.3.tgz': [
+            200,
+            `${__dirname}/fixtures/abbrev-1.1.1.tgz`,
+          ],
         },
-      })
-      server.get('/no-integrity').many().reply(200, {
-        name: 'no-integrity',
-        'dist-tags': { latest: '1.2.3' },
-        versions: {
-          '1.2.3': {
-            name: 'no-integrity',
-            version: '1.2.3',
-            dist: {
-              tarball: `${registry}no-integrity/-/no-integrity-1.2.3.tgz`,
+      },
+
+      plugin (server) {
+        server.get('/thing-is-not-here').many().reply(404, { error: 'not found' })
+        server.get('/no-tarball').many().reply(200, {
+          name: 'no-tarball',
+          'dist-tags': { latest: '1.2.3' },
+          versions: {
+            '1.2.3': {
+              name: 'no-tarball',
+              version: '1.2.3',
             },
           },
-        },
-      })
-    },
-  }, (er, s) => {
-    if (er) {
-      throw er
-    }
+        })
+        const r = server.get('/no-integrity')
+        const m = r.many()
+        m.reply(200, {
+          name: 'no-integrity',
+          'dist-tags': { latest: '1.2.3' },
+          versions: {
+            '1.2.3': {
+              name: 'no-integrity',
+              version: '1.2.3',
+              dist: {
+                tarball: `${registry}no-integrity/-/no-integrity-1.2.3.tgz`,
+              },
+            },
+          },
+        })
+      },
+    }, (err, s) => {
+      if (err) {
+        return reject(err)
+      }
 
-    t.parent.teardown(() => s.close())
-    t.end()
+      t.teardown(() => s.close())
+      return resolve()
+    })
   })
 })
 
-const registry = `http://localhost:${port}/`
-const cache = me + '/cache'
-
-t.test('underscore, no tag or version', t => {
+t.test('underscore, no tag or version', async t => {
   const f = new RegistryFetcher('underscore', { registry, cache, fullReadJson: true })
 
-  return f.resolve().then(r => t.equal(r, `${registry}underscore/-/underscore-1.5.1.tgz`))
-    .then(() => f.manifest()).then(m => {
-      t.equal(m, f.package)
-      t.match(m, { version: '1.5.1', _id: 'underscore@1.5.1' })
-      return f.manifest().then(m2 => t.equal(m, m2, 'manifest cached'))
-    })
-    .then(() => f.extract(me + '/underscore'))
-    .then(result => t.same(result, {
-      resolved: `${registry}underscore/-/underscore-1.5.1.tgz`,
-      // eslint-disable-next-line max-len
-      integrity: 'sha1-0r3oF9F2/63olKtxRY5oKhS4bck= sha512-yOc7VukmA45a1D6clUn1mD7Mbc9LcVYAQEXNKSTblzha59hSFJ6cAt90JDoxh05GQnTPI9nk4wjT/I8C/nAMPw==',
-      from: 'underscore@',
-    }))
+  const r = await f.resolve()
+  t.equal(r, `${registry}underscore/-/underscore-1.5.1.tgz`)
+  const m = await f.manifest()
+  t.equal(m, f.package)
+  t.match(m, { version: '1.5.1', _id: 'underscore@1.5.1' })
+  const m2 = await f.manifest()
+  t.equal(m, m2, 'manifest cached')
+  const result = await f.extract(me + '/underscore')
+  t.same(result, {
+    resolved: `${registry}underscore/-/underscore-1.5.1.tgz`,
+    // eslint-disable-next-line max-len
+    integrity: 'sha1-0r3oF9F2/63olKtxRY5oKhS4bck= sha512-yOc7VukmA45a1D6clUn1mD7Mbc9LcVYAQEXNKSTblzha59hSFJ6cAt90JDoxh05GQnTPI9nk4wjT/I8C/nAMPw==',
+    from: 'underscore@',
+  })
 })
 
 t.test('scoped, no tag or version', t => {
