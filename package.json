@@ -21,8 +21,7 @@
     "template-oss-apply": "template-oss-apply --force"
   },
   "tap": {
-    "timeout": 300,
-    "coverage-map": "map.js"
+    "timeout": 300
   },
   "devDependencies": {
     "@npmcli/eslint-config": "^3.0.1",
