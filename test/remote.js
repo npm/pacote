@@ -1,5 +1,6 @@
 const RemoteFetcher = require('../lib/remote.js')
 const http = require('http')
+const ssri = require('ssri')
 const t = require('tap')
 
 const { resolve } = require('path')
@@ -12,9 +13,11 @@ const fs = require('fs')
 const abbrev = resolve(__dirname, 'fixtures/abbrev-1.1.1.tgz')
 const port = 12345 + (+process.env.TAP_CHILD_ID || 0)
 const server = `http://localhost:${port}`
+let abbrevIntegrity
 const requestLog = []
 t.test('start server', t => {
   const data = fs.readFileSync(abbrev)
+  abbrevIntegrity = ssri.fromData(data)
   const httpServer = http.createServer((req, res) => {
     res.setHeader('cache-control', 'max-age=432000')
     res.setHeader('accept-ranges', 'bytes')
@@ -110,6 +113,13 @@ t.test('bad integrity', t => {
       ],
     },
   })
+})
+
+t.test('known integrity', async t => {
+  const url = `${server}/abbrev.tgz`
+  const f = new RemoteFetcher(url, { cache, integrity: abbrevIntegrity })
+  await f.extract(me + '/good-integrity')
+  t.same(f.integrity, abbrevIntegrity, 'got the right integrity back out')
 })
 
 t.test('an missing tarball', t => {
