@@ -240,9 +240,15 @@ t.test('verifySignatures invalid signature', async t => {
     }],
   })
   return t.rejects(
+    /abbrev@1\.1\.1 has an invalid registry signature/,
     f.manifest(),
     {
       code: 'EINTEGRITYSIGNATURE',
+      keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+      signature: 'nope',
+      resolved: 'https://registry.npmjs.org/abbrev/-/abbrev-1.1.1.tgz',
+      // eslint-disable-next-line max-len
+      integrity: 'sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==',
     }
   )
 })
@@ -258,6 +264,7 @@ t.test('verifySignatures no valid key', async t => {
   })
   return t.rejects(
     f.manifest(),
+    /@isaacs\/namespace-test@1\.0\.0 has a registry signature/,
     {
       code: 'EMISSINGSIGNATUREKEY',
     }
@@ -271,9 +278,13 @@ t.test('verifySignatures no registry keys at all', async t => {
     verifySignatures: true,
     [`//localhost:${port}/:_keys`]: null,
   })
-  return f.manifest().then(mani => {
-    t.notOk(mani._signatures)
-  })
+  return t.rejects(
+    f.manifest(),
+    /@isaacs\/namespace-test@1\.0\.0 has a registry signature/,
+    {
+      code: 'EMISSINGSIGNATUREKEY',
+    }
+  )
 })
 
 t.test('404 fails with E404', t => {
