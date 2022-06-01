@@ -1,5 +1,23 @@
 # Changelog
 
+## [13.6.0](https://github.com/npm/pacote/compare/v13.5.0...v13.6.0) (2022-06-01)
+
+
+### Features
+
+* allow reuse of external integrity stream ([fdb9e5a](https://github.com/npm/pacote/commit/fdb9e5a8b659786f002e7901cf011242d57139db))
+* replaceRegistryHost can now be a hostname ([#177](https://github.com/npm/pacote/issues/177)) ([a9a4cdd](https://github.com/npm/pacote/commit/a9a4cdd79a46b002ceba4d7944d0524367ed599c))
+
+
+### Bug Fixes
+
+* error when passing signature without keys ([#176](https://github.com/npm/pacote/issues/176)) ([d69e524](https://github.com/npm/pacote/commit/d69e524845ce5a752bdba9a2e3647ce23934b3a9))
+
+
+### Documentation
+
+* add some fields to the README ([#180](https://github.com/npm/pacote/issues/180)) ([f356cb2](https://github.com/npm/pacote/commit/f356cb2ebef239131fc24a9d23ca3cc595a254d4))
+
 ## [13.5.0](https://github.com/npm/pacote/compare/v13.4.1...v13.5.0) (2022-05-25)
 
 
