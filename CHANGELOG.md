@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.5.0](https://github.com/npm/pacote/compare/v13.4.1...v13.5.0) (2022-05-25)
+
+
+### Features
+
+* bump npm-packlist for workspace awareness ([#178](https://github.com/npm/pacote/issues/178)) ([316059b](https://github.com/npm/pacote/commit/316059b07c837d60fc90d3edb60ffc8717e7ca65))
+
 ### [13.4.1](https://github.com/npm/pacote/compare/v13.4.0...v13.4.1) (2022-05-19)
 
 
