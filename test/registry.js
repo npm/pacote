@@ -444,7 +444,7 @@ t.test('option replaceRegistryHost', rhTest => {
       cache: join(testdir, 'cache'),
       fullReadJson: true,
     })
-    ct.equal(fetcher.replaceRegistryHost, 'npmjs')
+    ct.equal(fetcher.replaceRegistryHost, 'registry.npmjs.org')
     const manifest = await fetcher.manifest()
     ct.equal(manifest.dist.tarball, 'https://registry.npmjs.org/abbrev/-/abbrev-1.1.1.tgz')
     const tarball = await fetcher.tarball()
@@ -465,7 +465,7 @@ t.test('option replaceRegistryHost', rhTest => {
       fullReadJson: true,
       replaceRegistryHost: 'npmjs',
     })
-    ct.equal(fetcher.replaceRegistryHost, 'npmjs')
+    ct.equal(fetcher.replaceRegistryHost, 'registry.npmjs.org')
     const manifest = await fetcher.manifest()
     ct.equal(manifest.dist.tarball, 'https://registry.npmjs.org/abbrev/-/abbrev-1.1.1.tgz')
     const tarball = await fetcher.tarball()

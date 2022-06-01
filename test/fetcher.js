@@ -518,10 +518,10 @@ t.test('set integrity, pick default algo', t => {
   t.end()
 })
 
-t.test('replace opts defaults to npmjs', t => {
+t.test('replace opts defaults to default registry', t => {
   const f = new FileFetcher('pkg.tgz', {
   })
-  t.equal(f.replaceRegistryHost, 'npmjs')
+  t.equal(f.replaceRegistryHost, 'registry.npmjs.org')
   t.end()
 })
 t.test('replace opts never', t => {
