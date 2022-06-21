@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.6.1](https://github.com/npm/pacote/compare/v13.6.0...v13.6.1) (2022-06-21)
+
+
+### Dependencies
+
+* bump @npmcli/run-script from 3.0.3 to 4.1.0 ([#185](https://github.com/npm/pacote/issues/185)) ([d0459ec](https://github.com/npm/pacote/commit/d0459ec46d85466c71aa7a9594fbb84ec6d18277))
+
 ## [13.6.0](https://github.com/npm/pacote/compare/v13.5.0...v13.6.0) (2022-06-01)
 
 
