@@ -484,32 +484,33 @@ t.test('weird hosted that doesnt provide any fetch targets', t => {
   t.end()
 })
 
-t.test('extract from tarball from hosted git service', t => {
+t.test('extract from tarball from hosted git service', async t => {
   // run in both ssh and https url types from a hosted service
   // both of these actually produce a git:// url so that the test
   // doesn't hang waiting for SSH key approval/passphrases.
   const domains = ['localhost', 'localhostssh']
 
-  t.plan(domains.length)
-  domains.forEach(domain => t.test(domain, t => {
-    const runTest = nameat => t => {
-      const spec = npa(`${nameat}${domain}:repo/x#${REPO_HEAD}`)
-      const g = new GitFetcher(spec, { cache })
-      return g.manifest().then(m => t.match(m, {
-        name: 'repo',
-        version: '1.0.0',
-        description: 'just some random thing',
-        devDependencies: {
-          abbrev: abbrevSpec,
-        },
-        scripts: { prepare: 'node prepare.js', test: 'node index.js' },
-        files: ['index.js'],
-        _id: 'repo@1.0.0',
-        _integrity: /^sha512-/,
-        _resolved: `${remoteHosted}#${REPO_HEAD}`,
-      }))
-        .then(() => g.packument())
-        .then(p => t.match(p, {
+  for (const domain of domains) {
+    t.test(domain, async t => {
+      const runTest = nameat => async t => {
+        const spec = npa(`${nameat}${domain}:repo/x#${REPO_HEAD}`)
+        const g = new GitFetcher(spec, { cache })
+        const m = await g.manifest()
+        t.match(m, {
+          name: 'repo',
+          version: '1.0.0',
+          description: 'just some random thing',
+          devDependencies: {
+            abbrev: abbrevSpec,
+          },
+          scripts: { prepare: 'node prepare.js', test: 'node index.js' },
+          files: ['index.js'],
+          _id: 'repo@1.0.0',
+          _integrity: /^sha512-/,
+          _resolved: `${remoteHosted}#${REPO_HEAD}`,
+        })
+        const p = await g.packument()
+        t.match(p, {
           name: 'repo',
           'dist-tags': { latest: '1.0.0' },
           versions: {
@@ -528,18 +529,16 @@ t.test('extract from tarball from hosted git service', t => {
               dist: {},
             },
           },
-        }))
-        .then(() => g.extract(me + '/hosted'))
-        .then(result => {
-          t.throws(() => fs.statSync(me + '/hosted/prepare.js'))
-          fs.statSync(me + '/hosted/index.js')
         })
-    }
+        await g.extract(me + '/hosted')
+        t.throws(() => fs.statSync(me + '/hosted/prepare.js'))
+        fs.statSync(me + '/hosted/index.js')
+      }
 
-    t.plan(2)
-    t.test('with repo@ on the spec', runTest('repo@'))
-    t.test('without repo@on the spec', runTest(''))
-  }))
+      t.test('with repo@ on the spec', runTest('repo@'))
+      t.test('without repo@on the spec', runTest(''))
+    })
+  }
 })
 
 t.test('include auth with hosted https when provided', async t => {
@@ -593,20 +592,19 @@ t.test('add git sha to hosted git shorthand', t =>
 
 t.test('fetch a weird ref', t => {
   let head3 = ''
-  t.test('hosted', t =>
-    new GitFetcher('localhost:repo/x#HEAD~3', { cache }).extract(me + '/h3h')
-      .then(result => {
-        head3 = result.resolved.split('#').pop()
-        t.match(result.resolved, /^git\+git:\/\/127\.0\.0\.1:[0-9]+\/repo#[a-z0-9]{40}$/,
-          'got git url as resolved value')
-        t.not(result.resolved, `${remoteHosted}#${REPO_HEAD}`,
-          'git url for HEAD~3 is not the same as HEAD')
-      }))
+  t.test('hosted', async t => {
+    const result = await new GitFetcher('localhost:repo/x#HEAD~3', { cache }).extract(me + '/h3h')
+    head3 = result.resolved.split('#').pop()
+    t.match(result.resolved, /^git\+git:\/\/127\.0\.0\.1:[0-9]+\/repo#[a-z0-9]{40}$/,
+      'got git url as resolved value')
+    t.not(result.resolved, `${remoteHosted}#${REPO_HEAD}`,
+      'git url for HEAD~3 is not the same as HEAD')
+  })
 
-  t.test('reglar', t =>
-    new GitFetcher(`${remote}#HEAD~3`, { cache }).extract(me + '/h3r')
-      .then(result => t.equal(result.resolved, `${remote}#${head3}`,
-        'got the same HEAD~3 sha as before')))
+  t.test('regular', async t => {
+    const result = await new GitFetcher(`${remote}#HEAD~3`, { cache }).extract(me + '/h3r')
+    t.equal(result.resolved, `${remote}#${head3}`, 'got the same HEAD~3 sha as before')
+  })
 
   t.end()
 })

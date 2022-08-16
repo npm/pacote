@@ -50,7 +50,7 @@ t.test('start server', t => {
   })
 })
 
-t.test('packument', t => {
+t.test('packument', async t => {
   // const url = 'https://registry.npmjs.org/abbrev/-/abbrev-1.1.1.tgz'
   const url = `https://registry.npmjs.org/abbrev.tgz`
   const f = new RemoteFetcher(url, {
@@ -64,38 +64,34 @@ t.test('packument', t => {
     npmSession: 'foobarbaz',
   })
   // run twice to pull from cache the second time
-  return t.resolveMatchSnapshot(f.packument(), 'packument')
-    .then(() => {
-      const f2 = new RemoteFetcher(`abbrev@${url}`, {
-        registry: server,
-        pkgid: `remote:abbrev@${url}`,
-        cache,
-      })
-      return t.resolveMatchSnapshot(f2.packument(), 'packument 2')
-    })
-    .then(() => {
-      const version = require('../package.json').version
-      t.equal(requestLog.length, 1, 'only one request hit the server')
-      t.match(requestLog, [
-        [
-          '/abbrev.tgz',
-          {
-            connection: 'keep-alive',
-            'user-agent': `pacote/${version} node/${process.version}`,
-            'pacote-version': version,
-            'pacote-req-type': 'tarball',
-            'pacote-pkg-id': `remote:${server}/abbrev.tgz`,
-            accept: '*/*',
-            'accept-encoding': 'gzip,deflate',
-            host: new URL(server).host,
-            'npm-session': 'foobarbaz',
-            'npm-scope': '@npmcli',
-            'not-referer': 'http://example.com',
-          },
-        ],
-      ])
-      requestLog.length = 0
-    })
+  await t.resolveMatchSnapshot(f.packument(), 'packument')
+  const f2 = new RemoteFetcher(`abbrev@${url}`, {
+    registry: server,
+    pkgid: `remote:abbrev@${url}`,
+    cache,
+  })
+  await t.resolveMatchSnapshot(f2.packument(), 'packument 2')
+  const version = require('../package.json').version
+  t.equal(requestLog.length, 1, 'only one request hit the server')
+  t.match(requestLog, [
+    [
+      '/abbrev.tgz',
+      {
+        connection: 'keep-alive',
+        'user-agent': `pacote/${version} node/${process.version}`,
+        'pacote-version': version,
+        'pacote-req-type': 'tarball',
+        'pacote-pkg-id': `remote:${server}/abbrev.tgz`,
+        accept: '*/*',
+        'accept-encoding': 'gzip,deflate',
+        host: new URL(server).host,
+        'npm-session': 'foobarbaz',
+        'npm-scope': '@npmcli',
+        'not-referer': 'http://example.com',
+      },
+    ],
+  ])
+  requestLog.length = 0
 })
 
 t.test('bad integrity', t => {
