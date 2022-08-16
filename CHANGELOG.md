@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.6.2](https://github.com/npm/pacote/compare/v13.6.1...v13.6.2) (2022-08-16)
+
+
+### Bug Fixes
+
+* linting ([#187](https://github.com/npm/pacote/issues/187)) ([cf1c5ed](https://github.com/npm/pacote/commit/cf1c5ed47810d98568cfdbd2c4b06b51e6fccd32))
+
 ## [13.6.1](https://github.com/npm/pacote/compare/v13.6.0...v13.6.1) (2022-06-21)
 
 
