@@ -135,18 +135,17 @@ t.test('provide matching integrity, totes ok, includes signature', async t => {
     // eslint-disable-next-line max-len
     integrity: 'sha512-5ZYe1LgwHIaag0p9loMwsf5N/wJ4XAuHVNhSO+qulQOXWnyJVuco6IZjo+5u4ZLF/GimdHJcX+QK892ONfOCqQ==',
   })
-  return f.manifest().then(mani => {
-    t.match(mani, {
-      // eslint-disable-next-line max-len
-      _integrity: 'sha512-5ZYe1LgwHIaag0p9loMwsf5N/wJ4XAuHVNhSO+qulQOXWnyJVuco6IZjo+5u4ZLF/GimdHJcX+QK892ONfOCqQ==',
-      _signatures: [
-        {
-          keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
-          // eslint-disable-next-line max-len
-          sig: 'MEQCIHXwKYe70+xcDOvFhM1etZQFUKEwz9VarppUbp5/Ie1+AiAM7aZcT1a2JR0oF/XwjNb13YEHwiagnDapLgYbklRvtA==',
-        },
-      ],
-    })
+  const mani = await f.manifest()
+  t.match(mani, {
+    // eslint-disable-next-line max-len
+    _integrity: 'sha512-5ZYe1LgwHIaag0p9loMwsf5N/wJ4XAuHVNhSO+qulQOXWnyJVuco6IZjo+5u4ZLF/GimdHJcX+QK892ONfOCqQ==',
+    _signatures: [
+      {
+        keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+        // eslint-disable-next-line max-len
+        sig: 'MEQCIHXwKYe70+xcDOvFhM1etZQFUKEwz9VarppUbp5/Ie1+AiAM7aZcT1a2JR0oF/XwjNb13YEHwiagnDapLgYbklRvtA==',
+      },
+    ],
   })
 })
 
@@ -166,10 +165,9 @@ t.test('verifySignatures valid signature', async t => {
       pemkey: '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==\n-----END PUBLIC KEY-----',
     }],
   })
-  return f.manifest().then(mani => {
-    t.ok(mani._signatures)
-    t.ok(mani._integrity)
-  })
+  const mani = await f.manifest()
+  t.ok(mani._signatures)
+  t.ok(mani._integrity)
 })
 
 t.test('verifySignatures expired signature', async t => {

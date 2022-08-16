@@ -92,17 +92,17 @@ t.test('snapshot the npmInstallCmd and npmInstallConfig', async t => {
   t.matchSnapshot(yarn.npmCliConfig, 'yarn style cli config stuff')
 })
 
-t.test('tarball data', t =>
-  new FileFetcher(abbrevspec, { cache }).tarball()
-    .then(data => {
-      t.equal(data.toString('hex'), fs.readFileSync(abbrev, 'hex'), 'without integrity')
-      t.equal(data.integrity, abbrevMani._integrity, 'integrity calculated')
-    })
-    .then(() => new FileFetcher(abbrevspec, {
-      cache,
-      integrity: abbrevMani._integrity,
-    }).tarball())
-    .then(data => t.same(data, fs.readFileSync(abbrev), 'with integrity')))
+t.test('tarball data', async t => {
+  const dataWithout = await new FileFetcher(abbrevspec, { cache }).tarball()
+  t.equal(dataWithout.toString('hex'), fs.readFileSync(abbrev, 'hex'), 'without integrity')
+  t.equal(dataWithout.integrity, abbrevMani._integrity, 'integrity calculated')
+
+  const dataWith = await new FileFetcher(abbrevspec, {
+    cache,
+    integrity: abbrevMani._integrity,
+  }).tarball()
+  t.same(dataWith, fs.readFileSync(abbrev), 'with integrity')
+})
 
 t.test('tarballFile', t => {
   const target = resolve(me, 'tarball-file')
@@ -351,7 +351,7 @@ t.test('extract', t => {
     })
 })
 
-t.test('extract into folder that already has a package in it', t => {
+t.test('extract into folder that already has a package in it', async t => {
   const dir = t.testdir({
     'package.json': JSON.stringify({
       name: 'weird',
@@ -384,28 +384,27 @@ t.test('extract into folder that already has a package in it', t => {
   })
   // some weird thing with links and such
   // will remove weird and weird/foo bundle dep, but not weird/bar
-  return new FileFetcher(weirdspec, { cache }).extract(dir).then(() => {
-    const missing = [
-      'index-hardlink.js',
-      'index-symlink.js',
-      '.gitignore',
-      'lib/.gitignore',
-      'no-gitignore-here/.gitignore',
-      'node_modules/foo',
-      'node_modules/.bin/foo',
-    ]
-    missing.forEach(f =>
-      t.throws(() => fs.statSync(dir + '/' + f), 'excluded or removed' + f))
+  await new FileFetcher(weirdspec, { cache }).extract(dir)
+  const missing = [
+    'index-hardlink.js',
+    'index-symlink.js',
+    '.gitignore',
+    'lib/.gitignore',
+    'no-gitignore-here/.gitignore',
+    'node_modules/foo',
+    'node_modules/.bin/foo',
+  ]
+  missing.forEach(f =>
+    t.throws(() => fs.statSync(dir + '/' + f), 'excluded or removed' + f))
 
-    const present = [
-      'no-gitignore-here/.npmignore',
-      'node_modules/bar/package.json',
-      'node_modules/bar/index.js',
-      'node_modules/.bin/bar',
-    ]
-    present.forEach(f =>
-      t.ok(fs.statSync(dir + '/' + f), 'still have file at ' + f))
-  })
+  const present = [
+    'no-gitignore-here/.npmignore',
+    'node_modules/bar/package.json',
+    'node_modules/bar/index.js',
+    'node_modules/.bin/bar',
+  ]
+  present.forEach(f =>
+    t.ok(fs.statSync(dir + '/' + f), 'still have file at ' + f))
 })
 
 t.test('a non-retriable cache error', t => {

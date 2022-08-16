@@ -18,14 +18,18 @@ t.cleanSnapshot = str => str
   .split(process.cwd()).join('${CWD}')
   .replace(/\\/g, '/')
 
+// Putting all these tests inside a `t.test` suite broke the tests. They either
+// didn't run or failed w/ no message.  Ignoring promise/catch-or-return for now.
 t.resolveMatchSnapshot(pacote.resolve(abbrevspec), 'resolve')
 t.resolveMatchSnapshot(pacote.extract(abbrevspec, me + '/extract'), 'extract')
 t.resolveMatchSnapshot(pacote.manifest(abbrevspec), 'manifest')
 t.resolveMatchSnapshot(pacote.packument(abbrevspec), 'packument')
 t.resolveMatch(pacote.tarball(abbrevspec), fs.readFileSync(abbrev), 'tarball')
+// eslint-disable-next-line promise/catch-or-return
 t.resolveMatchSnapshot(pacote.tarball.file(abbrevspec, me + '/tarball.tgz'),
   'tarball to file').then(() =>
   t.match(fs.readFileSync(me + '/tarball.tgz'), fs.readFileSync(abbrev)))
+// eslint-disable-next-line promise/catch-or-return
 pacote.tarball.stream(abbrevspec, stream =>
   new Promise((res, rej) => {
     stream.on('end', res)

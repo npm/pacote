@@ -383,7 +383,7 @@ Object {
 `
 
 exports[`test/bin.js TAP run > expect resolving Promise 6`] = `
-undefined
+false
 `
 
 exports[`test/bin.js TAP running bin runs main file > helpful output 1`] = `
