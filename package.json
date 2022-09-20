@@ -11,9 +11,6 @@
   "scripts": {
     "test": "tap",
     "snap": "tap",
-    "preversion": "npm test",
-    "postversion": "npm publish",
-    "prepublishOnly": "git push origin --follow-tags",
     "lint": "eslint \"**/*.js\"",
     "postlint": "template-oss-check",
     "lintfix": "npm run lint -- --fix",
@@ -21,7 +18,11 @@
     "template-oss-apply": "template-oss-apply --force"
   },
   "tap": {
-    "timeout": 300
+    "timeout": 300,
+    "nyc-arg": [
+      "--exclude",
+      "tap-snapshots/**"
+    ]
   },
   "devDependencies": {
     "@npmcli/eslint-config": "^3.1.0",
@@ -65,7 +66,7 @@
     "tar": "^6.1.11"
   },
   "engines": {
-    "node": "^12.13.0 || ^14.15.0 || >=16.0.0"
+    "node": "^14.17.0 || ^16.13.0 || >=18.0.0"
   },
   "repository": {
     "type": "git",
@@ -73,7 +74,7 @@
   },
   "templateOSS": {
     "//@npmcli/template-oss": "This file is partially managed by @npmcli/template-oss. Edits may be overwritten.",
-    "version": "3.6.0",
+    "version": "4.3.2",
     "windowsCI": false
   }
 }
