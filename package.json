@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "@npmcli/eslint-config": "^3.1.0",
-    "@npmcli/template-oss": "3.6.0",
+    "@npmcli/template-oss": "4.3.2",
     "hosted-git-info": "^5.0.0",
     "mutate-fs": "^2.1.1",
     "nock": "^13.2.4",
