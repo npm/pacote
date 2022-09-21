@@ -1,5 +1,20 @@
 # Changelog
 
+## [14.0.0-pre.0](https://github.com/npm/pacote/compare/v13.6.2...v14.0.0-pre.0) (2022-09-21)
+
+### ⚠️ BREAKING CHANGES
+
+* npm-packlist@6.0.0
+* `pacote` is now compatible with the following semver range for node: `^14.17.0 || ^16.13.0 || >=18.0.0`
+
+### Features
+
+* [`72e9be4`](https://github.com/npm/pacote/commit/72e9be4e3d6615f64654c7cb37bfffb673f84ba5) [#197](https://github.com/npm/pacote/pull/197) postinstall for dependabot template-oss PR (@lukekarrys)
+
+### Dependencies
+
+* [`1216ec6`](https://github.com/npm/pacote/commit/1216ec6e694c4fc05b6d8da0dc2042baa0822087) [#200](https://github.com/npm/pacote/pull/200) `npm-packlist@6.0.0`
+
 ## [13.6.2](https://github.com/npm/pacote/compare/v13.6.1...v13.6.2) (2022-08-16)
 
 
