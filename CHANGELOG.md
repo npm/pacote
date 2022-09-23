@@ -1,5 +1,15 @@
 # Changelog
 
+## [14.0.0-pre.1](https://github.com/npm/pacote/compare/v14.0.0-pre.0...v14.0.0-pre.1) (2022-09-22)
+
+### ⚠️ BREAKING CHANGES
+
+* the `_cached` attribute has been removed from packuments.
+
+### Bug Fixes
+
+* [`8ca3751`](https://github.com/npm/pacote/commit/8ca3751edf7be9f27227f4a205676401303871db) [#175](https://github.com/npm/pacote/pull/175) packument: eliminate _cached field (#175) (@jablko)
+
 ## [14.0.0-pre.0](https://github.com/npm/pacote/compare/v13.6.2...v14.0.0-pre.0) (2022-09-21)
 
 ### ⚠️ BREAKING CHANGES
