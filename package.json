@@ -25,6 +25,7 @@
     ]
   },
   "devDependencies": {
+    "@npmcli/arborist": "^6.0.0 || ^6.0.0-pre.0",
     "@npmcli/eslint-config": "^3.1.0",
     "@npmcli/template-oss": "4.4.2",
     "hosted-git-info": "^5.0.0",
@@ -54,7 +55,7 @@
     "minipass": "^3.1.6",
     "mkdirp": "^1.0.4",
     "npm-package-arg": "^9.0.0",
-    "npm-packlist": "^6.0.0",
+    "npm-packlist": "^7.0.0 || ^7.0.0-pre.0",
     "npm-pick-manifest": "^7.0.0",
     "npm-registry-fetch": "^13.0.1",
     "proc-log": "^2.0.0",
@@ -64,6 +65,9 @@
     "rimraf": "^3.0.2",
     "ssri": "^9.0.0",
     "tar": "^6.1.11"
+  },
+  "peerDependencies": {
+    "@npmcli/arborist": "^6.0.0 || ^6.0.0-pre.0"
   },
   "engines": {
     "node": "^14.17.0 || ^16.13.0 || >=18.0.0"
