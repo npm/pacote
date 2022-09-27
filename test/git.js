@@ -78,7 +78,7 @@ const cycleB = resolve(me, 'cycle-b')
 
 const abbrevSpec = `file:${abbrev}`
 
-const opts = { cache }
+const opts = { cache, Arborist: require('@npmcli/arborist') }
 
 const spawnGit = require('@npmcli/git').spawn
 const { spawn } = require('child_process')

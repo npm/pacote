@@ -66,9 +66,6 @@
     "ssri": "^9.0.0",
     "tar": "^6.1.11"
   },
-  "peerDependencies": {
-    "@npmcli/arborist": "^6.0.0 || ^6.0.0-pre.0"
-  },
   "engines": {
     "node": "^14.17.0 || ^16.13.0 || >=18.0.0"
   },
