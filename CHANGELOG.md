@@ -1,5 +1,15 @@
 # Changelog
 
+## [14.0.0-pre.2](https://github.com/npm/pacote/compare/v14.0.0-pre.1...v14.0.0-pre.2) (2022-09-27)
+
+### ⚠️ BREAKING CHANGES
+
+* `pacote` now has a peer dependency on `@npmcli/arborist`.
+
+### Features
+
+* [`d3517fd`](https://github.com/npm/pacote/commit/d3517fd4a0e21bbc2e9d729cd88666a829de59fc) [#202](https://github.com/npm/pacote/pull/202) pacote now optionally takes a tree when preparing directories (@lukekarrys)
+
 ## [14.0.0-pre.1](https://github.com/npm/pacote/compare/v14.0.0-pre.0...v14.0.0-pre.1) (2022-09-22)
 
 ### ⚠️ BREAKING CHANGES
