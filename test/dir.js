@@ -1,6 +1,13 @@
 const runScript = require('@npmcli/run-script')
 const RUNS = []
 const t = require('tap')
+const Arborist = require('@npmcli/arborist')
+
+const loadActual = async (path) => {
+  const arb = new Arborist({ path })
+  const tree = await arb.loadActual()
+  return tree
+}
 
 const DirFetcher = t.mock('../lib/dir.js', {
   '@npmcli/run-script': (opts) => {
@@ -20,8 +27,8 @@ t.cleanSnapshot = str => str.split(process.cwd()).join('${CWD}')
 const abbrev = resolve(__dirname, 'fixtures/abbrev')
 const abbrevspec = `file:${relative(process.cwd(), abbrev)}`
 
-t.test('basic', t => {
-  const f = new DirFetcher(abbrevspec, {})
+t.test('basic', async t => {
+  const f = new DirFetcher(abbrevspec, { tree: await loadActual(abbrev) })
   t.same(f.types, ['directory'])
   t.resolveMatchSnapshot(f.packument(), 'packument')
   t.resolveMatchSnapshot(f.manifest(), 'manifest')
@@ -32,21 +39,21 @@ t.test('basic', t => {
     .then(() => f.manifest().then(mani => t.equal(mani, f.package)))
 })
 
-t.test('dir with integrity', t => {
+t.test('dir with integrity', async t => {
   const f = new DirFetcher(abbrevspec, {
     integrity: 'sha512-whatever-this-is-only-checked-if-we-extract-it',
+    tree: await loadActual(abbrev),
   })
   t.same(f.types, ['directory'])
-  t.resolveMatchSnapshot(f.packument(), 'packument')
-  return t.end()
+  return t.resolveMatchSnapshot(f.packument(), 'packument')
 })
 
 const prepare = resolve(__dirname, 'fixtures/prepare-script')
 const preparespec = `file:${relative(process.cwd(), prepare)}`
 
-t.test('with prepare script', t => {
+t.test('with prepare script', async t => {
   RUNS.length = 0
-  const f = new DirFetcher(preparespec, {})
+  const f = new DirFetcher(preparespec, { tree: await loadActual(prepare) })
   t.resolveMatchSnapshot(f.packument(), 'packument')
   t.resolveMatchSnapshot(f.manifest(), 'manifest')
   const index = me + '/prepare/index.js'
@@ -59,9 +66,9 @@ t.test('with prepare script', t => {
     }, 'should run in background'))
 })
 
-t.test('responds to foregroundScripts: true', t => {
+t.test('responds to foregroundScripts: true', async t => {
   RUNS.length = 0
-  const opt = { foregroundScripts: true }
+  const opt = { foregroundScripts: true, tree: await loadActual(prepare) }
   const f = new DirFetcher(preparespec, opt)
   t.resolveMatchSnapshot(f.packument(), 'packument')
   t.resolveMatchSnapshot(f.manifest(), 'manifest')
@@ -75,9 +82,9 @@ t.test('responds to foregroundScripts: true', t => {
     }, 'should run in foreground'))
 })
 
-t.test('responds to foregroundScripts: true and silent: true', t => {
+t.test('responds to foregroundScripts: true and silent: true', async t => {
   RUNS.length = 0
-  const opt = { foregroundScripts: true, silent: true }
+  const opt = { foregroundScripts: true, silent: true, tree: await loadActual(prepare) }
   const f = new DirFetcher(preparespec, opt)
   t.resolveMatchSnapshot(f.packument(), 'packument')
   t.resolveMatchSnapshot(f.manifest(), 'manifest')
@@ -91,8 +98,8 @@ t.test('responds to foregroundScripts: true and silent: true', t => {
     }, 'should run in foreground, but without banner'))
 })
 
-t.test('missing dir cannot be packed', t => {
-  const f = new DirFetcher('file:/this/dir/doesnt/exist', {})
+t.test('missing dir cannot be packed', async t => {
+  const f = new DirFetcher('file:/this/dir/doesnt/exist', { tree: await loadActual() })
   return t.rejects(f.extract(me + '/nope'), {
     message: `no such file or directory, open '/this/dir/doesnt/exist/package.json`,
     errno: Number,
@@ -102,19 +109,19 @@ t.test('missing dir cannot be packed', t => {
   })
 })
 
-t.test('when read fails', t => {
+t.test('when read fails', async t => {
   const read = fs.read
   t.teardown(() => fs.read = read)
   const poop = new Error('poop')
   fs.read = (...args) => setTimeout(() => args[args.length - 1](poop))
-  const f = new DirFetcher(preparespec, {})
+  const f = new DirFetcher(preparespec, { tree: await loadActual() })
   return t.rejects(f.extract(me + '/nope'), poop)
 })
 
 t.test('make bins executable', async t => {
   const file = resolve(__dirname, 'fixtures/bin-object')
   const spec = `file:${relative(process.cwd(), file)}`
-  const f = new DirFetcher(spec, {})
+  const f = new DirFetcher(spec, { tree: await loadActual(file) })
   const target = resolve(me, basename(file))
   const res = await f.extract(target)
   // node v13.8 swapped out their zlib implementation with chromium's

@@ -78,6 +78,8 @@ const cycleB = resolve(me, 'cycle-b')
 
 const abbrevSpec = `file:${abbrev}`
 
+const opts = { cache }
+
 const spawnGit = require('@npmcli/git').spawn
 const { spawn } = require('child_process')
 const spawnNpm = require('../lib/util/npm.js')
@@ -381,13 +383,13 @@ t.test('setup', { bail: true }, t => {
 })
 
 t.test('basic stuff', async t => {
-  const g = new GitFetcher(remote, { cache })
+  const g = new GitFetcher(remote, opts)
   t.same(g.types, ['git'])
   t.equal(g.resolved, null)
-  const r = new GitFetcher(remote + '#' + REPO_HEAD, { cache })
+  const r = new GitFetcher(remote + '#' + REPO_HEAD, opts)
   t.equal(r.resolved, remote + '#' + REPO_HEAD)
   await g.resolve().then(resolved => t.equal(resolved, r.resolved))
-  const s = new GitFetcher(remote + '#semver:1.x', { cache })
+  const s = new GitFetcher(remote + '#semver:1.x', opts)
   t.equal(s.resolved, null)
   await s.resolve().then(resolved => t.not(resolved, r.resolved))
 
@@ -418,7 +420,7 @@ t.test('basic stuff', async t => {
   t.equal(await g.manifest(), gm, 'cached manifest')
 
   // one that doesn't have an npm install step, but does have submods
-  const subs = new GitFetcher(submodsRemote, { cache })
+  const subs = new GitFetcher(submodsRemote, opts)
   await subs.extract(me + '/s')
   fs.statSync(me + '/s/fooblz/package.json')
 })
@@ -436,7 +438,8 @@ t.test('ignores integrity for git deps', async (t) => {
   })
 
   // known invalid integrity
-  const fetcher = new GitFetcher(remote + '#' + REPO_HEAD, { cache, integrity: 'sha512-beeffeed' })
+  const fetcher = new GitFetcher(remote + '#' + REPO_HEAD,
+    { ...opts, integrity: 'sha512-beeffeed' })
   const manifest = await fetcher.manifest()
   t.match(manifest, {
     _id: 'repo@1.0.0',
@@ -470,13 +473,13 @@ t.test('weird hosted that doesnt provide any fetch targets', t => {
 
   const spec = npa(remote)
   spec.hosted = hosted
-  t.rejects(new GitFetcher(Object.assign(spec, { hosted }), { cache }).resolve(), {
+  t.rejects(new GitFetcher(Object.assign(spec, { hosted }), opts).resolve(), {
     message: `No git url for ${remote}`,
   })
 
   const resSpec = npa(`${remote}#${REPO_HEAD}`)
   resSpec.hosted = hosted
-  t.rejects(new GitFetcher(Object.assign(resSpec, { hosted }), { cache })
+  t.rejects(new GitFetcher(Object.assign(resSpec, { hosted }), opts)
     .extract(`${me}/weird-hosted-extract`), {
     message: `No git url for ${remote}`,
   })
@@ -494,7 +497,7 @@ t.test('extract from tarball from hosted git service', async t => {
     t.test(domain, async t => {
       const runTest = nameat => async t => {
         const spec = npa(`${nameat}${domain}:repo/x#${REPO_HEAD}`)
-        const g = new GitFetcher(spec, { cache })
+        const g = new GitFetcher(spec, opts)
         const m = await g.manifest()
         t.match(m, {
           name: 'repo',
@@ -542,9 +545,8 @@ t.test('extract from tarball from hosted git service', async t => {
 })
 
 t.test('include auth with hosted https when provided', async t => {
-  const opt = { cache }
   const spec = `git+https://user:pass@127.0.0.1/repo`
-  const g = new GitFetcher(spec, opt)
+  const g = new GitFetcher(spec, opts)
   const resolved = await g.resolve()
   // this weird url is because our fakey mock hosted service's
   // https() method returns a git:// url, since the git daemon we
@@ -559,7 +561,7 @@ t.test('include auth with hosted https when provided', async t => {
   t.test('fail, but do not fall through to sshurl', async t => {
     const badSpec = `git+https://user:pass@127.0.0.1/no-repo-here`
     const failer = new GitFetcher(badSpec, {
-      cache,
+      ...opts,
       resolved: resolved.replace(/\/repo/, '/no-repo-here'),
     })
     t.equal(failer.spec.hosted.shortcut(), 'localhosthttps:no-repo-here/x',
@@ -575,7 +577,7 @@ t.test('include .gitignore in hosted tarballs for preparation', async t => {
   const spec = npa(`localhost:foo/y#${REPO_HEAD}`)
   spec.hosted.tarball = () =>
     `http://localhost:${httpPort}/prepare-requires-gitignore-1.2.3.tgz`
-  const g = new GitFetcher(spec, { cache })
+  const g = new GitFetcher(spec, opts)
   const dir = t.testdir()
   await g.extract(dir)
   t.strictSame(fs.readdirSync(dir).sort((a, b) => a.localeCompare(b)), [
@@ -586,14 +588,14 @@ t.test('include .gitignore in hosted tarballs for preparation', async t => {
 })
 
 t.test('add git sha to hosted git shorthand', t =>
-  new GitFetcher('localhost:repo/x', { cache })
+  new GitFetcher('localhost:repo/x', opts)
     // it adds the git+ because it thinks it's https
     .resolve().then(r => t.equal(r, `git+${remoteHosted}#${REPO_HEAD}`)))
 
 t.test('fetch a weird ref', t => {
   let head3 = ''
   t.test('hosted', async t => {
-    const result = await new GitFetcher('localhost:repo/x#HEAD~3', { cache }).extract(me + '/h3h')
+    const result = await new GitFetcher('localhost:repo/x#HEAD~3', opts).extract(me + '/h3h')
     head3 = result.resolved.split('#').pop()
     t.match(result.resolved, /^git\+git:\/\/127\.0\.0\.1:[0-9]+\/repo#[a-z0-9]{40}$/,
       'got git url as resolved value')
@@ -602,7 +604,7 @@ t.test('fetch a weird ref', t => {
   })
 
   t.test('regular', async t => {
-    const result = await new GitFetcher(`${remote}#HEAD~3`, { cache }).extract(me + '/h3r')
+    const result = await new GitFetcher(`${remote}#HEAD~3`, opts).extract(me + '/h3r')
     t.equal(result.resolved, `${remote}#${head3}`, 'got the same HEAD~3 sha as before')
   })
 
@@ -610,14 +612,14 @@ t.test('fetch a weird ref', t => {
 })
 
 t.test('fetch a private repo where the tgz is a 404', t => {
-  const gf = new GitFetcher(`localhost:repo/x#${REPO_HEAD}`, { cache })
+  const gf = new GitFetcher(`localhost:repo/x#${REPO_HEAD}`, opts)
   gf.spec.hosted.tarball = () => `${hostedUrl}/not-found.tgz`
   // should fetch it by falling back to ssh when it gets an http error
   return gf.extract(me + '/no-tgz')
 })
 
 t.test('fetch a private repo where the tgz is not a tarball', t => {
-  const gf = new GitFetcher(`localhost:repo/x#${REPO_HEAD}`, { cache })
+  const gf = new GitFetcher(`localhost:repo/x#${REPO_HEAD}`, opts)
   gf.spec.hosted.tarball = () => `${hostedUrl}/not-tar.tgz`
   // should NOT retry, because the error was not an HTTP fetch error
   return t.rejects(gf.extract(me + '/bad-tgz'), {
@@ -627,7 +629,7 @@ t.test('fetch a private repo where the tgz is not a tarball', t => {
 
 t.test('resolved is a git+ssh url for hosted repos that support it', t => {
   const hash = '0000000000000000000000000000000000000000'
-  const gf = new GitFetcher(`github:x/y#${hash}`, {})
+  const gf = new GitFetcher(`github:x/y#${hash}`, { ...opts, cache: null })
   t.equal(gf.resolved, `git+ssh://git@github.com/x/y.git#${hash}`)
   t.end()
 })
@@ -635,13 +637,13 @@ t.test('resolved is a git+ssh url for hosted repos that support it', t => {
 t.test('resolved preserves git+ssh url for non-hosted repos', t => {
   const hash = '0000000000000000000000000000000000000000'
   const url = `git+ssh://git@test/x/y.git#${hash}`
-  const gf = new GitFetcher(url, {})
+  const gf = new GitFetcher(url, { ...opts, cache: null })
   t.equal(gf.resolved, url)
   t.end()
 })
 
 t.test('fall back to ssh url if https url fails or is missing', t => {
-  const gf = new GitFetcher(`localhostssh:repo/x`, { cache })
+  const gf = new GitFetcher(`localhostssh:repo/x`, opts)
   return gf.extract(`${me}/localhostssh`).then(({ resolved }) =>
     t.equal(resolved, `git+git://127.0.0.1:${gitPort}/repo#${REPO_HEAD}`))
 })
@@ -667,36 +669,22 @@ t.test('handle it when prepared git deps depend on each other', async t => {
   // now we've created both repos, and they each depend on the other
   // our mocked npm bin should safely prevent an infinite regress if
   // this test fails, and just log that the appropriate env got set.
-  const npmBin = resolve(t.testdir(), 'npm-mock.js')
   const path = t.testdir({
-    'npm-mock.js': `#!/usr/bin/env node
-const pnp = process.env._PACOTE_NO_PREPARE_ || ''
-const { argv } = process
-const data = {
-  argv,
-  noPrepare: pnp ? pnp.split('\\n') : [],
-  cwd: process.cwd(),
-}
-if (data.noPrepare.length > 5) {
-  throw new Error('infinite regress detected!')
-}
+    'npm-mock.js': fs.readFileSync(resolve(fixtures, 'npm-mock.js')).toString(),
+  })
 
-// just an incredibly rudimentary package manager
-const pkg = require(process.cwd() + '/package.json')
-const pacote = require(${JSON.stringify(dirname(__dirname))})
-for (const [name, spec] of Object.entries(pkg.dependencies)) {
-  pacote.extract(spec, process.cwd() + '/' + name, {
-    npmBin: ${JSON.stringify(npmBin)},
-    cache: ${JSON.stringify(cache)},
+  process.env._PACOTE_TEST_PATH_ = dirname(__dirname)
+  process.env._PACOTE_TEST_OPTS_ = JSON.stringify(opts)
+  t.teardown(() => {
+    delete process.env._PACOTE_TEST_PATH_
+    delete process.env._PACOTE_TEST_OPTS_
   })
-}
-require('fs').writeFileSync('log', JSON.stringify(data,0,2))
-`,
-  })
+
   for (const project of ['cycle-a', 'cycle-b']) {
     const localRemote = `git://localhost:${gitPort}/${project}`
     const local = `${path}/${project}`
-    const g = new GitFetcher(localRemote, { cache, npmBin })
+    const npmBin = `${path}/npm-mock.js`
+    const g = new GitFetcher(localRemote, { ...opts, npmBin })
     await g.extract(local)
     const log = JSON.parse(fs.readFileSync(`${local}/log`, 'utf8'))
     t.match(log, {
@@ -726,7 +714,7 @@ t.test('missing branch name throws pathspec error', async (t) => {
     await t.rejects(
       new GitFetcher(
         `${domain}:repo/x#this-branch-does-not-exist`,
-        { cache }
+        opts
       ).resolve(),
       {
         constructor: /GitPathspecError/,
@@ -736,7 +724,7 @@ t.test('missing branch name throws pathspec error', async (t) => {
     await t.rejects(
       new GitFetcher(
         `${domain}:repo/x#this-branch-does-not-exist`,
-        { cache }
+        opts
       ).manifest(),
       {
         constructor: /GitPathspecError/,
@@ -745,7 +733,7 @@ t.test('missing branch name throws pathspec error', async (t) => {
 })
 
 t.test('simple repo with workspaces', async t => {
-  const ws = new GitFetcher(workspacesRemote, { cache })
+  const ws = new GitFetcher(workspacesRemote, opts)
   const extract = resolve(me, 'extract-workspaces')
   await ws.extract(extract)
   // the file ./a/foo does not exist in the original repo
@@ -757,7 +745,7 @@ t.test('simple repo with workspaces', async t => {
 })
 
 t.test('simple repo with only a prepack script', async t => {
-  const ws = new GitFetcher(prepackRemote, { cache })
+  const ws = new GitFetcher(prepackRemote, opts)
   const extract = resolve(me, 'extract-prepack')
   await ws.extract(extract)
   // the file ./foo does not exist in the original repo
