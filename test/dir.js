@@ -160,3 +160,8 @@ t.test('exposes tarCreateOptions method', async t => {
     'should return standard options'
   )
 })
+
+t.test('fails without a tree or constructor', async t => {
+  const f = new DirFetcher(abbrevspec, {})
+  t.rejects(() => f.extract(me + '/prepare'))
+})

@@ -755,3 +755,9 @@ t.test('simple repo with only a prepack script', async t => {
     'should run prepack lifecycle script'
   )
 })
+
+t.test('fails without arborist constructor', async t => {
+  const ws = new GitFetcher(prepackRemote, { cache })
+  const extract = resolve(me, 'extract-prepack')
+  t.rejects(() => ws.extract(extract))
+})
