@@ -78,7 +78,7 @@ const cycleB = resolve(me, 'cycle-b')
 
 const abbrevSpec = `file:${abbrev}`
 
-const opts = { cache }
+const opts = { cache, Arborist: require('@npmcli/arborist') }
 
 const spawnGit = require('@npmcli/git').spawn
 const { spawn } = require('child_process')
@@ -754,4 +754,10 @@ t.test('simple repo with only a prepack script', async t => {
     fs.statSync(me + '/extract-prepack/foo'),
     'should run prepack lifecycle script'
   )
+})
+
+t.test('fails without arborist constructor', async t => {
+  const ws = new GitFetcher(prepackRemote, { cache })
+  const extract = resolve(me, 'extract-prepack')
+  t.rejects(() => ws.extract(extract))
 })

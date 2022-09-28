@@ -22,6 +22,7 @@ for (const [name, spec] of Object.entries(pkg.dependencies)) {
   pacote.extract(spec, process.cwd() + '/' + name, {
     npmBin: __filename,
     ...JSON.parse(pacoteOpts),
+    Arborist: require('@npmcli/arborist'),
   })
 }
 
