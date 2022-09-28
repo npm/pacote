@@ -1,5 +1,15 @@
 # Changelog
 
+## [14.0.0-pre.3](https://github.com/npm/pacote/compare/v14.0.0-pre.2...v14.0.0-pre.3) (2022-09-28)
+
+### ⚠️ BREAKING CHANGES
+
+* a `@npmcli/arborist` constructor must be passed in if no tree is provided and pacote is going to operate on git dependencies.
+
+### Features
+
+* [`d6ef5dc`](https://github.com/npm/pacote/commit/d6ef5dc8856cfc81de15d1b2fb0c647cecca2496) [#204](https://github.com/npm/pacote/pull/204) require arborist constructor to be passed in for preparing git dirs (#204) (@lukekarrys)
+
 ## [14.0.0-pre.2](https://github.com/npm/pacote/compare/v14.0.0-pre.1...v14.0.0-pre.2) (2022-09-27)
 
 ### ⚠️ BREAKING CHANGES
