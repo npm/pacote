@@ -458,7 +458,7 @@ if (!fakeSudo) {
       }
     }
     t.throws(() => new KidFetcher('foo', {}), {
-      message: `Wrong spec type (tag) for KidFetcher. Supported types: kid`,
+      message: `Wrong spec type (range) for KidFetcher. Supported types: kid`,
     })
     t.end()
   })
