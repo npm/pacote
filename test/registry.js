@@ -70,7 +70,7 @@ t.test('underscore, no tag or version', t => {
       resolved: `${registry}underscore/-/underscore-1.5.1.tgz`,
       // eslint-disable-next-line max-len
       integrity: 'sha1-0r3oF9F2/63olKtxRY5oKhS4bck= sha512-yOc7VukmA45a1D6clUn1mD7Mbc9LcVYAQEXNKSTblzha59hSFJ6cAt90JDoxh05GQnTPI9nk4wjT/I8C/nAMPw==',
-      from: 'underscore@',
+      from: 'underscore@*',
     }))
 })
 
@@ -85,7 +85,7 @@ t.test('scoped, no tag or version', t => {
       resolved: `${registry}@isaacs/namespace-test/-/namespace-test-1.0.0.tgz`,
       // eslint-disable-next-line max-len
       integrity: 'sha512-5ZYe1LgwHIaag0p9loMwsf5N/wJ4XAuHVNhSO+qulQOXWnyJVuco6IZjo+5u4ZLF/GimdHJcX+QK892ONfOCqQ==',
-      from: '@isaacs/namespace-test@',
+      from: '@isaacs/namespace-test@*',
     }))
 })
 
@@ -292,9 +292,38 @@ t.test('404 fails with E404', t => {
 })
 
 t.test('respect default tag', async t => {
-  const f = new RegistryFetcher('underscore', { registry, cache, defaultTag: 'stable' })
-  t.equal(f.spec.raw, 'underscore@stable')
-  t.equal(await f.resolve(), `${registry}underscore/-/underscore-1.5.1.tgz`)
+  const taggedPackument = JSON.stringify({
+    _id: 'abbrev',
+    _rev: 'lkjadflkjasdf',
+    name: 'abbrev',
+    'dist-tags': { latest: '1.1.1', stable: '1.1.0' },
+    versions: {
+      '1.1.0': {
+        name: 'abbrev',
+        version: '1.1.0',
+        dist: {
+          tarball: 'https://registry.npmjs.org/abbrev/-/abbrev-1.1.0.tgz',
+        },
+      },
+      '1.1.1': {
+        name: 'abbrev',
+        version: '1.1.1',
+        dist: {
+          tarball: 'https://registry.npmjs.org/abbrev/-/abbrev-1.1.1.tgz',
+        },
+      },
+    },
+  })
+  tnock(t, 'https://registry.github.com')
+    .get('/abbrev')
+    .reply(200, taggedPackument)
+
+  const f = new RegistryFetcher('abbrev', {
+    registry: 'https://registry.github.com',
+    cache,
+    defaultTag: 'stable',
+  })
+  t.equal(await f.resolve(), 'https://registry.npmjs.org/abbrev/-/abbrev-1.1.0.tgz')
 })
 
 t.test('fail resolution if no dist.tarball', t => {
@@ -315,7 +344,7 @@ t.test('a manifest that lacks integrity', async t => {
     resolved: `${registry}no-integrity/-/no-integrity-1.2.3.tgz`,
     // eslint-disable-next-line max-len
     integrity: 'sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==',
-    from: 'no-integrity@',
+    from: 'no-integrity@*',
   }, 'calculated integrity anyway')
   // load a second one, but get the cached copy
   const f2 = new RegistryFetcher('no-integrity', { registry, cache, packumentCache })
