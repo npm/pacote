@@ -31,7 +31,7 @@
   "packages": {
     ".": {
       "package-name": "",
-      "prerelease": true
+      "prerelease": false
     }
   }
 }
