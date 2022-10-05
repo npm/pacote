@@ -1,5 +1,11 @@
 # Changelog
 
+## [14.0.0](https://github.com/npm/pacote/compare/v14.0.0-pre.3...v14.0.0) (2022-10-05)
+
+### Features
+
+* [`ee16f1f`](https://github.com/npm/pacote/commit/ee16f1f44a8a3510b8ac8c49f207d3e01d1db96e) [#207](https://github.com/npm/pacote/pull/207) set as release (@fritzy)
+
 ## [14.0.0-pre.3](https://github.com/npm/pacote/compare/v14.0.0-pre.2...v14.0.0-pre.3) (2022-09-28)
 
 ### ⚠️ BREAKING CHANGES
