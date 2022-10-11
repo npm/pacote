@@ -61,7 +61,7 @@
     "proc-log": "^2.0.0",
     "promise-retry": "^2.0.1",
     "read-package-json": "^5.0.0",
-    "read-package-json-fast": "^2.0.3",
+    "read-package-json-fast": "^3.0.0",
     "rimraf": "^3.0.2",
     "ssri": "^9.0.0",
     "tar": "^6.1.11"
