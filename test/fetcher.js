@@ -1,16 +1,4 @@
-const fakeSudo = process.argv[2] === 'fake-sudo'
 const fs = require('fs')
-process.chownLog = []
-if (fakeSudo) {
-  process.realUid = process.getuid()
-  process.getuid = () => 0
-  const fakeChown = type => (path, uid, gid, cb) => {
-    process.chownLog.push({ type, path, uid, gid })
-    process.nextTick(cb)
-  }
-  fs.chown = fakeChown('chown')
-  fs.lchown = fakeChown('lchown')
-}
 
 fs.utimes = () => {
   throw new Error('do not call utimes')
@@ -106,10 +94,6 @@ t.test('tarball data', async t => {
 
 t.test('tarballFile', t => {
   const target = resolve(me, 'tarball-file')
-  if (fakeSudo) {
-    process.chownLog.length = 0
-  }
-
   t.test('basic copy', t =>
     new FileFetcher(abbrevspec, { cache })
       .tarballFile(target + '/basic/1.tgz'))
@@ -198,10 +182,6 @@ t.test('extract', t => {
     })
   }
 
-  if (fakeSudo) {
-    process.chownLog.length = 0
-  }
-
   return new FileFetcher(abbrevspec, { cache }).extract(target + '/uncached')
     .then(check('uncached'))
     .then(() => new FileFetcher(abbrevspec, {
@@ -210,12 +190,6 @@ t.test('extract', t => {
       resolved: abbrev,
     }).extract(target + '/cached'))
     .then(check('cached'))
-    .then(!fakeSudo ? () => {} : () => {
-      t.not(process.chownLog.length, 0, 'did some chowns')
-      const log = { uid: process.realUid, gid: process.getgid() }
-      process.chownLog.forEach(entry => t.match(entry, log, 'chowned to me'))
-      process.chownLog.length = 0
-    })
     .then(() => {
       // test a bad cache entry
       cacache.get.stream.byDigest = () => {
@@ -413,7 +387,6 @@ t.test('a non-retriable cache error', t => {
   const poop = new Error('poop')
   poop.code = 'LE_POOP'
   t.teardown(mutateFS.fail('read', poop))
-  t.teardown(() => process.chownLog.length = 0)
   return cacache.put(cache, 'any-old-key', data, {
     integrity: abbrevMani._integrity,
   }).then(() => t.rejects(new FileFetcher(abbrev, {
@@ -422,70 +395,65 @@ t.test('a non-retriable cache error', t => {
   }).manifest(), poop))
 })
 
-// no need to do some of these basic tests in sudo mode
-if (!fakeSudo) {
-  t.spawn(process.execPath, [__filename, 'fake-sudo'], 'fake sudo mode')
+t.test('before implies full metadata', t => {
+  const f = new Fetcher('foo', { before: new Date('1979-07-01') })
+  t.equal(f.fullMetadata, true)
+  t.end()
+})
 
-  t.test('before implies full metadata', t => {
-    const f = new Fetcher('foo', { before: new Date('1979-07-01') })
-    t.equal(f.fullMetadata, true)
-    t.end()
+t.test('various projectiles', t => {
+  t.throws(() => new Fetcher(), { message: 'options object is required' })
+  const f = new Fetcher('foo', {})
+  // base class doesn't implement functionality
+  const expect = {
+    message: 'not implemented in this fetcher type: FetcherBase',
+  }
+  t.rejects(f.resolve(), expect)
+  f.resolved = 'fooblz'
+  t.resolveMatch(f.resolve(), 'fooblz', 'has resolved')
+  t.rejects(f.extract('target'), expect)
+  t.rejects(f.manifest(), expect)
+  t.rejects(f.packument(), expect)
+  t.rejects(f.tarball(), expect)
+  const foo = npa('foo@bar')
+  foo.type = 'blerg'
+  t.throws(() => Fetcher.get(foo, {}), {
+    message: 'Unknown spec type: blerg',
   })
 
-  t.test('various projectiles', t => {
-    t.throws(() => new Fetcher(), { message: 'options object is required' })
-    const f = new Fetcher('foo', {})
-    // base class doesn't implement functionality
-    const expect = {
-      message: 'not implemented in this fetcher type: FetcherBase',
+  class KidFetcher extends Fetcher {
+    get types () {
+      return ['kid']
     }
-    t.rejects(f.resolve(), expect)
-    f.resolved = 'fooblz'
-    t.resolveMatch(f.resolve(), 'fooblz', 'has resolved')
-    t.rejects(f.extract('target'), expect)
-    t.rejects(f.manifest(), expect)
-    t.rejects(f.packument(), expect)
-    t.rejects(f.tarball(), expect)
-    const foo = npa('foo@bar')
-    foo.type = 'blerg'
-    t.throws(() => Fetcher.get(foo, {}), {
-      message: 'Unknown spec type: blerg',
-    })
-
-    class KidFetcher extends Fetcher {
-      get types () {
-        return ['kid']
-      }
-    }
-    t.throws(() => new KidFetcher('foo', {}), {
-      message: `Wrong spec type (tag) for KidFetcher. Supported types: kid`,
-    })
-    t.end()
+  }
+  t.throws(() => new KidFetcher('foo', {}), {
+    message: `Wrong spec type (tag) for KidFetcher. Supported types: kid`,
   })
+  t.end()
+})
 
-  t.test('fetcher.get', t => {
-    const specToType = {
-      foo: 'RegistryFetcher',
-      'foo@bar': 'RegistryFetcher',
-      'foo@1.2': 'RegistryFetcher',
-      'foo@1.2.3': 'RegistryFetcher',
-      'npm:foo@2': 'RegistryFetcher',
-      '@foo/bar': 'RegistryFetcher',
-      '@foo/bar@1.2': 'RegistryFetcher',
-      '@foo/bar@1.2.3': 'RegistryFetcher',
-      'foo.tgz': 'FileFetcher',
-      '/path/to/foo': 'DirFetcher',
-      'isaacs/foo': 'GitFetcher',
-      'git+https://github.com/isaacs/foo': 'GitFetcher',
-      'https://server.com/foo.tgz': 'RemoteFetcher',
-    }
-    for (const [spec, type] of Object.entries(specToType)) {
-      t.equal(Fetcher.get(spec).type, type)
-    }
+t.test('fetcher.get', t => {
+  const specToType = {
+    foo: 'RegistryFetcher',
+    'foo@bar': 'RegistryFetcher',
+    'foo@1.2': 'RegistryFetcher',
+    'foo@1.2.3': 'RegistryFetcher',
+    'npm:foo@2': 'RegistryFetcher',
+    '@foo/bar': 'RegistryFetcher',
+    '@foo/bar@1.2': 'RegistryFetcher',
+    '@foo/bar@1.2.3': 'RegistryFetcher',
+    'foo.tgz': 'FileFetcher',
+    '/path/to/foo': 'DirFetcher',
+    'isaacs/foo': 'GitFetcher',
+    'git+https://github.com/isaacs/foo': 'GitFetcher',
+    'https://server.com/foo.tgz': 'RemoteFetcher',
+  }
+  for (const [spec, type] of Object.entries(specToType)) {
+    t.equal(Fetcher.get(spec).type, type)
+  }
 
-    t.end()
-  })
-}
+  t.end()
+})
 
 t.test('make bins executable', async t => {
   const file = resolve(__dirname, 'fixtures/bin-object.tgz')
