@@ -61,7 +61,6 @@ const fs = require('fs')
 const http = require('http')
 
 const { dirname, basename, resolve } = require('path')
-const rimraf = require('rimraf')
 const fixtures = resolve(__dirname, 'fixtures')
 const abbrev = resolve(fixtures, 'abbrev-1.1.1.tgz')
 const prepIgnore = resolve(fixtures, 'prepare-requires-gitignore-1.2.3.tgz')
@@ -84,7 +83,8 @@ const spawnGit = require('@npmcli/git').spawn
 const { spawn } = require('child_process')
 const spawnNpm = require('../lib/util/npm.js')
 
-const mkdirp = require('mkdirp')
+const { mkdir } = require('fs/promises')
+const { rmSync } = require('fs')
 
 const tar = require('tar')
 
@@ -99,8 +99,8 @@ t.test('setup', { bail: true }, t => {
       '--no-sign-git-tag',
     ], repo)
 
-    mkdirp.sync(repo)
-    return git('init')
+    return mkdir(repo, { recursive: true })
+      .then(() => git('init'))
       .then(() => git('config', 'user.name', 'pacotedev'))
       .then(() => git('config', 'user.email', 'i+pacotedev@izs.me'))
       .then(() => git('config', 'tag.gpgSign', 'false'))
@@ -180,7 +180,7 @@ t.test('setup', { bail: true }, t => {
       const name = basename(repoDir)
       const otherName = basename(other)
 
-      mkdirp.sync(repoDir)
+      await mkdir(repoDir, { recursive: true })
       await git('init')
       await git('config', 'user.name', 'pacotedev')
       await git('config', 'user.email', 'i+pacotedev@izs.me')
@@ -227,15 +227,15 @@ t.test('setup', { bail: true }, t => {
     }
     daemon.stderr.on('data', onDaemonData)
     // only clean up the dir once the daemon is banished
-    daemon.on('close', () => rimraf.sync(me))
+    daemon.on('close', () => rmSync(me, { recursive: true, force: true }))
   })
 
   t.test('create a repo with a submodule', t => {
     const submoduleRepo = resolve(me, 'submodule-repo')
     const git = (...cmd) => spawnGit(cmd, { cwd: submoduleRepo })
     const write = (f, c) => fs.writeFileSync(`${submoduleRepo}/${f}`, c)
-    mkdirp.sync(submoduleRepo)
-    return git('init')
+    return mkdir(submoduleRepo, { recursive: true })
+      .then(() => git('init'))
       .then(() => git('config', 'user.name', 'pacotedev'))
       .then(() => git('config', 'user.email', 'i+pacotedev@izs.me'))
       .then(() => git('config', 'tag.gpgSign', 'false'))
@@ -293,8 +293,8 @@ t.test('setup', { bail: true }, t => {
     const wsfolder = resolve(me, 'workspaces-repo/a')
     const git = (...cmd) => spawnGit(cmd, { cwd: workspacesRepo })
     const write = (f, c) => fs.writeFileSync(`${workspacesRepo}/${f}`, c)
-    mkdirp.sync(wsfolder)
-    return git('init')
+    return mkdir(wsfolder, { recursive: true })
+      .then(() => git('init'))
       .then(() => git('config', 'user.name', 'pacotedev'))
       .then(() => git('config', 'user.email', 'i+pacotedev@github.com'))
       .then(() => git('config', 'tag.gpgSign', 'false'))
@@ -322,8 +322,8 @@ t.test('setup', { bail: true }, t => {
     const prepackRepo = resolve(me, 'prepack-repo')
     const git = (...cmd) => spawnGit(cmd, { cwd: prepackRepo })
     const write = (f, c) => fs.writeFileSync(`${prepackRepo}/${f}`, c)
-    mkdirp.sync(prepackRepo)
-    return git('init')
+    return mkdir(prepackRepo, { recursive: true })
+      .then(() => git('init'))
       .then(() => git('config', 'user.name', 'pacotedev'))
       .then(() => git('config', 'user.email', 'i+pacotedev@github.com'))
       .then(() => git('config', 'tag.gpgSign', 'false'))
