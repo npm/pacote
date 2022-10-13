@@ -1,5 +1,19 @@
 # Changelog
 
+## [15.0.0](https://github.com/npm/pacote/compare/v14.0.0...v15.0.0) (2022-10-13)
+
+### ⚠️ BREAKING CHANGES
+
+* this package no longer attempts to change file ownership automatically
+
+### Features
+
+* [`43ae022`](https://github.com/npm/pacote/commit/43ae02203f04fd597a6d73f0a8bb4e639986e62e) [#216](https://github.com/npm/pacote/pull/216) do not alter file ownership (#216) (@nlf)
+
+### Dependencies
+
+* [`2ac3980`](https://github.com/npm/pacote/commit/2ac39808b135987eb9e1f0200212c64cbf77973c) [#213](https://github.com/npm/pacote/pull/213) bump read-package-json-fast from 2.0.3 to 3.0.0
+
 ## [14.0.0](https://github.com/npm/pacote/compare/v14.0.0-pre.3...v14.0.0) (2022-10-05)
 
 ### Features
