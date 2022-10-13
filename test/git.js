@@ -1,12 +1,11 @@
 // set this up first, so we can use 127.0.0.1 as our "hosted git" service
 const httpPort = 18000 + (+process.env.TAP_CHILD_ID || 0)
 const hostedUrl = `http://localhost:${httpPort}`
-const ghi = require('hosted-git-info/lib/git-host-info.js')
+const HostedGit = require('hosted-git-info')
 const gitPort = 12345 + (+process.env.TAP_CHILD_ID || 0)
 
-ghi.byShortcut['localhost:'] = 'localhost'
-ghi.byDomain.localhost = 'localhost'
-ghi.localhost = {
+HostedGit.addHost('localhost', {
+  domain: 'localhost',
   protocols: ['git+https:', 'git+ssh:'],
   tarballtemplate: () => `${hostedUrl}/repo-HEAD.tgz`,
   sshurltemplate: (h) =>
@@ -17,11 +16,10 @@ ghi.localhost = {
     const [, user, project] = url.pathname.split('/')
     return { user, project, committish: url.hash.slice(1) }
   },
-}
+})
 
-ghi.byShortcut['localhosthttps:'] = 'localhosthttps'
-ghi.byDomain['127.0.0.1'] = 'localhosthttps'
-ghi.localhosthttps = {
+HostedGit.addHost('localhosthttps', {
+  domain: '127.0.0.1',
   protocols: ['git+https:', 'git+ssh:', 'git:'],
   httpstemplate: (h) =>
     `git://127.0.0.1:${gitPort}/${h.user}${h.committish ? `#${h.committish}` : ''}`,
@@ -30,11 +28,10 @@ ghi.localhosthttps = {
     const [, user, project] = url.pathname.split('/')
     return { user, project, committish: url.hash.slice(1) }
   },
-}
+})
 
-ghi.byShortcut['localhostssh:'] = 'localhostssh'
-ghi.byDomain.localhostssh = 'localhostssh'
-ghi.localhostssh = {
+HostedGit.addHost('localhostssh', {
+  domain: 'localhostssh',
   protocols: ['git+ssh:'],
   tarballtemplate: () => `${hostedUrl}/repo-HEAD.tgz`,
   sshurltemplate: (h) =>
@@ -47,7 +44,7 @@ ghi.localhostssh = {
     const [, user, project] = url.pathname.split('/')
     return { user, project, committish: url.hash.slice(1) }
   },
-}
+})
 
 const remote = `git://localhost:${gitPort}/repo`
 const remoteHosted = `git://127.0.0.1:${gitPort}/repo`
