@@ -45,7 +45,7 @@
   ],
   "dependencies": {
     "@npmcli/git": "^4.0.0",
-    "@npmcli/installed-package-contents": "^1.0.7",
+    "@npmcli/installed-package-contents": "^2.0.0",
     "@npmcli/promise-spawn": "^3.0.0",
     "@npmcli/run-script": "^4.1.0",
     "cacache": "^17.0.0",
