@@ -1,5 +1,19 @@
 # Changelog
 
+## [15.0.1](https://github.com/npm/pacote/compare/v15.0.0...v15.0.1) (2022-10-17)
+
+### Dependencies
+
+* [`74821c2`](https://github.com/npm/pacote/commit/74821c26a19e025c5eeb24a6dacb20bc9cb7dfcc) [#229](https://github.com/npm/pacote/pull/229) bump @npmcli/run-script from 4.2.1 to 5.0.0 (#229)
+* [`a9844d0`](https://github.com/npm/pacote/commit/a9844d047c4c8633e9caab25e69143b737880fe4) [#226](https://github.com/npm/pacote/pull/226) bump @npmcli/promise-spawn from 3.0.0 to 4.0.0 (#226)
+* [`1058177`](https://github.com/npm/pacote/commit/1058177e43cd9b8af8cdb097b8efe403b45a70d3) [#227](https://github.com/npm/pacote/pull/227) bump read-package-json from 5.0.2 to 6.0.0
+* [`0f5ef8a`](https://github.com/npm/pacote/commit/0f5ef8afb359bf461c2b3a6b0fb6cb983a58a83f) [#228](https://github.com/npm/pacote/pull/228) bump @npmcli/installed-package-contents from 1.0.7 to 2.0.0
+* [`7e3b4b5`](https://github.com/npm/pacote/commit/7e3b4b5e4cb48a5304ac850d9cc66c9aee046b41) [#220](https://github.com/npm/pacote/pull/220) bump ssri from 9.0.1 to 10.0.0
+* [`4e7536d`](https://github.com/npm/pacote/commit/4e7536d3dc3c2cd5db2defbe5b5d0e2e2e686dfd) [#222](https://github.com/npm/pacote/pull/222) bump @npmcli/git from 3.0.2 to 4.0.0
+* [`3bc7550`](https://github.com/npm/pacote/commit/3bc75501972833f707ffac4219ef57ed43e51e77) [#223](https://github.com/npm/pacote/pull/223) bump npm-pick-manifest from 7.0.2 to 8.0.0
+* [`41fab27`](https://github.com/npm/pacote/commit/41fab27f1d42d78fc2e46e271461c5a066cb170d) [#224](https://github.com/npm/pacote/pull/224) bump proc-log from 2.0.1 to 3.0.0
+* [`4abf24a`](https://github.com/npm/pacote/commit/4abf24ac8bdf698a9fcbf085e629d6f4e0981f1e) [#218](https://github.com/npm/pacote/pull/218) bump npm-registry-fetch from 13.3.1 to 14.0.0 (#218)
+
 ## [15.0.0](https://github.com/npm/pacote/compare/v14.0.0...v15.0.0) (2022-10-13)
 
 ### ⚠️ BREAKING CHANGES
