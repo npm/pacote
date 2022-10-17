@@ -47,7 +47,7 @@
     "@npmcli/git": "^4.0.0",
     "@npmcli/installed-package-contents": "^2.0.0",
     "@npmcli/promise-spawn": "^4.0.0",
-    "@npmcli/run-script": "^4.1.0",
+    "@npmcli/run-script": "^5.0.0",
     "cacache": "^17.0.0",
     "fs-minipass": "^2.1.0",
     "minipass": "^3.1.6",
