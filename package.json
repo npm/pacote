@@ -51,7 +51,7 @@
     "cacache": "^17.0.0",
     "fs-minipass": "^2.1.0",
     "minipass": "^3.1.6",
-    "npm-package-arg": "^9.0.0",
+    "npm-package-arg": "^10.0.0",
     "npm-packlist": "^7.0.0",
     "npm-pick-manifest": "^8.0.0",
     "npm-registry-fetch": "^14.0.0",
