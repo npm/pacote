@@ -1,5 +1,15 @@
 # Changelog
 
+## [15.0.2](https://github.com/npm/pacote/compare/v15.0.1...v15.0.2) (2022-10-18)
+
+### Bug Fixes
+
+* [`95f9cd5`](https://github.com/npm/pacote/commit/95f9cd514d9ab5b1fc0605de7fed76e6f467fbd2) handle new npm-package-arg semantics (@wraithgar)
+
+### Dependencies
+
+* [`2ed4d22`](https://github.com/npm/pacote/commit/2ed4d22ee7a489f05eaacae3ce30619ef455de71) `npm-package-arg@10.0.0`
+
 ## [15.0.1](https://github.com/npm/pacote/compare/v15.0.0...v15.0.1) (2022-10-17)
 
 ### Dependencies
