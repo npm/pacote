@@ -1,5 +1,11 @@
 # Changelog
 
+## [15.0.3](https://github.com/npm/pacote/compare/v15.0.2...v15.0.3) (2022-10-19)
+
+### Dependencies
+
+* [`2a95ddb`](https://github.com/npm/pacote/commit/2a95ddbbf9f859140e3d4225a3404c16bcb6b785) [#235](https://github.com/npm/pacote/pull/235) bump @npmcli/installed-package-contents (#235)
+
 ## [15.0.2](https://github.com/npm/pacote/compare/v15.0.1...v15.0.2) (2022-10-18)
 
 ### Bug Fixes
