@@ -46,7 +46,7 @@
   "dependencies": {
     "@npmcli/git": "^4.0.0",
     "@npmcli/installed-package-contents": "^2.0.1",
-    "@npmcli/promise-spawn": "^4.0.0",
+    "@npmcli/promise-spawn": "^5.0.0",
     "@npmcli/run-script": "^5.0.0",
     "cacache": "^17.0.0",
     "fs-minipass": "^2.1.0",
