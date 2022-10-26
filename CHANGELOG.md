@@ -1,5 +1,11 @@
 # Changelog
 
+## [15.0.4](https://github.com/npm/pacote/compare/v15.0.3...v15.0.4) (2022-10-26)
+
+### Dependencies
+
+* [`854fad1`](https://github.com/npm/pacote/commit/854fad16afe96737abe0f6a4583aef2b962929f1) [#239](https://github.com/npm/pacote/pull/239) bump @npmcli/promise-spawn from 4.0.0 to 5.0.0 (#239)
+
 ## [15.0.3](https://github.com/npm/pacote/compare/v15.0.2...v15.0.3) (2022-10-19)
 
 ### Dependencies
