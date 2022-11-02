@@ -1,5 +1,11 @@
 # Changelog
 
+## [15.0.6](https://github.com/npm/pacote/compare/v15.0.5...v15.0.6) (2022-11-02)
+
+### Dependencies
+
+* [`dbbda43`](https://github.com/npm/pacote/commit/dbbda43a22fdbbc3a9c09273beaf316c0de3d4aa) [#246](https://github.com/npm/pacote/pull/246) `@npmcli/run-script@6.0.0`
+
 ## [15.0.5](https://github.com/npm/pacote/compare/v15.0.4...v15.0.5) (2022-11-01)
 
 ### Dependencies
