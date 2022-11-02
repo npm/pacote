@@ -16,7 +16,7 @@ Object {
   "message": "oopsie",
   "signal": undefined,
   "stderr": "",
-  "stdout": "[\\"{NODE}\\",[\\"/path/to/npm/bin/npm-cli.js\\",\\"flerb\\"],{\\"cwd\\":\\"/cwd\\",\\"stdioString\\":true,\\"env\\":{\\"environmental\\":\\"variables\\"}}]",
+  "stdout": "[\\"{NODE}\\",[\\"/path/to/npm/bin/npm-cli.js\\",\\"flerb\\"],{\\"cwd\\":\\"/cwd\\",\\"env\\":{\\"environmental\\":\\"variables\\"}}]",
 }
 `
 
@@ -30,6 +30,6 @@ Object {
   "message": "oopsie",
   "signal": undefined,
   "stderr": "",
-  "stdout": "[\\"/path/to/npm\\",[\\"flerb\\"],{\\"cwd\\":\\"/cwd\\",\\"stdioString\\":true,\\"env\\":{\\"environmental\\":\\"variables\\"}}]",
+  "stdout": "[\\"/path/to/npm\\",[\\"flerb\\"],{\\"cwd\\":\\"/cwd\\",\\"env\\":{\\"environmental\\":\\"variables\\"}}]",
 }
 `
