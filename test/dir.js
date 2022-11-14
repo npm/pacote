@@ -52,6 +52,8 @@ const prepare = resolve(__dirname, 'fixtures/prepare-script')
 const preparespec = `file:${relative(process.cwd(), prepare)}`
 
 t.test('with prepare script', async t => {
+  // ensure clean fixtures folder - remove file that should get generated
+  fs.rmSync(prepare + '/index.js', { force: true })
   RUNS.length = 0
   const f = new DirFetcher(preparespec, { tree: await loadActual(prepare) })
   t.resolveMatchSnapshot(f.packument(), 'packument')
@@ -64,6 +66,18 @@ t.test('with prepare script', async t => {
       stdio: 'pipe',
       banner: false,
     }, 'should run in background'))
+})
+
+t.test('with prepare script and ignoreScripts', async t => {
+  // ensure clean fixtures folder - remove file that should get generated
+  fs.rmSync(prepare + '/index.js', { force: true })
+  RUNS.length = 0
+  const f = new DirFetcher(preparespec, { tree: await loadActual(prepare), ignoreScripts: true })
+  t.resolveMatchSnapshot(f.packument(), 'packument')
+  t.resolveMatchSnapshot(f.manifest(), 'manifest')
+  return t.resolveMatchSnapshot(f.extract(me + '/prepare'), 'extract')
+    .then(() => t.matchSnapshot(fs.readdirSync(me + '/prepare').sort(), 'file list'))
+    .then(() => t.equal(RUNS.length, 0, 'should not execute the script'))
 })
 
 t.test('responds to foregroundScripts: true', async t => {
