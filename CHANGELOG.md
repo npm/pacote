@@ -1,5 +1,11 @@
 # Changelog
 
+## [15.0.8](https://github.com/npm/pacote/compare/v15.0.7...v15.0.8) (2022-12-14)
+
+### Dependencies
+
+* [`40aa6fe`](https://github.com/npm/pacote/commit/40aa6fe9055f3fe673fda7032c7da8958d3f574d) [#253](https://github.com/npm/pacote/pull/253) bump fs-minipass from 2.1.0 to 3.0.0
+
 ## [15.0.7](https://github.com/npm/pacote/compare/v15.0.6...v15.0.7) (2022-12-07)
 
 ### Dependencies
