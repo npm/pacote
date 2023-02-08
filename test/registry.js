@@ -1,5 +1,23 @@
-const RegistryFetcher = require('../lib/registry.js')
 const t = require('tap')
+// Stub out sigstore verification for testing to avoid needing to refresh the tuf cache
+const RegistryFetcher = require('../lib/registry.js')
+const MockedRegistryFetcher = t.mock('../lib/registry.js', {
+  sigstore: {
+    sigstore: {
+      verify: async (bundle, data, options) => {
+        options.keySelector && options.keySelector()
+        if (bundle.dsseEnvelope.payloadType === 'tlog-entry-mismatch') {
+          throw new Error('bundle content and tlog entry do not match')
+        }
+        if (bundle.dsseEnvelope.signatures[0].sig === 'invalid-signature') {
+          throw new Error('artifact signature verification failed')
+        }
+      },
+    },
+  },
+})
+const path = require('path')
+const fs = require('fs')
 const mr = require('npm-registry-mock')
 const tnock = require('./fixtures/tnock')
 const port = 18000 + (+process.env.TAP_CHILD_ID || 0)
@@ -285,6 +303,817 @@ t.test('verifySignatures no registry keys at all', async t => {
   )
 })
 
+t.test('verifyAttestations valid attestations', async t => {
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/sigstore')
+    .reply(200, {
+      _id: 'sigstore',
+      _rev: 'deadbeef',
+      name: 'sigstore',
+      'dist-tags': { latest: '0.4.0' },
+      versions: {
+        '0.4.0': {
+          name: 'sigstore',
+          version: '0.4.0',
+          dist: {
+            // eslint-disable-next-line max-len
+            integrity: 'sha512-KCwMX6k20mQyFkNYG2XT3lwK9u1P36wS9YURFd85zCXPrwrSLZCEh7/vMBFNYcJXRiBtGDS+T4/RZZF493zABA==',
+            // eslint-disable-next-line max-len
+            attestations: { url: 'https://registry.npmjs.org/-/npm/v1/attestations/sigstore@0.4.0', provenance: { predicateType: 'https://slsa.dev/provenance/v0.2' } },
+          },
+        },
+      },
+    })
+
+  const fixture = fs.readFileSync(
+    path.join(__dirname, 'fixtures', 'sigstore/valid-attestations.json'),
+    'utf8'
+  )
+
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/-/npm/v1/attestations/sigstore@0.4.0')
+    .reply(200, JSON.parse(fixture))
+
+  const f = new MockedRegistryFetcher('sigstore@0.4.0', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifyAttestations: true,
+    [`//registry.npmjs.org/:_keys`]: [{
+      expires: null,
+      keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+      keytype: 'ecdsa-sha2-nistp256',
+      scheme: 'ecdsa-sha2-nistp256',
+      // eslint-disable-next-line max-len
+      key: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==',
+      // eslint-disable-next-line max-len
+      pemkey: '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==\n-----END PUBLIC KEY-----',
+    }],
+  })
+
+  const mani = await f.manifest()
+  t.ok(mani._attestations)
+  t.ok(mani._integrity)
+})
+
+t.test('verifyAttestations when registry returns no attestations', async t => {
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/sigstore')
+    .reply(200, {
+      _id: 'sigstore',
+      _rev: 'deadbeef',
+      name: 'sigstore',
+      'dist-tags': { latest: '0.4.0' },
+      versions: {
+        '0.4.0': {
+          name: 'sigstore',
+          version: '0.4.0',
+          dist: {
+            // eslint-disable-next-line max-len
+            integrity: 'sha512-KCwMX6k20mQyFkNYG2XT3lwK9u1P36wS9YURFd85zCXPrwrSLZCEh7/vMBFNYcJXRiBtGDS+T4/RZZF493zABA==',
+            // eslint-disable-next-line max-len
+            attestations: { url: 'https://registry.npmjs.org/-/npm/v1/attestations/sigstore@0.4.0', provenance: { predicateType: 'https://slsa.dev/provenance/v0.2' } },
+          },
+        },
+      },
+    })
+
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/-/npm/v1/attestations/sigstore@0.4.0')
+    .reply(404)
+
+  const f = new MockedRegistryFetcher('sigstore@0.4.0', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifyAttestations: true,
+  })
+
+  return t.rejects(
+    f.manifest(),
+    /404 Not Found - GET https:\/\/registry.npmjs.org\/-\/npm\/v1\/attestations\/sigstore@0\.4\.0/,
+    {
+      code: 'E404',
+    }
+  )
+})
+
+t.test('verifyAttestations when package has no attestations', async t => {
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/sigstore')
+    .reply(200, {
+      _id: 'sigstore',
+      _rev: 'deadbeef',
+      name: 'sigstore',
+      'dist-tags': { latest: '0.4.0' },
+      versions: {
+        '0.4.0': {
+          name: 'sigstore',
+          version: '0.4.0',
+          dist: {
+            // eslint-disable-next-line max-len
+            integrity: 'sha512-KCwMX6k20mQyFkNYG2XT3lwK9u1P36wS9YURFd85zCXPrwrSLZCEh7/vMBFNYcJXRiBtGDS+T4/RZZF493zABA==',
+          },
+        },
+      },
+    })
+
+  const f = new MockedRegistryFetcher('sigstore@0.4.0', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifyAttestations: true,
+  })
+
+  const mani = await f.manifest()
+  t.ok(mani._integrity)
+})
+
+t.test('disable verifyAttestations when package has attestations', async t => {
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/sigstore')
+    .reply(200, {
+      _id: 'sigstore',
+      _rev: 'deadbeef',
+      name: 'sigstore',
+      'dist-tags': { latest: '0.4.0' },
+      versions: {
+        '0.4.0': {
+          name: 'sigstore',
+          version: '0.4.0',
+          dist: {
+            // eslint-disable-next-line max-len
+            integrity: 'sha512-KCwMX6k20mQyFkNYG2XT3lwK9u1P36wS9YURFd85zCXPrwrSLZCEh7/vMBFNYcJXRiBtGDS+T4/RZZF493zABA==',
+            // eslint-disable-next-line max-len
+            attestations: { url: 'https://registry.npmjs.org/-/npm/v1/attestations/sigstore@0.4.0', provenance: { predicateType: 'https://slsa.dev/provenance/v0.2' } },
+          },
+        },
+      },
+    })
+
+  const f = new MockedRegistryFetcher('sigstore@0.4.0', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifyAttestations: false,
+  })
+
+  const mani = await f.manifest()
+  t.ok(mani._attestations)
+  t.ok(mani._integrity)
+})
+
+t.test('verifyAttestations invalid signature', async t => {
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/sigstore')
+    .reply(200, {
+      _id: 'sigstore',
+      _rev: 'deadbeef',
+      name: 'sigstore',
+      'dist-tags': { latest: '0.4.0' },
+      versions: {
+        '0.4.0': {
+          name: 'sigstore',
+          version: '0.4.0',
+          dist: {
+            // eslint-disable-next-line max-len
+            integrity: 'sha512-KCwMX6k20mQyFkNYG2XT3lwK9u1P36wS9YURFd85zCXPrwrSLZCEh7/vMBFNYcJXRiBtGDS+T4/RZZF493zABA==',
+            // eslint-disable-next-line max-len
+            attestations: { url: 'https://registry.npmjs.org/-/npm/v1/attestations/sigstore@0.4.0', provenance: { predicateType: 'https://slsa.dev/provenance/v0.2' } },
+          },
+        },
+      },
+    })
+
+  const fixture = fs.readFileSync(
+    path.join(__dirname, 'fixtures', 'sigstore/invalid-attestations.json'),
+    'utf8'
+  )
+
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/-/npm/v1/attestations/sigstore@0.4.0')
+    .reply(200, JSON.parse(fixture))
+
+  const f = new MockedRegistryFetcher('sigstore@0.4.0', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifyAttestations: true,
+    [`//registry.npmjs.org/:_keys`]: [{
+      expires: null,
+      keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+      keytype: 'ecdsa-sha2-nistp256',
+      scheme: 'ecdsa-sha2-nistp256',
+      // eslint-disable-next-line max-len
+      key: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==',
+      // eslint-disable-next-line max-len
+      pemkey: '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==\n-----END PUBLIC KEY-----',
+    }],
+  })
+
+  return t.rejects(
+    f.manifest(),
+    /sigstore@0\.4\.0 failed to verify attestation: artifact signature verification failed/,
+    {
+      code: 'EATTESTATIONVERIFY',
+    }
+  )
+})
+
+t.test('verifyAttestations errors when tuf update fails', async t => {
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/sigstore')
+    .reply(200, {
+      _id: 'sigstore',
+      _rev: 'deadbeef',
+      name: 'sigstore',
+      'dist-tags': { latest: '0.4.0' },
+      versions: {
+        '0.4.0': {
+          name: 'sigstore',
+          version: '0.4.0',
+          dist: {
+            // eslint-disable-next-line max-len
+            integrity: 'sha512-KCwMX6k20mQyFkNYG2XT3lwK9u1P36wS9YURFd85zCXPrwrSLZCEh7/vMBFNYcJXRiBtGDS+T4/RZZF493zABA==',
+            // eslint-disable-next-line max-len
+            attestations: { url: 'https://registry.npmjs.org/-/npm/v1/attestations/sigstore@0.4.0', provenance: { predicateType: 'https://slsa.dev/provenance/v0.2' } },
+          },
+        },
+      },
+    })
+
+  const fixture = fs.readFileSync(
+    path.join(__dirname, 'fixtures', 'sigstore/valid-attestations.json'),
+    'utf8'
+  )
+
+  tnock(t, 'https://sigstore-tuf-root.storage.googleapis.com')
+    .get(/./) // match any path
+    .reply(404)
+
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/-/npm/v1/attestations/sigstore@0.4.0')
+    .reply(200, JSON.parse(fixture))
+
+  const f = new RegistryFetcher('sigstore@0.4.0', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifyAttestations: true,
+    [`//registry.npmjs.org/:_keys`]: [{
+      expires: null,
+      keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+      keytype: 'ecdsa-sha2-nistp256',
+      scheme: 'ecdsa-sha2-nistp256',
+      // eslint-disable-next-line max-len
+      key: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==',
+      // eslint-disable-next-line max-len
+      pemkey: '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==\n-----END PUBLIC KEY-----',
+    }],
+  })
+
+  return t.rejects(
+    f.manifest(),
+    /sigstore@0.4.0 failed to verify attestation: error refreshing trust metadata/,
+    {
+      code: 'EATTESTATIONVERIFY',
+    }
+  )
+})
+
+t.test('verifyAttestations publish attestation for unknown public key', async t => {
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/sigstore')
+    .reply(200, {
+      _id: 'sigstore',
+      _rev: 'deadbeef',
+      name: 'sigstore',
+      'dist-tags': { latest: '0.4.0' },
+      versions: {
+        '0.4.0': {
+          name: 'sigstore',
+          version: '0.4.0',
+          dist: {
+            // eslint-disable-next-line max-len
+            integrity: 'sha512-KCwMX6k20mQyFkNYG2XT3lwK9u1P36wS9YURFd85zCXPrwrSLZCEh7/vMBFNYcJXRiBtGDS+T4/RZZF493zABA==',
+            // eslint-disable-next-line max-len
+            attestations: { url: 'https://registry.npmjs.org/-/npm/v1/attestations/sigstore@0.4.0', provenance: { predicateType: 'https://slsa.dev/provenance/v0.2' } },
+          },
+        },
+      },
+    })
+
+  const fixture = fs.readFileSync(
+    path.join(__dirname, 'fixtures', 'sigstore/valid-attestations.json'),
+    'utf8'
+  )
+
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/-/npm/v1/attestations/sigstore@0.4.0')
+    .reply(200, JSON.parse(fixture))
+
+  const f = new MockedRegistryFetcher('sigstore@0.4.0', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifyAttestations: true,
+    [`//registry.npmjs.org/:_keys`]: [{
+      expires: null,
+      keyid: 'SHA256:JXkT/aBM9baLZ7dpjJLQhJrj3Ru5s/OSXoZzZsPUyhg',
+      keytype: 'ecdsa-sha2-nistp256',
+      scheme: 'ecdsa-sha2-nistp256',
+      // eslint-disable-next-line max-len
+      key: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEztMhKw7mGA6DV6Cc510h10d/KFISm3fIue5AoZiKjh+noDv0bxxzr780F/tkqqw80+hSnJXKj7DuUyRD0IZH3A==',
+      // eslint-disable-next-line max-len
+      pemkey: '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEztMhKw7mGA6DV6Cc510h10d/KFISm3fIue5AoZiKjh+noDv0bxxzr780F/tkqqw80+hSnJXKj7DuUyRD0IZH3A==\n-----END PUBLIC KEY-----',
+    }],
+  })
+
+  return t.rejects(
+    f.manifest(),
+    // eslint-disable-next-line max-len
+    /sigstore@0\.4\.0 has attestations but no corresponding public key\(s\) can be found/,
+    {
+      code: 'EMISSINGSIGNATUREKEY',
+    }
+  )
+})
+
+t.test('verifyAttestations no attestation with keyid', async t => {
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/sigstore')
+    .reply(200, {
+      _id: 'sigstore',
+      _rev: 'deadbeef',
+      name: 'sigstore',
+      'dist-tags': { latest: '0.4.0' },
+      versions: {
+        '0.4.0': {
+          name: 'sigstore',
+          version: '0.4.0',
+          dist: {
+            // eslint-disable-next-line max-len
+            integrity: 'sha512-KCwMX6k20mQyFkNYG2XT3lwK9u1P36wS9YURFd85zCXPrwrSLZCEh7/vMBFNYcJXRiBtGDS+T4/RZZF493zABA==',
+            // eslint-disable-next-line max-len
+            attestations: { url: 'https://registry.npmjs.org/-/npm/v1/attestations/sigstore@0.4.0', provenance: { predicateType: 'https://slsa.dev/provenance/v0.2' } },
+          },
+        },
+      },
+    })
+
+  const fixture = fs.readFileSync(
+    path.join(__dirname, 'fixtures', 'sigstore/no-keyid-attestations.json'),
+    'utf8'
+  )
+
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/-/npm/v1/attestations/sigstore@0.4.0')
+    .reply(200, JSON.parse(fixture))
+
+  const f = new MockedRegistryFetcher('sigstore@0.4.0', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifyAttestations: true,
+    [`//registry.npmjs.org/:_keys`]: [{
+      expires: null,
+      keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+      keytype: 'ecdsa-sha2-nistp256',
+      scheme: 'ecdsa-sha2-nistp256',
+      // eslint-disable-next-line max-len
+      key: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==',
+      // eslint-disable-next-line max-len
+      pemkey: '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==\n-----END PUBLIC KEY-----',
+    }],
+  })
+
+  return t.rejects(
+    f.manifest(),
+    // eslint-disable-next-line max-len
+    /sigstore@0\.4\.0 has attestations but no corresponding public key\(s\) can be found/,
+    {
+      code: 'EMISSINGSIGNATUREKEY',
+    }
+  )
+})
+
+t.test('verifyAttestations valid attestations', async t => {
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/sigstore')
+    .reply(200, {
+      _id: 'sigstore',
+      _rev: 'deadbeef',
+      name: 'sigstore',
+      'dist-tags': { latest: '0.4.0' },
+      versions: {
+        '0.4.0': {
+          name: 'sigstore',
+          version: '0.4.0',
+          dist: {
+            // eslint-disable-next-line max-len
+            integrity: 'sha512-KCwMX6k20mQyFkNYG2XT3lwK9u1P36wS9YURFd85zCXPrwrSLZCEh7/vMBFNYcJXRiBtGDS+T4/RZZF493zABA==',
+            // eslint-disable-next-line max-len
+            attestations: { url: 'https://registry.npmjs.org/-/npm/v1/attestations/sigstore@0.4.0', provenance: { predicateType: 'https://slsa.dev/provenance/v0.2' } },
+          },
+        },
+      },
+    })
+
+  const fixture = fs.readFileSync(
+    path.join(__dirname, 'fixtures', 'sigstore/mismatched-keyid-attestations.json'),
+    'utf8'
+  )
+
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/-/npm/v1/attestations/sigstore@0.4.0')
+    .reply(200, JSON.parse(fixture))
+
+  const f = new MockedRegistryFetcher('sigstore@0.4.0', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifyAttestations: true,
+    [`//registry.npmjs.org/:_keys`]: [{
+      expires: null,
+      keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+      keytype: 'ecdsa-sha2-nistp256',
+      scheme: 'ecdsa-sha2-nistp256',
+      // eslint-disable-next-line max-len
+      key: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==',
+      // eslint-disable-next-line max-len
+      pemkey: '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==\n-----END PUBLIC KEY-----',
+    }],
+  })
+
+  return t.rejects(
+    f.manifest(),
+    // eslint-disable-next-line max-len
+    /sigstore@0\.4\.0 has attestations with keyid: JXkT\/aBM9baLZ7dpjJLQhJrj3Ru5s\/OSXoZzZsPUyhg but no corresponding public key can be found/,
+    {
+      code: 'EMISSINGSIGNATUREKEY',
+    }
+  )
+})
+
+t.test('verifyAttestations no matching registry keys', async t => {
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/sigstore')
+    .reply(200, {
+      _id: 'sigstore',
+      _rev: 'deadbeef',
+      name: 'sigstore',
+      'dist-tags': { latest: '0.4.0' },
+      versions: {
+        '0.4.0': {
+          name: 'sigstore',
+          version: '0.4.0',
+          dist: {
+            // eslint-disable-next-line max-len
+            integrity: 'sha512-KCwMX6k20mQyFkNYG2XT3lwK9u1P36wS9YURFd85zCXPrwrSLZCEh7/vMBFNYcJXRiBtGDS+T4/RZZF493zABA==',
+            // eslint-disable-next-line max-len
+            attestations: { url: 'https://registry.npmjs.org/-/npm/v1/attestations/sigstore@0.4.0', provenance: { predicateType: 'https://slsa.dev/provenance/v0.2' } },
+          },
+        },
+      },
+    })
+
+  const fixture = fs.readFileSync(
+    path.join(__dirname, 'fixtures', 'sigstore/valid-attestations.json'),
+    'utf8'
+  )
+
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/-/npm/v1/attestations/sigstore@0.4.0')
+    .reply(200, JSON.parse(fixture))
+
+  const f = new MockedRegistryFetcher('sigstore@0.4.0', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifyAttestations: true,
+    [`//registry.npmjs.org/:_keys`]: [{
+      expires: null,
+      keyid: 'SHA256:JXkT/aBM9baLZ7dpjJLQhJrj3Ru5s/OSXoZzZsPUyhg',
+      keytype: 'ecdsa-sha2-nistp256',
+      scheme: 'ecdsa-sha2-nistp256',
+      // eslint-disable-next-line max-len
+      key: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEztMhKw7mGA6DV6Cc510h10d/KFISm3fIue5AoZiKjh+noDv0bxxzr780F/tkqqw80+hSnJXKj7DuUyRD0IZH3A==',
+      // eslint-disable-next-line max-len
+      pemkey: '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEztMhKw7mGA6DV6Cc510h10d/KFISm3fIue5AoZiKjh+noDv0bxxzr780F/tkqqw80+hSnJXKj7DuUyRD0IZH3A==\n-----END PUBLIC KEY-----',
+    }],
+  })
+
+  return t.rejects(
+    f.manifest(),
+    // eslint-disable-next-line max-len
+    /sigstore@0\.4\.0 has attestations but no corresponding public key\(s\) can be found/,
+    {
+      code: 'EMISSINGSIGNATUREKEY',
+    }
+  )
+})
+
+t.test('verifyAttestations no valid key', async t => {
+  const fixture = fs.readFileSync(
+    path.join(__dirname, 'fixtures', 'sigstore/valid-attestations.json'),
+    'utf8'
+  )
+
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/-/npm/v1/attestations/sigstore@0.4.0')
+    .reply(200, JSON.parse(fixture))
+
+  const f = new MockedRegistryFetcher('sigstore@0.4.0', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifyAttestations: true,
+    [`//registry.npmjs.org/:_keys`]: [{
+      expires: '2010-01-01T00:00:00.000Z',
+      keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+      keytype: 'ecdsa-sha2-nistp256',
+      scheme: 'ecdsa-sha2-nistp256',
+      // eslint-disable-next-line max-len
+      key: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==',
+      // eslint-disable-next-line max-len
+      pemkey: '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==\n-----END PUBLIC KEY-----',
+    }],
+  })
+
+  return t.rejects(
+    f.manifest(),
+    // eslint-disable-next-line max-len
+    /sigstore@0\.4\.0 has attestations with keyid: SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA but the corresponding public key has expired 2010-01-01T00:00:00\.000Z/,
+    {
+      code: 'EEXPIREDSIGNATUREKEY',
+    }
+  )
+})
+
+t.test('verifyAttestations no registry keys at all', async t => {
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/sigstore')
+    .reply(200, {
+      _id: 'sigstore',
+      _rev: 'deadbeef',
+      name: 'sigstore',
+      'dist-tags': { latest: '0.4.0' },
+      versions: {
+        '0.4.0': {
+          name: 'sigstore',
+          version: '0.4.0',
+          dist: {
+            // eslint-disable-next-line max-len
+            integrity: 'sha512-KCwMX6k20mQyFkNYG2XT3lwK9u1P36wS9YURFd85zCXPrwrSLZCEh7/vMBFNYcJXRiBtGDS+T4/RZZF493zABA==',
+            // eslint-disable-next-line max-len
+            attestations: { url: 'https://registry.npmjs.org/-/npm/v1/attestations/sigstore@0.4.0', provenance: { predicateType: 'https://slsa.dev/provenance/v0.2' } },
+          },
+        },
+      },
+    })
+
+  const fixture = fs.readFileSync(
+    path.join(__dirname, 'fixtures', 'sigstore/valid-attestations.json'),
+    'utf8'
+  )
+
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/-/npm/v1/attestations/sigstore@0.4.0')
+    .reply(200, JSON.parse(fixture))
+
+  const f = new MockedRegistryFetcher('sigstore@0.4.0', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifyAttestations: true,
+  })
+
+  return t.rejects(
+    f.manifest(),
+    // eslint-disable-next-line max-len
+    /sigstore@0\.4\.0 has attestations but no corresponding public key\(s\) can be found/,
+    {
+      code: 'EMISSINGSIGNATUREKEY',
+    }
+  )
+})
+
+t.test('verifyAttestations fetching without version', async t => {
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/sigstore')
+    .reply(200, {
+      _id: 'sigstore',
+      _rev: 'deadbeef',
+      name: 'sigstore',
+      'dist-tags': { latest: '0.4.0' },
+      versions: {
+        '0.4.0': {
+          name: 'sigstore',
+          version: '0.4.0',
+          dist: {
+            // eslint-disable-next-line max-len
+            integrity: 'sha512-KCwMX6k20mQyFkNYG2XT3lwK9u1P36wS9YURFd85zCXPrwrSLZCEh7/vMBFNYcJXRiBtGDS+T4/RZZF493zABA==',
+            // eslint-disable-next-line max-len
+            attestations: { url: 'https://registry.npmjs.org/-/npm/v1/attestations/sigstore@0.4.0', provenance: { predicateType: 'https://slsa.dev/provenance/v0.2' } },
+          },
+        },
+      },
+    })
+
+  const fixture = fs.readFileSync(
+    path.join(__dirname, 'fixtures', 'sigstore/valid-attestations.json'),
+    'utf8'
+  )
+
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/-/npm/v1/attestations/sigstore@0.4.0')
+    .reply(200, JSON.parse(fixture))
+
+  const f = new MockedRegistryFetcher('sigstore', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifyAttestations: true,
+    [`//registry.npmjs.org/:_keys`]: [{
+      expires: null,
+      keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+      keytype: 'ecdsa-sha2-nistp256',
+      scheme: 'ecdsa-sha2-nistp256',
+      // eslint-disable-next-line max-len
+      key: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==',
+      // eslint-disable-next-line max-len
+      pemkey: '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==\n-----END PUBLIC KEY-----',
+    }],
+  })
+
+  return t.rejects(
+    f.manifest(),
+    // eslint-disable-next-line max-len
+    /sigstore@0\.4\.0 package name and version \(PURL\): sigstore@\* doesn't match what was signed: pkg:npm\/sigstore@0\.4\.0/,
+    {
+      code: 'EMISSINGSIGNATUREKEY',
+    }
+  )
+})
+
+t.test('verifyAttestations mismatched subject name', async t => {
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/sigstore')
+    .reply(200, {
+      _id: 'sigstore',
+      _rev: 'deadbeef',
+      name: 'sigstore',
+      'dist-tags': { latest: '0.4.0' },
+      versions: {
+        '0.4.0': {
+          name: 'sigstore',
+          version: '0.4.0',
+          dist: {
+            // eslint-disable-next-line max-len
+            integrity: 'sha512-KCwMX6k20mQyFkNYG2XT3lwK9u1P36wS9YURFd85zCXPrwrSLZCEh7/vMBFNYcJXRiBtGDS+T4/RZZF493zABA==',
+            // eslint-disable-next-line max-len
+            attestations: { url: 'https://registry.npmjs.org/-/npm/v1/attestations/sigstore@0.4.0', provenance: { predicateType: 'https://slsa.dev/provenance/v0.2' } },
+          },
+        },
+      },
+    })
+
+  const fixture = fs.readFileSync(
+    path.join(__dirname, 'fixtures', 'sigstore/mismatched-subject-name-attestations.json'),
+    'utf8'
+  )
+
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/-/npm/v1/attestations/sigstore@0.4.0')
+    .reply(200, JSON.parse(fixture))
+
+  const f = new MockedRegistryFetcher('sigstore@0.4.0', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifyAttestations: true,
+    [`//registry.npmjs.org/:_keys`]: [{
+      expires: null,
+      keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+      keytype: 'ecdsa-sha2-nistp256',
+      scheme: 'ecdsa-sha2-nistp256',
+      // eslint-disable-next-line max-len
+      key: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==',
+      // eslint-disable-next-line max-len
+      pemkey: '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==\n-----END PUBLIC KEY-----',
+    }],
+  })
+
+  return t.rejects(
+    f.manifest(),
+    // eslint-disable-next-line max-len
+    /sigstore@0\.4\.0 package name and version \(PURL\): pkg:npm\/sigstore@0\.4\.0 doesn't match what was signed: pkg:npm\/sigstore@1\.4\.0/,
+    {
+      code: 'EATTESTATIONSUBJECT',
+    }
+  )
+})
+
+t.test('verifyAttestations mismatched subject sha512 digest', async t => {
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/sigstore')
+    .reply(200, {
+      _id: 'sigstore',
+      _rev: 'deadbeef',
+      name: 'sigstore',
+      'dist-tags': { latest: '0.4.0' },
+      versions: {
+        '0.4.0': {
+          name: 'sigstore',
+          version: '0.4.0',
+          dist: {
+            // eslint-disable-next-line max-len
+            integrity: 'sha512-KCwMX6k20mQyFkNYG2XT3lwK9u1P36wS9YURFd85zCXPrwrSLZCEh7/vMBFNYcJXRiBtGDS+T4/RZZF493zABA==',
+            // eslint-disable-next-line max-len
+            attestations: { url: 'https://registry.npmjs.org/-/npm/v1/attestations/sigstore@0.4.0', provenance: { predicateType: 'https://slsa.dev/provenance/v0.2' } },
+          },
+        },
+      },
+    })
+
+  const fixture = fs.readFileSync(
+    path.join(__dirname, 'fixtures', 'sigstore/mismatched-subject-digest-attestations.json'),
+    'utf8'
+  )
+
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/-/npm/v1/attestations/sigstore@0.4.0')
+    .reply(200, JSON.parse(fixture))
+
+  const f = new MockedRegistryFetcher('sigstore@0.4.0', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifyAttestations: true,
+    [`//registry.npmjs.org/:_keys`]: [{
+      expires: null,
+      keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+      keytype: 'ecdsa-sha2-nistp256',
+      scheme: 'ecdsa-sha2-nistp256',
+      // eslint-disable-next-line max-len
+      key: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==',
+      // eslint-disable-next-line max-len
+      pemkey: '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==\n-----END PUBLIC KEY-----',
+    }],
+  })
+
+  return t.rejects(
+    f.manifest(),
+    // eslint-disable-next-line max-len
+    /sigstore@0\.4\.0 package integrity \(hex digest\): 282c0c5fa936d264321643581b65d3de5c0af6ed4fdfac12f5851115df39cc25cfaf0ad22d908487bfef30114d61c25746206d1834be4f8fd1659178f77cc004 doesn't match what was signed: 123c0c5fa936d264321643581b65d3de5c0af6ed4fdfac12f5851115df39cc25cfaf0ad22d908487bfef30114d61c25746206d1834be4f8fd1659178f77cc004/,
+    {
+      code: 'EATTESTATIONSUBJECT',
+    }
+  )
+})
+
+t.test('verifyAttestations bundle payload that does not match the tlog entry', async t => {
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/sigstore')
+    .reply(200, {
+      _id: 'sigstore',
+      _rev: 'deadbeef',
+      name: 'sigstore',
+      'dist-tags': { latest: '0.4.0' },
+      versions: {
+        '0.4.0': {
+          name: 'sigstore',
+          version: '0.4.0',
+          dist: {
+            // eslint-disable-next-line max-len
+            integrity: 'sha512-KCwMX6k20mQyFkNYG2XT3lwK9u1P36wS9YURFd85zCXPrwrSLZCEh7/vMBFNYcJXRiBtGDS+T4/RZZF493zABA==',
+            // eslint-disable-next-line max-len
+            attestations: { url: 'https://registry.npmjs.org/-/npm/v1/attestations/sigstore@0.4.0', provenance: { predicateType: 'https://slsa.dev/provenance/v0.2' } },
+          },
+        },
+      },
+    })
+
+  const fixture = fs.readFileSync(
+    path.join(__dirname, 'fixtures', 'sigstore/unsupported-attestations.json'),
+    'utf8'
+  )
+
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/-/npm/v1/attestations/sigstore@0.4.0')
+    .reply(200, JSON.parse(fixture))
+
+  const f = new MockedRegistryFetcher('sigstore@0.4.0', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifyAttestations: true,
+    [`//registry.npmjs.org/:_keys`]: [{
+      expires: null,
+      keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+      keytype: 'ecdsa-sha2-nistp256',
+      scheme: 'ecdsa-sha2-nistp256',
+      // eslint-disable-next-line max-len
+      key: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==',
+      // eslint-disable-next-line max-len
+      pemkey: '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==\n-----END PUBLIC KEY-----',
+    }],
+  })
+
+  return t.rejects(
+    f.manifest(),
+    // eslint-disable-next-line max-len
+    /sigstore@0\.4\.0 failed to verify attestation: bundle content and tlog entry do not match/,
+    {
+      code: 'EATTESTATIONVERIFY',
+    }
+  )
+})
+
 t.test('404 fails with E404', t => {
   const f = new RegistryFetcher('thing-is-not-here', { registry, cache })
   return t.rejects(f.resolve(), { code: 'E404' }).then(() =>
@@ -414,7 +1243,6 @@ t.test('packument that falls back to fullMetadata', t => {
 
 t.test('option replaceRegistryHost', rhTest => {
   const { join, resolve } = require('path')
-  const fs = require('fs')
 
   const abbrev = resolve(__dirname, 'fixtures/abbrev-1.1.1.tgz')
   const abbrevTGZ = fs.readFileSync(abbrev)
