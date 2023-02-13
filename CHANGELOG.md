@@ -1,5 +1,15 @@
 # Changelog
 
+## [15.1.0](https://github.com/npm/pacote/compare/v15.0.8...v15.1.0) (2023-02-13)
+
+### Features
+
+* [`2916b72`](https://github.com/npm/pacote/commit/2916b725c3c2bdd661874ad1c54eefd10398bc46) [#259](https://github.com/npm/pacote/pull/259) verifyAttestations to registry.manifest (@feelepxyz, @bdehamer)
+
+### Dependencies
+
+* [`f0bd19b`](https://github.com/npm/pacote/commit/f0bd19b425be18a007538aa8cb6b55b0afc35cbe) add sigstore 1.0.0
+
 ## [15.0.8](https://github.com/npm/pacote/compare/v15.0.7...v15.0.8) (2022-12-14)
 
 ### Dependencies
