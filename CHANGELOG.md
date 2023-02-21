@@ -1,5 +1,11 @@
 # Changelog
 
+## [15.1.1](https://github.com/npm/pacote/compare/v15.1.0...v15.1.1) (2023-02-21)
+
+### Bug Fixes
+
+* [`8f4e39c`](https://github.com/npm/pacote/commit/8f4e39c72e41c8a307db2cff4e7cf9f6e630e3e2) [#261](https://github.com/npm/pacote/pull/261) always ignore ownership from tar headers (#261) (@nlf)
+
 ## [15.1.0](https://github.com/npm/pacote/compare/v15.0.8...v15.1.0) (2023-02-13)
 
 ### Features
