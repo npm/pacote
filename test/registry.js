@@ -568,7 +568,7 @@ t.test('verifyAttestations errors when tuf update fails', async t => {
 
   return t.rejects(
     f.manifest(),
-    /sigstore@0.4.0 failed to verify attestation: error refreshing trust metadata/,
+    /sigstore@0.4.0 failed to verify attestation: error refreshing TUF metadata/,
     {
       code: 'EATTESTATIONVERIFY',
     }
