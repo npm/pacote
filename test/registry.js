@@ -542,7 +542,7 @@ t.test('verifyAttestations errors when tuf update fails', async t => {
     'utf8'
   )
 
-  tnock(t, 'https://sigstore-tuf-root.storage.googleapis.com')
+  tnock(t, 'https://tuf-repo-cdn.sigstore.dev')
     .get(/./) // match any path
     .reply(404)
 
