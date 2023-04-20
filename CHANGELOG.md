@@ -1,5 +1,16 @@
 # Changelog
 
+## [15.1.2](https://github.com/npm/pacote/compare/v15.1.1...v15.1.2) (2023-04-20)
+
+### Documentation
+
+* [`43363dd`](https://github.com/npm/pacote/commit/43363dd5d3002d16297b20d3fa3c29c25b177402) [#266](https://github.com/npm/pacote/pull/266) update dist details (#266) (@wraithgar)
+
+### Dependencies
+
+* [`d5cb3df`](https://github.com/npm/pacote/commit/d5cb3dfbe5838aaa48bc8937681b0a9addcfae47) [#276](https://github.com/npm/pacote/pull/276) `sigstore@1.3.0` (#276)
+* [`c231986`](https://github.com/npm/pacote/commit/c231986cd7a473f79add65b433e43bd7a5f9f25f) [#267](https://github.com/npm/pacote/pull/267) sigstore@^1.1.0
+
 ## [15.1.1](https://github.com/npm/pacote/compare/v15.1.0...v15.1.1) (2023-02-21)
 
 ### Bug Fixes
