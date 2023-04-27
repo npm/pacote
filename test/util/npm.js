@@ -2,7 +2,7 @@ const t = require('tap')
 
 const cp = require('child_process')
 const { spawn } = cp
-const Minipass = require('minipass')
+const { Minipass } = require('minipass')
 const EventEmitter = require('events')
 cp.spawn = (...args) => {
   const proc = new EventEmitter()
