@@ -29,7 +29,7 @@ const weirdspec = `file:${relative(process.cwd(), weird)}`
 
 const cacache = require('cacache')
 const byDigest = cacache.get.stream.byDigest
-const Minipass = require('minipass')
+const { Minipass } = require('minipass')
 
 // we actually use a file fetcher for this, because we need implementations
 const FileFetcher = require('../lib/file.js')
