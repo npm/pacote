@@ -1,5 +1,11 @@
 # Changelog
 
+## [15.1.3](https://github.com/npm/pacote/compare/v15.1.2...v15.1.3) (2023-04-27)
+
+### Dependencies
+
+* [`c99db13`](https://github.com/npm/pacote/commit/c99db13ef65d44ad94a87d3cd54c7a1d79ca07e3) [#271](https://github.com/npm/pacote/pull/271) bump minipass from 4.2.7 to 5.0.0 (#271)
+
 ## [15.1.2](https://github.com/npm/pacote/compare/v15.1.1...v15.1.2) (2023-04-20)
 
 ### Documentation
