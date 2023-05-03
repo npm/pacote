@@ -1,5 +1,11 @@
 # Changelog
 
+## [15.2.0](https://github.com/npm/pacote/compare/v15.1.3...v15.2.0) (2023-05-03)
+
+### Features
+
+* [`3307ad9`](https://github.com/npm/pacote/commit/3307ad9c1600b6a60b2250c2239240ac41fc7b07) [#278](https://github.com/npm/pacote/pull/278) configurable TUF cache dir (#278) (@bdehamer)
+
 ## [15.1.3](https://github.com/npm/pacote/compare/v15.1.2...v15.1.3) (2023-04-27)
 
 ### Dependencies
