@@ -18,15 +18,21 @@ const cacheDir = require('../../lib/util/cache-dir.js')
 // on all platforms.
 t.ok(cacheDir(), 'a cache dir is ok')
 
-t.equal(cacheDir(posix), '/home/isaacs/.npm/_cacache')
-t.equal(cacheDir(windows), '/home/isaacs/npm-cache/_cacache')
+t.equal(cacheDir(posix).cacache, '/home/isaacs/.npm/_cacache')
+t.equal(cacheDir(windows).cacache, '/home/isaacs/npm-cache/_cacache')
+t.equal(cacheDir(posix).tufcache, '/home/isaacs/.npm/_tuf')
+t.equal(cacheDir(windows).tufcache, '/home/isaacs/npm-cache/_tuf')
 
 os.homedir = () => null
-t.equal(cacheDir(posix), '/tmp/npm-69420/.npm/_cacache')
-t.equal(cacheDir(windows), '/tmp/npm-69420/npm-cache/_cacache')
+t.equal(cacheDir(posix).cacache, '/tmp/npm-69420/.npm/_cacache')
+t.equal(cacheDir(windows).cacache, '/tmp/npm-69420/npm-cache/_cacache')
+t.equal(cacheDir(posix).tufcache, '/tmp/npm-69420/.npm/_tuf')
+t.equal(cacheDir(windows).tufcache, '/tmp/npm-69420/npm-cache/_tuf')
 
 process.env.LOCALAPPDATA = '/%LOCALAPPDATA%'
-t.equal(cacheDir(windows), '/%LOCALAPPDATA%/npm-cache/_cacache')
+t.equal(cacheDir(windows).cacache, '/%LOCALAPPDATA%/npm-cache/_cacache')
+t.equal(cacheDir(windows).tufcache, '/%LOCALAPPDATA%/npm-cache/_tuf')
 
 process.getuid = null
-t.equal(cacheDir(posix), `/tmp/npm-${process.pid}/.npm/_cacache`)
+t.equal(cacheDir(posix).cacache, `/tmp/npm-${process.pid}/.npm/_cacache`)
+t.equal(cacheDir(posix).tufcache, `/tmp/npm-${process.pid}/.npm/_tuf`)
