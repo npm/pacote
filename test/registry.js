@@ -212,6 +212,183 @@ t.test('verifySignatures expired signature', async t => {
   )
 })
 
+t.test('verifySignatures key expired with valid signature (signed before expiry)', async t => {
+  const f = new RegistryFetcher('@isaacs/namespace-test', {
+    registry,
+    cache,
+    verifySignatures: true,
+    [`//localhost:${port}/:_keys`]: [{
+      expires: '2020-06-28',
+      keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+      keytype: 'ecdsa-sha2-nistp256',
+      scheme: 'ecdsa-sha2-nistp256',
+      // eslint-disable-next-line max-len
+      key: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==',
+      // eslint-disable-next-line max-len
+      pemkey: '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==\n-----END PUBLIC KEY-----',
+    }],
+  })
+  const mani = await f.manifest()
+  t.ok(mani._signatures)
+  t.ok(mani._integrity)
+})
+
+t.test('verifySignatures key expired with invalid signature (signed after expiry)', async t => {
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/test-1-test')
+    .reply(200, {
+      _id: 'test-1-test',
+      _rev: 'deadbeef',
+      name: 'test-1-test',
+      'dist-tags': { latest: '1.0.0' },
+      versions: {
+        '1.0.0': {
+          name: 'test-1-test',
+          version: '1.0.0',
+          dist: {
+            shasum: '8179353da4ffa52028be60075cb860030b914594',
+            tarball: 'https://registry.npmjs.org/test-1-test/-/test-1-test-1.0.0.tgz',
+            // eslint-disable-next-line max-len
+            integrity: 'sha512-UlHTsb3xsmZYruiC5xnEMypf4sBipBJzgtZTWF0HW01Ql1DYDf/3Ohaw08HMPkRI2eCFIgozHGgzoRXur+wKcA==',
+            signatures: [
+              {
+                keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+                // eslint-disable-next-line max-len
+                sig: 'MEYCIQDiDq3DugVBpY6LvOzUN3V/29juTslOjyZ5cEiiSy5RbgIhAIh+337zvdffe26gUmRcfR/S9WVopDwLDJAhClSueJws',
+              },
+            ],
+          },
+        },
+      },
+      time: {
+        '1.0.0': '2023-06-28T00:00:00.000Z', // After key expires
+      },
+    })
+
+  const f = new RegistryFetcher('test-1-test', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifySignatures: true,
+    [`//registry.npmjs.org/:_keys`]: [{
+      expires: '2022-12-01', // After the NPM_MISSING_PUBLISH_TIME_FALLBACK_DATE
+      keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+      keytype: 'ecdsa-sha2-nistp256',
+      scheme: 'ecdsa-sha2-nistp256',
+      // eslint-disable-next-line max-len
+      key: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==',
+      // eslint-disable-next-line max-len
+      pemkey: '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==\n-----END PUBLIC KEY-----',
+    }],
+  })
+  return t.rejects(
+    f.manifest(),
+    {
+      code: 'EEXPIREDSIGNATUREKEY',
+    }
+  )
+})
+
+t.test('verifySignatures key expired with a package without publish time', async t => {
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/test-1-test')
+    .reply(200, {
+      _id: 'test-1-test',
+      _rev: 'deadbeef',
+      name: 'test-1-test',
+      'dist-tags': { latest: '1.0.0' },
+      versions: {
+        '1.0.0': {
+          name: 'test-1-test',
+          version: '1.0.0',
+          dist: {
+            shasum: '8179353da4ffa52028be60075cb860030b914594',
+            tarball: 'https://registry.npmjs.org/test-1-test/-/test-1-test-1.0.0.tgz',
+            // eslint-disable-next-line max-len
+            integrity: 'sha512-UlHTsb3xsmZYruiC5xnEMypf4sBipBJzgtZTWF0HW01Ql1DYDf/3Ohaw08HMPkRI2eCFIgozHGgzoRXur+wKcA==',
+            signatures: [
+              {
+                keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+                // eslint-disable-next-line max-len
+                sig: 'MEYCIQDiDq3DugVBpY6LvOzUN3V/29juTslOjyZ5cEiiSy5RbgIhAIh+337zvdffe26gUmRcfR/S9WVopDwLDJAhClSueJws',
+              },
+            ],
+          },
+        },
+      },
+    })
+
+  const f = new RegistryFetcher('test-1-test', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifySignatures: true,
+    [`//registry.npmjs.org/:_keys`]: [{
+      expires: '2022-12-01', // After the NPM_MISSING_PUBLISH_TIME_FALLBACK_DATE
+      keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+      keytype: 'ecdsa-sha2-nistp256',
+      scheme: 'ecdsa-sha2-nistp256',
+      // eslint-disable-next-line max-len
+      key: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==',
+      // eslint-disable-next-line max-len
+      pemkey: '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==\n-----END PUBLIC KEY-----',
+    }],
+  })
+  const mani = await f.manifest()
+  t.ok(mani._signatures)
+  t.ok(mani._integrity)
+})
+
+t.test('verifySignatures key expired before the fallback for package wo/ publish time', async t => {
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/test-1-test')
+    .reply(200, {
+      _id: 'test-1-test',
+      _rev: 'deadbeef',
+      name: 'test-1-test',
+      'dist-tags': { latest: '1.0.0' },
+      versions: {
+        '1.0.0': {
+          name: 'test-1-test',
+          version: '1.0.0',
+          dist: {
+            shasum: '8179353da4ffa52028be60075cb860030b914594',
+            tarball: 'https://registry.npmjs.org/test-1-test/-/test-1-test-1.0.0.tgz',
+            // eslint-disable-next-line max-len
+            integrity: 'sha512-UlHTsb3xsmZYruiC5xnEMypf4sBipBJzgtZTWF0HW01Ql1DYDf/3Ohaw08HMPkRI2eCFIgozHGgzoRXur+wKcA==',
+            signatures: [
+              {
+                keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+                // eslint-disable-next-line max-len
+                sig: 'MEYCIQDiDq3DugVBpY6LvOzUN3V/29juTslOjyZ5cEiiSy5RbgIhAIh+337zvdffe26gUmRcfR/S9WVopDwLDJAhClSueJws',
+              },
+            ],
+          },
+        },
+      },
+    })
+
+  const f = new RegistryFetcher('test-1-test', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifySignatures: true,
+    [`//registry.npmjs.org/:_keys`]: [{
+      expires: '2021-12-01', // Before the NPM_MISSING_PUBLISH_TIME_FALLBACK_DATE
+      keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+      keytype: 'ecdsa-sha2-nistp256',
+      scheme: 'ecdsa-sha2-nistp256',
+      // eslint-disable-next-line max-len
+      key: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==',
+      // eslint-disable-next-line max-len
+      pemkey: '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==\n-----END PUBLIC KEY-----',
+    }],
+  })
+  return t.rejects(
+    f.manifest(),
+    {
+      code: 'EEXPIREDSIGNATUREKEY',
+    }
+  )
+})
+
 t.test('verifySignatures invalid signature', async t => {
   tnock(t, 'https://registry.npmjs.org')
     .get('/abbrev')
