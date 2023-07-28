@@ -1,5 +1,21 @@
 # Changelog
 
+## [16.0.0](https://github.com/npm/pacote/compare/v15.2.0...v16.0.0) (2023-07-28)
+
+### ⚠️ BREAKING CHANGES
+
+* the underlying fetch module now uses `@npmcli/agent`. Backwards compatibility should be fully implemented but due to the scope of this change it was made a breaking change out of an abundance of caution.
+* support for node 14 has been removed
+
+### Bug Fixes
+
+* [`73b6297`](https://github.com/npm/pacote/commit/73b62976054951b683a5c4c5f511d39f818641e4) [#290](https://github.com/npm/pacote/pull/290) drop node14 support (#290) (@wraithgar)
+
+### Dependencies
+
+* [`8dc6a32`](https://github.com/npm/pacote/commit/8dc6a32a22d76028f9802fbe8920ec0911d3981a) bump minipass from 5.0.0 to 7.0.2
+* [`7cebf19`](https://github.com/npm/pacote/commit/7cebf194afb45e6aa8d44150b94984c75a3a5e08) bump npm-registry-fetch from 14.0.5 to 15.0.0
+
 ## [15.2.0](https://github.com/npm/pacote/compare/v15.1.3...v15.2.0) (2023-05-03)
 
 ### Features
