@@ -114,7 +114,7 @@ jobs:
             os: macos-latest
             shell: bash
         node-version:
-          - 16.13.0
+          - 16.14.0
           - 16.x
           - 18.0.0
           - 18.x
