@@ -1,5 +1,22 @@
 # Changelog
 
+## [17.0.0](https://github.com/npm/pacote/compare/v16.0.0...v17.0.0) (2023-08-15)
+
+### ⚠️ BREAKING CHANGES
+
+* support for node <=16.13 has been removed
+
+### Bug Fixes
+
+* [`2db2fb5`](https://github.com/npm/pacote/commit/2db2fb520b54a3a486c92f141a86c31910a5fa73) [#296](https://github.com/npm/pacote/pull/296) drop node 16.13.x support (@lukekarrys)
+
+### Dependencies
+
+* [`e9e964b`](https://github.com/npm/pacote/commit/e9e964b5facbf4eb1229ec17e9da3ebeaffc7fe0) [#299](https://github.com/npm/pacote/pull/299) bump read-package-json from 6.0.4 to 7.0.0
+* [`5d26500`](https://github.com/npm/pacote/commit/5d26500d32bc379a26c42b7e107c9bb28dac5389) [#298](https://github.com/npm/pacote/pull/298) bump npm-package-arg from 10.1.0 to 11.0.0
+* [`d13bb9c`](https://github.com/npm/pacote/commit/d13bb9c5f174f38c419bb9701efe1bd9eef27a91) [#294](https://github.com/npm/pacote/pull/294) bump @npmcli/git from 4.1.0 to 5.0.0
+* [`7a25e39`](https://github.com/npm/pacote/commit/7a25e396b6ca6a54da9724726e1da4fdd5a95ea5) [#293](https://github.com/npm/pacote/pull/293) bump cacache from 17.1.4 to 18.0.0
+
 ## [16.0.0](https://github.com/npm/pacote/compare/v15.2.0...v16.0.0) (2023-07-28)
 
 ### ⚠️ BREAKING CHANGES
