@@ -1,5 +1,12 @@
 # Changelog
 
+## [17.0.1](https://github.com/npm/pacote/compare/v17.0.0...v17.0.1) (2023-08-15)
+
+### Dependencies
+
+* [`6ddae13`](https://github.com/npm/pacote/commit/6ddae13dd4cd346255221077d13fa534ed924f63) [#302](https://github.com/npm/pacote/pull/302) bump npm-registry-fetch from 15.0.0 to 16.0.0
+* [`42bf787`](https://github.com/npm/pacote/commit/42bf787be1af58050edd38ab599bb74021b88dbf) [#300](https://github.com/npm/pacote/pull/300) bump npm-pick-manifest from 8.0.2 to 9.0.0
+
 ## [17.0.0](https://github.com/npm/pacote/compare/v16.0.0...v17.0.0) (2023-08-15)
 
 ### ⚠️ BREAKING CHANGES
