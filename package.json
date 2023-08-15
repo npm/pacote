@@ -53,7 +53,7 @@
     "minipass": "^7.0.2",
     "npm-package-arg": "^11.0.0",
     "npm-packlist": "^7.0.0",
-    "npm-pick-manifest": "^8.0.0",
+    "npm-pick-manifest": "^9.0.0",
     "npm-registry-fetch": "^15.0.0",
     "proc-log": "^3.0.0",
     "promise-retry": "^2.0.1",
