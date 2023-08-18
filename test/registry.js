@@ -3,16 +3,14 @@ const t = require('tap')
 const RegistryFetcher = require('../lib/registry.js')
 const MockedRegistryFetcher = t.mock('../lib/registry.js', {
   sigstore: {
-    sigstore: {
-      verify: async (bundle, data, options) => {
-        options.keySelector && options.keySelector()
-        if (bundle.dsseEnvelope.payloadType === 'tlog-entry-mismatch') {
-          throw new Error('bundle content and tlog entry do not match')
-        }
-        if (bundle.dsseEnvelope.signatures[0].sig === 'invalid-signature') {
-          throw new Error('artifact signature verification failed')
-        }
-      },
+    verify: async (bundle, options) => {
+      options.keySelector && options.keySelector()
+      if (bundle.dsseEnvelope.payloadType === 'tlog-entry-mismatch') {
+        throw new Error('bundle content and tlog entry do not match')
+      }
+      if (bundle.dsseEnvelope.signatures[0].sig === 'invalid-signature') {
+        throw new Error('artifact signature verification failed')
+      }
     },
   },
 })
