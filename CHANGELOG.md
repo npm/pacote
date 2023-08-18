@@ -1,5 +1,11 @@
 # Changelog
 
+## [17.0.2](https://github.com/npm/pacote/compare/v17.0.1...v17.0.2) (2023-08-18)
+
+### Dependencies
+
+* [`c3b892d`](https://github.com/npm/pacote/commit/c3b892db8b889e43d8f385ee1171e2e36a5b32eb) [#303](https://github.com/npm/pacote/pull/303) bump sigstore from 1.3.0 to 2.0.0
+
 ## [17.0.1](https://github.com/npm/pacote/compare/v17.0.0...v17.0.1) (2023-08-15)
 
 ### Dependencies
