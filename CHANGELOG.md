@@ -1,5 +1,11 @@
 # Changelog
 
+## [17.0.3](https://github.com/npm/pacote/compare/v17.0.2...v17.0.3) (2023-08-24)
+
+### Dependencies
+
+* [`ace7c28`](https://github.com/npm/pacote/commit/ace7c283c424b12ec18c9b412515fe750538f0d9) [#305](https://github.com/npm/pacote/pull/305) bump npm-packlist from 7.0.4 to 8.0.0
+
 ## [17.0.2](https://github.com/npm/pacote/compare/v17.0.1...v17.0.2) (2023-08-18)
 
 ### Dependencies
