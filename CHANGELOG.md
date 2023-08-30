@@ -1,5 +1,12 @@
 # Changelog
 
+## [17.0.4](https://github.com/npm/pacote/compare/v17.0.3...v17.0.4) (2023-08-30)
+
+### Dependencies
+
+* [`ba8f790`](https://github.com/npm/pacote/commit/ba8f790ca27c753921d5cef08512705b50de12e8) [#309](https://github.com/npm/pacote/pull/309) bump @npmcli/promise-spawn from 6.0.2 to 7.0.0
+* [`2c0d3ae`](https://github.com/npm/pacote/commit/2c0d3ae6beaffcc849bebb1a45d6ba46cf3ce433) [#308](https://github.com/npm/pacote/pull/308) bump @npmcli/run-script from 6.0.2 to 7.0.0
+
 ## [17.0.3](https://github.com/npm/pacote/compare/v17.0.2...v17.0.3) (2023-08-24)
 
 ### Dependencies
