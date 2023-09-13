@@ -506,7 +506,7 @@ t.test('extract from tarball from hosted git service', async t => {
           scripts: { prepare: 'node prepare.js', test: 'node index.js' },
           files: ['index.js'],
           _id: 'repo@1.0.0',
-          _integrity: /^sha512-/,
+          _integrity: undefined,
           _resolved: `${remoteHosted}#${REPO_HEAD}`,
         })
         const p = await g.packument()
@@ -524,7 +524,7 @@ t.test('extract from tarball from hosted git service', async t => {
               scripts: { prepare: 'node prepare.js', test: 'node index.js' },
               files: ['index.js'],
               _id: 'repo@1.0.0',
-              _integrity: /^sha512-/,
+              _integrity: undefined,
               _resolved: `${remoteHosted}#${REPO_HEAD}`,
               dist: {},
             },
@@ -539,6 +539,19 @@ t.test('extract from tarball from hosted git service', async t => {
       t.test('without repo@on the spec', runTest(''))
     })
   }
+})
+
+t.test('can get manifest without arborist constructor', async t => {
+  const spec = `localhost:repo/x#${REPO_HEAD}`
+  const noArbOpts = { ...opts, Arborist: null }
+  const g = new GitFetcher(spec, noArbOpts)
+  const m = await g.manifest()
+  t.match(m, {
+    name: 'repo',
+    version: '1.0.0',
+    _integrity: undefined,
+    _resolved: `${remoteHosted}#${REPO_HEAD}`,
+  })
 })
 
 t.test('include auth with hosted https when provided', async t => {
