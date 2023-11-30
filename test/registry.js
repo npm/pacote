@@ -186,13 +186,13 @@ t.test('verifySignatures valid signature', async t => {
   t.ok(mani._integrity)
 })
 
-t.test('verifySignatures expired signature', async t => {
+t.test('verifySignatures expired key', async t => {
   const f = new RegistryFetcher('@isaacs/namespace-test', {
     registry,
     cache,
     verifySignatures: true,
     [`//localhost:${port}/:_keys`]: [{
-      expires: '2010-01-01',
+      expires: '2010-01-01T00:00:00.000Z',
       keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
       keytype: 'ecdsa-sha2-nistp256',
       scheme: 'ecdsa-sha2-nistp256',
@@ -208,6 +208,45 @@ t.test('verifySignatures expired signature', async t => {
       code: 'EEXPIREDSIGNATUREKEY',
     }
   )
+})
+
+t.test('verifySignatures rotated keys', async t => {
+  const f = new RegistryFetcher('@isaacs/namespace-test', {
+    registry,
+    cache,
+    verifySignatures: true,
+    [`//localhost:${port}/:_keys`]: [{
+      expires: '2020-06-28T18:46:27.981Z', // Expired AFTER publish time: 2019-06-28T18:46:27.981Z
+      keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+      keytype: 'ecdsa-sha2-nistp256',
+      scheme: 'ecdsa-sha2-nistp256',
+      // eslint-disable-next-line max-len
+      key: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==',
+      // eslint-disable-next-line max-len
+      pemkey: '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==\n-----END PUBLIC KEY-----',
+    }, {
+      expires: null,
+      keyid: 'SHA256:123',
+      keytype: 'ecdsa-sha2-nistp256',
+      scheme: 'ecdsa-sha2-nistp256',
+      // eslint-disable-next-line max-len
+      key: '123',
+      // eslint-disable-next-line max-len
+      pemkey: '-----BEGIN PUBLIC KEY-----\n123\n-----END PUBLIC KEY-----',
+    }],
+  })
+  const mani = await f.manifest()
+  t.match(mani, {
+    // eslint-disable-next-line max-len
+    _integrity: 'sha512-5ZYe1LgwHIaag0p9loMwsf5N/wJ4XAuHVNhSO+qulQOXWnyJVuco6IZjo+5u4ZLF/GimdHJcX+QK892ONfOCqQ==',
+    _signatures: [
+      {
+        keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+        // eslint-disable-next-line max-len
+        sig: 'MEQCIHXwKYe70+xcDOvFhM1etZQFUKEwz9VarppUbp5/Ie1+AiAM7aZcT1a2JR0oF/XwjNb13YEHwiagnDapLgYbklRvtA==',
+      },
+    ],
+  })
 })
 
 t.test('verifySignatures invalid signature', async t => {
@@ -835,6 +874,37 @@ t.test('verifyAttestations no valid key', async t => {
       code: 'EEXPIREDSIGNATUREKEY',
     }
   )
+})
+
+t.test('verifyAttestations rotated key', async t => {
+  const fixture = fs.readFileSync(
+    path.join(__dirname, 'fixtures', 'sigstore/valid-attestations.json'),
+    'utf8'
+  )
+
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/-/npm/v1/attestations/sigstore@0.4.0')
+    .reply(200, JSON.parse(fixture))
+
+  const f = new MockedRegistryFetcher('sigstore@0.4.0', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifyAttestations: true,
+    [`//registry.npmjs.org/:_keys`]: [{
+      expires: '2023-04-01T00:00:00.000Z', // Rotated AFTER integratedTime 2023-01-11T17:31:54.000Z
+      keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+      keytype: 'ecdsa-sha2-nistp256',
+      scheme: 'ecdsa-sha2-nistp256',
+      // eslint-disable-next-line max-len
+      key: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==',
+      // eslint-disable-next-line max-len
+      pemkey: '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==\n-----END PUBLIC KEY-----',
+    }],
+  })
+
+  const mani = await f.manifest()
+  t.ok(mani._attestations)
+  t.ok(mani._integrity)
 })
 
 t.test('verifyAttestations no registry keys at all', async t => {
