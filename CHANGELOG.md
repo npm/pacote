@@ -1,5 +1,11 @@
 # Changelog
 
+## [17.0.5](https://github.com/npm/pacote/compare/v17.0.4...v17.0.5) (2023-12-01)
+
+### Bug Fixes
+
+* [`0c96b9e`](https://github.com/npm/pacote/commit/0c96b9e825806441e043fbf97f167be3e9f5479d) [#338](https://github.com/npm/pacote/pull/338) bug to support rotated keys in signature/attestation audit (#338) (@feelepxyz)
+
 ## [17.0.4](https://github.com/npm/pacote/compare/v17.0.3...v17.0.4) (2023-08-30)
 
 ### Dependencies
