@@ -22,7 +22,9 @@ const { relative, resolve, basename } = require('path')
 
 const me = t.testdir()
 
-t.cleanSnapshot = str => str.split(process.cwd()).join('${CWD}')
+t.cleanSnapshot = str => str
+  .split(process.cwd()).join('${CWD}')
+  .replace(/"integrity": ".*",/g, '"integrity": "{integrity}",')
 
 const abbrev = resolve(__dirname, 'fixtures/abbrev')
 const abbrevspec = `file:${relative(process.cwd(), abbrev)}`
