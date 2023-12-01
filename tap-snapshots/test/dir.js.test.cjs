@@ -8,7 +8,7 @@
 exports[`test/dir.js TAP basic > extract 1`] = `
 Object {
   "from": "file:test/fixtures/abbrev",
-  "integrity": "sha512-4LQrO8XIPkwgx2wanFZU5bCNmzB1dzTbDtgozDs2uqGLj0x1De97lOP3BFEtlsZDFOquwrJt0IHsjEFfgfDyVA==",
+  "integrity": "{integrity}",
   "resolved": "\${CWD}/test/fixtures/abbrev",
 }
 `
@@ -151,7 +151,7 @@ Object {
         "tap": "^10.1",
       },
       "dist": Object {
-        "integrity": "sha512-whatever-this-is-only-checked-if-we-extract-it",
+        "integrity": "{integrity}",
         "tarball": "file:\${CWD}/test/fixtures/abbrev",
       },
       "files": Array [
@@ -176,7 +176,7 @@ Object {
 exports[`test/dir.js TAP make bins executable > results of unpack 1`] = `
 Object {
   "from": "file:test/fixtures/bin-object",
-  "integrity": "sha512-hvYyDtqhAkxg/NF7eOjCpDcIs7ksaZjk9vrBkktxTJ0liITA/FsnEgmbP9l8h3rp+zN1QIvKAUvyTCYRpyCqZQ==",
+  "integrity": "{integrity}",
   "resolved": "\${CWD}/test/fixtures/bin-object",
 }
 `
@@ -184,7 +184,7 @@ Object {
 exports[`test/dir.js TAP responds to foregroundScripts: true > extract 1`] = `
 Object {
   "from": "file:test/fixtures/prepare-script",
-  "integrity": "sha512-shf/7QYgFII06kJbyyqj4u86uLuyJnD0xVGLm0XDkC6nuVU+GBHwQ9uogbLUQnBu0gSvcWYVnO1TyPxj+YQDdw==",
+  "integrity": "{integrity}",
   "resolved": "\${CWD}/test/fixtures/prepare-script",
 }
 `
@@ -250,7 +250,7 @@ Object {
 exports[`test/dir.js TAP responds to foregroundScripts: true and silent: true > extract 1`] = `
 Object {
   "from": "file:test/fixtures/prepare-script",
-  "integrity": "sha512-shf/7QYgFII06kJbyyqj4u86uLuyJnD0xVGLm0XDkC6nuVU+GBHwQ9uogbLUQnBu0gSvcWYVnO1TyPxj+YQDdw==",
+  "integrity": "{integrity}",
   "resolved": "\${CWD}/test/fixtures/prepare-script",
 }
 `
@@ -316,7 +316,7 @@ Object {
 exports[`test/dir.js TAP with prepare script > extract 1`] = `
 Object {
   "from": "file:test/fixtures/prepare-script",
-  "integrity": "sha512-shf/7QYgFII06kJbyyqj4u86uLuyJnD0xVGLm0XDkC6nuVU+GBHwQ9uogbLUQnBu0gSvcWYVnO1TyPxj+YQDdw==",
+  "integrity": "{integrity}",
   "resolved": "\${CWD}/test/fixtures/prepare-script",
 }
 `
