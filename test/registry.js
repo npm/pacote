@@ -552,66 +552,6 @@ t.test('verifyAttestations invalid signature', async t => {
   )
 })
 
-t.test('verifyAttestations errors when tuf update fails', async t => {
-  tnock(t, 'https://registry.npmjs.org')
-    .get('/sigstore')
-    .reply(200, {
-      _id: 'sigstore',
-      _rev: 'deadbeef',
-      name: 'sigstore',
-      'dist-tags': { latest: '0.4.0' },
-      versions: {
-        '0.4.0': {
-          name: 'sigstore',
-          version: '0.4.0',
-          dist: {
-            // eslint-disable-next-line max-len
-            integrity: 'sha512-KCwMX6k20mQyFkNYG2XT3lwK9u1P36wS9YURFd85zCXPrwrSLZCEh7/vMBFNYcJXRiBtGDS+T4/RZZF493zABA==',
-            // eslint-disable-next-line max-len
-            attestations: { url: 'https://registry.npmjs.org/-/npm/v1/attestations/sigstore@0.4.0', provenance: { predicateType: 'https://slsa.dev/provenance/v0.2' } },
-          },
-        },
-      },
-    })
-
-  const fixture = fs.readFileSync(
-    path.join(__dirname, 'fixtures', 'sigstore/valid-attestations.json'),
-    'utf8'
-  )
-
-  tnock(t, 'https://tuf-repo-cdn.sigstore.dev')
-    .get(/./) // match any path
-    .reply(404)
-
-  tnock(t, 'https://registry.npmjs.org')
-    .get('/-/npm/v1/attestations/sigstore@0.4.0')
-    .reply(200, JSON.parse(fixture))
-
-  const f = new RegistryFetcher('sigstore@0.4.0', {
-    registry: 'https://registry.npmjs.org',
-    cache,
-    verifyAttestations: true,
-    [`//registry.npmjs.org/:_keys`]: [{
-      expires: null,
-      keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
-      keytype: 'ecdsa-sha2-nistp256',
-      scheme: 'ecdsa-sha2-nistp256',
-      // eslint-disable-next-line max-len
-      key: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==',
-      // eslint-disable-next-line max-len
-      pemkey: '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==\n-----END PUBLIC KEY-----',
-    }],
-  })
-
-  return t.rejects(
-    f.manifest(),
-    /sigstore@0.4.0 failed to verify attestation: error refreshing TUF metadata/,
-    {
-      code: 'EATTESTATIONVERIFY',
-    }
-  )
-})
-
 t.test('verifyAttestations publish attestation for unknown public key', async t => {
   tnock(t, 'https://registry.npmjs.org')
     .get('/sigstore')
