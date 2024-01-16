@@ -1,5 +1,18 @@
 # Changelog
 
+## [17.0.6](https://github.com/npm/pacote/compare/v17.0.5...v17.0.6) (2024-01-16)
+
+### Dependencies
+
+* [`0a5920f`](https://github.com/npm/pacote/commit/0a5920f8f8c5907b62ec0f80d11b4c3b9df24a18) [#343](https://github.com/npm/pacote/pull/343) bump sigstore from 2.0.0 to 2.2.0 (#343) (@bdehamer)
+
+### Chores
+
+* [`6fd23ad`](https://github.com/npm/pacote/commit/6fd23ad232035edc3624e74d4558ee18ce562bdd) [#342](https://github.com/npm/pacote/pull/342) postinstall for dependabot template-oss PR (@lukekarrys)
+* [`c3b398a`](https://github.com/npm/pacote/commit/c3b398a4c646e1e202cb6f42ce846a81f4e5ddb5) [#342](https://github.com/npm/pacote/pull/342) bump @npmcli/template-oss from 4.21.1 to 4.21.3 (@dependabot[bot])
+* [`4557919`](https://github.com/npm/pacote/commit/45579193a63fb7547c696ddd6bd17dd0b29ed989) [#337](https://github.com/npm/pacote/pull/337) postinstall for dependabot template-oss PR (@lukekarrys)
+* [`c7e293c`](https://github.com/npm/pacote/commit/c7e293c98c9cad47e96572d5e1321b77d26c4bb9) [#337](https://github.com/npm/pacote/pull/337) bump @npmcli/template-oss from 4.19.0 to 4.21.1 (@dependabot[bot])
+
 ## [17.0.5](https://github.com/npm/pacote/compare/v17.0.4...v17.0.5) (2023-12-01)
 
 ### Bug Fixes
