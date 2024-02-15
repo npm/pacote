@@ -59,7 +59,7 @@
     "promise-retry": "^2.0.1",
     "read-package-json": "^7.0.0",
     "read-package-json-fast": "^3.0.0",
-    "sigstore": "^2.2.0",
+    "sigstore": "^2.2.2",
     "ssri": "^10.0.0",
     "tar": "^6.1.11"
   },
