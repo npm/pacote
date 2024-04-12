@@ -1,5 +1,11 @@
 # Changelog
 
+## [17.0.7](https://github.com/npm/pacote/compare/v17.0.6...v17.0.7) (2024-04-12)
+
+### Dependencies
+
+* [`e07c3e5`](https://github.com/npm/pacote/commit/e07c3e5bed789dabe86b1c71a2963dbce6d31567) [#350](https://github.com/npm/pacote/pull/350) `proc-log@4.0.0` (#350)
+
 ## [17.0.6](https://github.com/npm/pacote/compare/v17.0.5...v17.0.6) (2024-01-16)
 
 ### Dependencies
