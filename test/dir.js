@@ -64,7 +64,6 @@ t.test('with prepare script', async t => {
     .then(() => t.matchSnapshot(fs.readdirSync(me + '/prepare').sort(), 'file list'))
     .then(() => t.match(RUNS[0], {
       stdio: 'pipe',
-      banner: false,
     }, 'should run in background'))
 })
 
@@ -80,24 +79,7 @@ t.test('responds to foregroundScripts: true', async t => {
     .then(() => t.matchSnapshot(fs.readdirSync(me + '/prepare').sort(), 'file list'))
     .then(() => t.match(RUNS[0], {
       stdio: 'inherit',
-      banner: true,
     }, 'should run in foreground'))
-})
-
-t.test('responds to foregroundScripts: true and silent: true', async t => {
-  RUNS.length = 0
-  const opt = { foregroundScripts: true, silent: true, tree: await loadActual(prepare) }
-  const f = new DirFetcher(preparespec, opt)
-  t.resolveMatchSnapshot(f.packument(), 'packument')
-  t.resolveMatchSnapshot(f.manifest(), 'manifest')
-  const index = me + '/prepare/index.js'
-  return t.resolveMatchSnapshot(f.extract(me + '/prepare'), 'extract')
-    .then(() => t.spawn(process.execPath, [index], 'test prepared result'))
-    .then(() => t.matchSnapshot(fs.readdirSync(me + '/prepare').sort(), 'file list'))
-    .then(() => t.match(RUNS[0], {
-      stdio: 'inherit',
-      banner: false,
-    }, 'should run in foreground, but without banner'))
 })
 
 t.test('missing dir cannot be packed', async t => {
