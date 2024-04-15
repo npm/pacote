@@ -1,5 +1,24 @@
 # Changelog
 
+## [18.0.0](https://github.com/npm/pacote/compare/v17.0.7...v18.0.0) (2024-04-15)
+
+### ⚠️ BREAKING CHANGES
+
+* The `silent` option was used to control whether `@npmcli/run-script` would write a banner via `console.log`. Now ouput will be emitted via an `process.emit('output')`.
+
+### Features
+
+* [`0c04569`](https://github.com/npm/pacote/commit/0c045693dfdc8654a044b3297b49192d29a8c813) [#352](https://github.com/npm/pacote/pull/352) remove silent option (@lukekarrys)
+
+### Dependencies
+
+* [`cb3abc2`](https://github.com/npm/pacote/commit/cb3abc2e77326abe158e90247a12882e6a767e13) [#352](https://github.com/npm/pacote/pull/352) bump @npmcli/run-script from 7.0.4 to 8.0.0 (@dependabot[bot])
+
+### Chores
+
+* [`7089bb1`](https://github.com/npm/pacote/commit/7089bb108f20b2c728836651c83678d68fc181c0) [#355](https://github.com/npm/pacote/pull/355) postinstall for dependabot template-oss PR (@lukekarrys)
+* [`4952672`](https://github.com/npm/pacote/commit/4952672ebca467fc1f9c49b19fb3fef9eecbaf19) [#355](https://github.com/npm/pacote/pull/355) bump @npmcli/template-oss from 4.21.3 to 4.21.4 (@dependabot[bot])
+
 ## [17.0.7](https://github.com/npm/pacote/compare/v17.0.6...v17.0.7) (2024-04-12)
 
 ### Dependencies
