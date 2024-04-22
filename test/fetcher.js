@@ -94,15 +94,14 @@ t.test('tarball data', async t => {
 
 t.test('tarballFile', t => {
   const target = resolve(me, 'tarball-file')
-  t.test('basic copy', t =>
-    new FileFetcher(abbrevspec, { cache })
-      .tarballFile(target + '/basic/1.tgz'))
 
-  t.test('again, folder already created', t =>
-    new FileFetcher(abbrevspec, { cache })
-      .tarballFile(target + '/basic/2.tgz'))
+  t.test('basic', async t => {
+    await new FileFetcher(abbrevspec, { cache })
+      .tarballFile(target + '/basic/1.tgz')
 
-  t.test('check it', t => {
+    await new FileFetcher(abbrevspec, { cache })
+      .tarballFile(target + '/basic/2.tgz')
+
     const one = fs.readFileSync(target + '/basic/1.tgz')
     const two = fs.readFileSync(target + '/basic/2.tgz')
     const expect = fs.readFileSync(abbrev)

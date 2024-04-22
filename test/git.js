@@ -87,7 +87,7 @@ const tar = require('tar')
 
 let REPO_HEAD = ''
 t.test('setup', { bail: true }, t => {
-  t.test('create repo', t => {
+  t.test('create repo', () => {
     const git = (...cmd) => spawnGit(cmd, { cwd: repo })
     const write = (f, c) => fs.writeFileSync(`${repo}/${f}`, c)
     const npm = (...cmd) => spawnNpm('npm', [
@@ -162,7 +162,7 @@ t.test('setup', { bail: true }, t => {
       .then(({ stdout }) => REPO_HEAD = stdout.trim())
   })
 
-  t.test('create cycle of git prepared deps', async t => {
+  t.test('create cycle of git prepared deps', async () => {
     for (const repoDir of [cycleA, cycleB]) {
       const git = (...cmd) => spawnGit(cmd, { cwd: repoDir })
       const write = (f, c) => fs.writeFileSync(`${repoDir}/${f}`, c)
@@ -227,7 +227,7 @@ t.test('setup', { bail: true }, t => {
     daemon.on('close', () => rmSync(me, { recursive: true, force: true }))
   })
 
-  t.test('create a repo with a submodule', t => {
+  t.test('create a repo with a submodule', () => {
     const submoduleRepo = resolve(me, 'submodule-repo')
     const git = (...cmd) => spawnGit(cmd, { cwd: submoduleRepo })
     const write = (f, c) => fs.writeFileSync(`${submoduleRepo}/${f}`, c)
@@ -285,7 +285,7 @@ t.test('setup', { bail: true }, t => {
       .then(() => git('commit', '-m', 'package'))
   })
 
-  t.test('create a repo with workspaces', t => {
+  t.test('create a repo with workspaces', () => {
     const workspacesRepo = resolve(me, 'workspaces-repo')
     const wsfolder = resolve(me, 'workspaces-repo/a')
     const git = (...cmd) => spawnGit(cmd, { cwd: workspacesRepo })
@@ -315,7 +315,7 @@ t.test('setup', { bail: true }, t => {
       .then(() => git('commit', '-m', 'a/package.json'))
   })
 
-  t.test('create a repo with only a prepack script', t => {
+  t.test('create a repo with only a prepack script', () => {
     const prepackRepo = resolve(me, 'prepack-repo')
     const git = (...cmd) => spawnGit(cmd, { cwd: prepackRepo })
     const write = (f, c) => fs.writeFileSync(`${prepackRepo}/${f}`, c)
@@ -608,7 +608,7 @@ t.test('fetch a weird ref', t => {
   t.end()
 })
 
-t.test('fetch a private repo where the tgz is a 404', t => {
+t.test('fetch a private repo where the tgz is a 404', () => {
   const gf = new GitFetcher(`localhost:repo/x#${REPO_HEAD}`, opts)
   gf.spec.hosted.tarball = () => `${hostedUrl}/not-found.tgz`
   // should fetch it by falling back to ssh when it gets an http error
