@@ -1,5 +1,11 @@
 # Changelog
 
+## [18.0.1](https://github.com/npm/pacote/compare/v18.0.0...v18.0.1) (2024-04-23)
+
+### Bug Fixes
+
+* [`b547e0d`](https://github.com/npm/pacote/commit/b547e0dfbc51c20ca13cfaba9a27f221dc38fc10) [#356](https://github.com/npm/pacote/pull/356) use @npmcli/package-json (#356) (@lukekarrys)
+
 ## [18.0.0](https://github.com/npm/pacote/compare/v17.0.7...v18.0.0) (2024-04-15)
 
 ### ⚠️ BREAKING CHANGES
