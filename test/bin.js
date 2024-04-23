@@ -23,7 +23,7 @@ pacote.manifest = (spec, conf) => Promise.resolve({
 pacote.packument = (spec, conf) => Promise.resolve({ method: 'packument', spec, conf })
 pacote.tarball.file = (spec, file, conf) => Promise.resolve({ method: 'tarball', spec, file, conf })
 const { Minipass } = require('minipass')
-pacote.tarball.stream = (spec, handler, conf) => handler(new Minipass().end('tarball data'))
+pacote.tarball.stream = (spec, handler) => handler(new Minipass().end('tarball data'))
 pacote.extract = (spec, dest, conf) => Promise.resolve({ method: 'extract', spec, dest, conf })
 
 t.test('running bin runs main file', t => {
