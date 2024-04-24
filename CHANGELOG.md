@@ -1,5 +1,11 @@
 # Changelog
 
+## [18.0.2](https://github.com/npm/pacote/compare/v18.0.1...v18.0.2) (2024-04-24)
+
+### Bug Fixes
+
+* [`116b277`](https://github.com/npm/pacote/commit/116b2776822b494b5928297f4dedc01af671523a) [#358](https://github.com/npm/pacote/pull/358) don't strip underscore attributes in .manifest() (#358) (@wraithgar)
+
 ## [18.0.1](https://github.com/npm/pacote/compare/v18.0.0...v18.0.1) (2024-04-23)
 
 ### Bug Fixes
