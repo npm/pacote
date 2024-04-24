@@ -1267,6 +1267,7 @@ t.test('option replaceRegistryHost', rhTest => {
         dist: {
           tarball: 'https://registry.npmjs.org/abbrev/-/abbrev-1.1.1.tgz',
         },
+        _test: true,
       },
     },
   })
@@ -1291,6 +1292,7 @@ t.test('option replaceRegistryHost', rhTest => {
     const manifest = await fetcher.manifest()
     ct.equal(manifest.dist.tarball, 'https://registry.npmjs.org/abbrev/-/abbrev-1.1.1.tgz')
     const tarball = await fetcher.tarball()
+    ct.equal(manifest._test, true, 'Underscores are preserved')
     ct.match(tarball, abbrevTGZ)
   })
 
