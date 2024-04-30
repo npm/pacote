@@ -1,5 +1,11 @@
 # Changelog
 
+## [18.0.3](https://github.com/npm/pacote/compare/v18.0.2...v18.0.3) (2024-04-30)
+
+### Dependencies
+
+* [`5ecce7a`](https://github.com/npm/pacote/commit/5ecce7ac82ba9e710d3bb21ec9096a992516a2a1) [#360](https://github.com/npm/pacote/pull/360) `npm-registry-fetch@17.0.0` (#360)
+
 ## [18.0.2](https://github.com/npm/pacote/compare/v18.0.1...v18.0.2) (2024-04-24)
 
 ### Bug Fixes
