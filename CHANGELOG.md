@@ -1,5 +1,16 @@
 # Changelog
 
+## [18.0.4](https://github.com/npm/pacote/compare/v18.0.3...v18.0.4) (2024-05-04)
+
+### Bug Fixes
+
+* [`5fd2c80`](https://github.com/npm/pacote/commit/5fd2c80d5a0b47692fc36175bf37bded451dadac) [#363](https://github.com/npm/pacote/pull/363) linting: no-unused-vars (@lukekarrys)
+
+### Chores
+
+* [`d867639`](https://github.com/npm/pacote/commit/d867639ef137f924dbe1fe3d83cd230a142e703e) [#363](https://github.com/npm/pacote/pull/363) bump @npmcli/template-oss to 4.22.0 (@lukekarrys)
+* [`a235f37`](https://github.com/npm/pacote/commit/a235f37a7b886c4f3e38eb3a2c34a0d240a880bb) [#363](https://github.com/npm/pacote/pull/363) postinstall for dependabot template-oss PR (@lukekarrys)
+
 ## [18.0.3](https://github.com/npm/pacote/compare/v18.0.2...v18.0.3) (2024-04-30)
 
 ### Dependencies
