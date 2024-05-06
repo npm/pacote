@@ -1188,6 +1188,11 @@ t.test('a manifest that lacks integrity', async t => {
   t.equal(await f.packument(), await f2.packument(), 'serve cached packument')
 })
 
+t.test('packument has contentLength', async t => {
+  const f = new RegistryFetcher('underscore', { registry, cache })
+  t.match(await f.packument(), { _contentLength: 40966 }, 'got contentLength from body')
+})
+
 t.test('packument that has been cached', async t => {
   const packumentUrl = `${registry}asdf`
   const packument = {
