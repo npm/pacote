@@ -2,10 +2,11 @@ const FileFetcher = require('../lib/file.js')
 const t = require('tap')
 const { relative, resolve, basename } = require('path')
 const fs = require('fs')
-const me = t.testdir({ cache: {} })
-const cache = resolve(me, 'cache')
+
 t.cleanSnapshot = str => str.split(process.cwd()).join('${CWD}')
 
+const me = t.testdir({ cache: {} })
+const cache = resolve(me, 'cache')
 const abbrev = resolve(__dirname, 'fixtures/abbrev-1.1.1.tgz')
 const abbrevspec = `file:${relative(process.cwd(), abbrev)}`
 

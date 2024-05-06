@@ -2,17 +2,17 @@ const RemoteFetcher = require('../lib/remote.js')
 const http = require('http')
 const ssri = require('ssri')
 const t = require('tap')
-
 const { resolve } = require('path')
+const fs = require('fs')
+
 const me = t.testdir()
 const cache = resolve(me, 'cache')
-
-t.cleanSnapshot = str => str.split('' + port).join('{PORT}')
-
-const fs = require('fs')
 const abbrev = resolve(__dirname, 'fixtures/abbrev-1.1.1.tgz')
 const port = 12345 + (+process.env.TAP_CHILD_ID || 0)
 const server = `http://localhost:${port}`
+
+t.cleanSnapshot = str => str.split('' + port).join('{PORT}')
+
 let abbrevIntegrity
 const requestLog = []
 t.test('start server', t => {

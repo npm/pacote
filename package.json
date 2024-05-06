@@ -4,7 +4,7 @@
   "description": "JavaScript package downloader",
   "author": "GitHub Inc.",
   "bin": {
-    "pacote": "lib/bin.js"
+    "pacote": "bin/index.js"
   },
   "license": "ISC",
   "main": "lib/index.js",

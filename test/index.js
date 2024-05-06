@@ -1,14 +1,13 @@
 const t = require('tap')
 const pacote = require('../lib/index.js')
 const fs = require('fs')
-
 const GitFetcher = require('../lib/git.js')
 const RegistryFetcher = require('../lib/registry.js')
 const FileFetcher = require('../lib/file.js')
 const DirFetcher = require('../lib/dir.js')
 const RemoteFetcher = require('../lib/remote.js')
-
 const { resolve, relative } = require('path')
+
 const abbrev = resolve(__dirname, 'fixtures/abbrev-1.1.1.tgz')
 const abbrevspec = `file:${relative(process.cwd(), abbrev)}`
 
