@@ -1,5 +1,13 @@
 # Changelog
 
+## [18.0.5](https://github.com/npm/pacote/compare/v18.0.4...v18.0.5) (2024-05-06)
+
+### Bug Fixes
+
+* [`5e75582`](https://github.com/npm/pacote/commit/5e755820b70f60ea136d9e85eb42a6c2d9718472) [#368](https://github.com/npm/pacote/pull/368) dont set _contentLength if not in headers (#368) (@lukekarrys)
+* [`1b6950b`](https://github.com/npm/pacote/commit/1b6950b993f07f87cf66a0e4d76e646939174d88) [#365](https://github.com/npm/pacote/pull/365) move bin to its own directory (@lukekarrys)
+* [`1b6950b`](https://github.com/npm/pacote/commit/1b6950b993f07f87cf66a0e4d76e646939174d88) [#365](https://github.com/npm/pacote/pull/365) refactor: symbol cleanup (#365) (@lukekarrys)
+
 ## [18.0.4](https://github.com/npm/pacote/compare/v18.0.3...v18.0.4) (2024-05-04)
 
 ### Bug Fixes
