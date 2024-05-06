@@ -1,13 +1,15 @@
-const bin = require.resolve('../lib/bin.js')
-const { main, run, parseArg, parse } = require('../lib/bin.js')
+const pkg = require('../package.json')
+const bin = require.resolve(`../${pkg.bin.pacote}`)
+const { main, run, parseArg, parse } = require(bin)
 const { spawn } = require('child_process')
 const t = require('tap')
-const version = require('../package.json').version
+const pacote = require('../')
+const { Minipass } = require('minipass')
+
 t.cleanSnapshot = str =>
-  str.split(version).join('{VERSION}')
+  str.split(pkg.version).join('{VERSION}')
     .split(process.env.HOME).join('{HOME}')
 
-const pacote = require('../')
 pacote.resolve = (spec, conf) =>
   spec === 'fail' ? Promise.reject(new Error('fail'))
   : spec === 'string' ? Promise.resolve('just a string')
@@ -22,7 +24,6 @@ pacote.manifest = (spec, conf) => Promise.resolve({
 })
 pacote.packument = (spec, conf) => Promise.resolve({ method: 'packument', spec, conf })
 pacote.tarball.file = (spec, file, conf) => Promise.resolve({ method: 'tarball', spec, file, conf })
-const { Minipass } = require('minipass')
 pacote.tarball.stream = (spec, handler) => handler(new Minipass().end('tarball data'))
 pacote.extract = (spec, dest, conf) => Promise.resolve({ method: 'extract', spec, dest, conf })
 

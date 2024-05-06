@@ -1,4 +1,15 @@
 const fs = require('fs')
+const { relative, resolve, basename } = require('path')
+const t = require('tap')
+const Fetcher = require('../lib/fetcher.js')
+const abbrevMani = require('./fixtures/abbrev-manifest-min.json')
+const cacache = require('cacache')
+const { Minipass } = require('minipass')
+// we actually use a file fetcher for this, because we need implementations
+const FileFetcher = require('../lib/file.js')
+const npa = require('npm-package-arg')
+
+const byDigest = cacache.get.stream.byDigest
 
 fs.utimes = () => {
   throw new Error('do not call utimes')
@@ -13,26 +24,13 @@ fs.futimesSync = () => {
   throw new Error('do not call futimesSync')
 }
 
-const { relative, resolve, basename } = require('path')
-const t = require('tap')
-const me = t.testdir()
-const Fetcher = require('../lib/fetcher.js')
 t.cleanSnapshot = s => s.split(process.cwd()).join('{CWD}')
 
-const npa = require('npm-package-arg')
-
+const me = t.testdir()
 const abbrev = resolve(__dirname, 'fixtures/abbrev-1.1.1.tgz')
 const abbrevspec = `file:${relative(process.cwd(), abbrev)}`
-const abbrevMani = require('./fixtures/abbrev-manifest-min.json')
 const weird = resolve(__dirname, 'fixtures/weird-pkg.tgz')
 const weirdspec = `file:${relative(process.cwd(), weird)}`
-
-const cacache = require('cacache')
-const byDigest = cacache.get.stream.byDigest
-const { Minipass } = require('minipass')
-
-// we actually use a file fetcher for this, because we need implementations
-const FileFetcher = require('../lib/file.js')
 const cache = resolve(me, 'cache')
 
 t.test('do not mutate opts object passed in', t => {

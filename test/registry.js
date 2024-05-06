@@ -1,6 +1,11 @@
 const t = require('tap')
+const path = require('path')
+const fs = require('fs')
+const mr = require('npm-registry-mock')
+const tnock = require('./fixtures/tnock')
 // Stub out sigstore verification for testing to avoid needing to refresh the tuf cache
 const RegistryFetcher = require('../lib/registry.js')
+
 const MockedRegistryFetcher = t.mock('../lib/registry.js', {
   sigstore: {
     verify: async (bundle, options) => {
@@ -14,10 +19,7 @@ const MockedRegistryFetcher = t.mock('../lib/registry.js', {
     },
   },
 })
-const path = require('path')
-const fs = require('fs')
-const mr = require('npm-registry-mock')
-const tnock = require('./fixtures/tnock')
+
 const port = 18000 + (+process.env.TAP_CHILD_ID || 0)
 const me = t.testdir()
 

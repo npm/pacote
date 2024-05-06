@@ -1,7 +1,22 @@
+const GitFetcher = require('../lib/git.js')
+const t = require('tap')
+const fs = require('fs')
+const http = require('http')
+const { dirname, basename, resolve } = require('path')
+const HostedGit = require('hosted-git-info')
+const npa = require('npm-package-arg')
+const Arborist = require('@npmcli/arborist')
+const spawnGit = require('@npmcli/git').spawn
+const { spawn } = require('child_process')
+const spawnNpm = require('../lib/util/npm.js')
+const { mkdir } = require('fs/promises')
+const { rmSync } = require('fs')
+
+const tar = require('tar')
+
 // set this up first, so we can use 127.0.0.1 as our "hosted git" service
 const httpPort = 18000 + (+process.env.TAP_CHILD_ID || 0)
 const hostedUrl = `http://localhost:${httpPort}`
-const HostedGit = require('hosted-git-info')
 const gitPort = 12345 + (+process.env.TAP_CHILD_ID || 0)
 
 HostedGit.addHost('localhost', {
@@ -52,16 +67,9 @@ const submodsRemote = `git://localhost:${gitPort}/submodule-repo`
 const workspacesRemote = `git://localhost:${gitPort}/workspaces-repo`
 const prepackRemote = `git://localhost:${gitPort}/prepack-repo`
 
-const GitFetcher = require('../lib/git.js')
-const t = require('tap')
-const fs = require('fs')
-const http = require('http')
-
-const { dirname, basename, resolve } = require('path')
 const fixtures = resolve(__dirname, 'fixtures')
 const abbrev = resolve(fixtures, 'abbrev-1.1.1.tgz')
 const prepIgnore = resolve(fixtures, 'prepare-requires-gitignore-1.2.3.tgz')
-const npa = require('npm-package-arg')
 
 const me = t.testdir({
   repo: {},
@@ -71,19 +79,9 @@ const repo = resolve(me, 'repo')
 const cache = resolve(me, 'cache')
 const cycleA = resolve(me, 'cycle-a')
 const cycleB = resolve(me, 'cycle-b')
+const opts = { cache, Arborist }
 
 const abbrevSpec = `file:${abbrev}`
-
-const opts = { cache, Arborist: require('@npmcli/arborist') }
-
-const spawnGit = require('@npmcli/git').spawn
-const { spawn } = require('child_process')
-const spawnNpm = require('../lib/util/npm.js')
-
-const { mkdir } = require('fs/promises')
-const { rmSync } = require('fs')
-
-const tar = require('tar')
 
 let REPO_HEAD = ''
 t.test('setup', { bail: true }, t => {

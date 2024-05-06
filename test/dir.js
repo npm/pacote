@@ -2,6 +2,8 @@ const runScript = require('@npmcli/run-script')
 const RUNS = []
 const t = require('tap')
 const Arborist = require('@npmcli/arborist')
+const fs = require('fs')
+const { relative, resolve, basename } = require('path')
 
 const loadActual = async (path) => {
   const arb = new Arborist({ path })
@@ -16,9 +18,6 @@ const DirFetcher = t.mock('../lib/dir.js', {
     return runScript({ ...opts, stdio: 'pipe', banner: false })
   },
 })
-
-const fs = require('fs')
-const { relative, resolve, basename } = require('path')
 
 const me = t.testdir()
 
