@@ -1341,3 +1341,9 @@ t.test('option replaceRegistryHost', rhTest => {
 
   rhTest.end()
 })
+
+t.test('packument contentLength from registry', async t => {
+  const f = new RegistryFetcher('underscore', { registry, cache })
+  const p = await f.packument()
+  t.equal(p._contentLength, undefined, 'content length is undefined from registry requests')
+})
