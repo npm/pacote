@@ -22,57 +22,62 @@ const MockedRegistryFetcher = t.mock('../lib/registry.js', {
 
 const port = 18000 + (+process.env.TAP_CHILD_ID || 0)
 const me = t.testdir()
+const registry = `http://localhost:${port}/`
+const cache = me + '/cache'
 
-t.test('start mock registry', { bail: true }, t => {
-  mr({
-    port,
-    mocks: {
-      get: {
-        '/no-integrity/-/no-integrity-1.2.3.tgz': [
-          200,
-          `${__dirname}/fixtures/abbrev-1.1.1.tgz`,
-        ],
-      },
-    },
-
-    plugin (server) {
-      server.get('/thing-is-not-here').many().reply(404, { error: 'not found' })
-      server.get('/no-tarball').many().reply(200, {
-        name: 'no-tarball',
-        'dist-tags': { latest: '1.2.3' },
-        versions: {
-          '1.2.3': {
-            name: 'no-tarball',
-            version: '1.2.3',
-          },
+let mockServer
+t.before(() => {
+  return new Promise((resolve, reject) => {
+    mr({
+      port,
+      mocks: {
+        get: {
+          '/no-integrity/-/no-integrity-1.2.3.tgz': [
+            200,
+            `${__dirname}/fixtures/abbrev-1.1.1.tgz`,
+          ],
         },
-      })
-      server.get('/no-integrity').many().reply(200, {
-        name: 'no-integrity',
-        'dist-tags': { latest: '1.2.3' },
-        versions: {
-          '1.2.3': {
-            name: 'no-integrity',
-            version: '1.2.3',
-            dist: {
-              tarball: `${registry}no-integrity/-/no-integrity-1.2.3.tgz`,
+      },
+
+      plugin (server) {
+        server.get('/thing-is-not-here').many().reply(404, { error: 'not found' })
+        server.get('/no-tarball').many().reply(200, {
+          name: 'no-tarball',
+          'dist-tags': { latest: '1.2.3' },
+          versions: {
+            '1.2.3': {
+              name: 'no-tarball',
+              version: '1.2.3',
             },
           },
-        },
-      })
-    },
-  }, (er, s) => {
-    if (er) {
-      throw er
-    }
-
-    t.parent.teardown(() => s.close())
-    t.end()
+        })
+        server.get('/no-integrity').many().reply(200, {
+          name: 'no-integrity',
+          'dist-tags': { latest: '1.2.3' },
+          versions: {
+            '1.2.3': {
+              name: 'no-integrity',
+              version: '1.2.3',
+              dist: {
+                tarball: `${registry}no-integrity/-/no-integrity-1.2.3.tgz`,
+              },
+            },
+          },
+        })
+      },
+    }, (err, s) => {
+      if (err) {
+        return reject(err)
+      }
+      mockServer = s
+      resolve()
+    })
   })
 })
 
-const registry = `http://localhost:${port}/`
-const cache = me + '/cache'
+t.teardown(() => {
+  mockServer?.close()
+})
 
 t.test('underscore, no tag or version', t => {
   const f = new RegistryFetcher('underscore', { registry, cache, fullReadJson: true })
@@ -1207,9 +1212,32 @@ t.test('packument that has been cached', async t => {
       },
     },
   }
-  const packumentCache = new Map([[packumentUrl, packument]])
+  const packumentCache = new Map([[`corgi:${packumentUrl}`, packument]])
   const f = new RegistryFetcher('asdf@1.2', { registry, cache, packumentCache })
   t.equal(await f.packument(), packument, 'got cached packument')
+})
+
+t.test('corgi packument is not cached as full packument', async t => {
+  const packumentUrl = `${registry}underscore`
+  const packument = {
+    name: 'underscore',
+    versions: {
+      '1.5.1': {
+        cached: true,
+        name: 'underscore',
+        version: '1.5.1',
+      },
+    },
+  }
+  const packumentCache = new Map([[`corgi:${packumentUrl}`, packument]])
+  const f = new RegistryFetcher('underscore', {
+    packumentCache,
+    registry,
+    cache,
+    fullMetadata: true,
+  })
+  t.notEqual(await f.packument(), packument, 'did not get cached packument')
+  t.ok(packumentCache.has(`full:${packumentUrl}`), 'full packument is also now cached')
 })
 
 t.test('packument that falls back to fullMetadata', t => {
