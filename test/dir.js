@@ -2,8 +2,8 @@ const runScript = require('@npmcli/run-script')
 const RUNS = []
 const t = require('tap')
 const Arborist = require('@npmcli/arborist')
-const fs = require('fs')
-const { relative, resolve, basename } = require('path')
+const fs = require('node:fs')
+const { relative, resolve, basename } = require('node:path')
 
 const loadActual = async (path) => {
   const arb = new Arborist({ path })

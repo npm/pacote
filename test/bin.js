@@ -1,15 +1,15 @@
+const t = require('tap')
+const { spawn } = require('node:child_process')
+const { Minipass } = require('minipass')
 const pkg = require('../package.json')
 const bin = require.resolve(`../${pkg.bin.pacote}`)
 const { main, run, parseArg, parse } = require(bin)
-const { spawn } = require('child_process')
-const t = require('tap')
-const pacote = require('../')
-const { Minipass } = require('minipass')
 
 t.cleanSnapshot = str =>
   str.split(pkg.version).join('{VERSION}')
     .split(process.env.HOME).join('{HOME}')
 
+const pacote = require('../')
 pacote.resolve = (spec, conf) =>
   spec === 'fail' ? Promise.reject(new Error('fail'))
   : spec === 'string' ? Promise.resolve('just a string')

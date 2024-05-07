@@ -1,9 +1,10 @@
 const t = require('tap')
-
-const cp = require('child_process')
-const { spawn } = cp
+const cp = require('node:child_process')
+const EventEmitter = require('node:events')
 const { Minipass } = require('minipass')
-const EventEmitter = require('events')
+
+const { spawn } = cp
+
 cp.spawn = (...args) => {
   const proc = new EventEmitter()
   proc.stdout = new Minipass()

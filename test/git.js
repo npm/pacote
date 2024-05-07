@@ -1,18 +1,17 @@
-const GitFetcher = require('../lib/git.js')
 const t = require('tap')
-const fs = require('fs')
-const http = require('http')
-const { dirname, basename, resolve } = require('path')
+const fs = require('node:fs')
+const http = require('node:http')
+const { dirname, basename, resolve } = require('node:path')
+const { mkdir } = require('node:fs/promises')
+const { rmSync } = require('node:fs')
+const { spawn } = require('node:child_process')
+const Arborist = require('@npmcli/arborist')
 const HostedGit = require('hosted-git-info')
 const npa = require('npm-package-arg')
-const Arborist = require('@npmcli/arborist')
 const spawnGit = require('@npmcli/git').spawn
-const { spawn } = require('child_process')
-const spawnNpm = require('../lib/util/npm.js')
-const { mkdir } = require('fs/promises')
-const { rmSync } = require('fs')
-
 const tar = require('tar')
+const spawnNpm = require('../lib/util/npm.js')
+const GitFetcher = require('../lib/git.js')
 
 // set this up first, so we can use 127.0.0.1 as our "hosted git" service
 const httpPort = 18000 + (+process.env.TAP_CHILD_ID || 0)

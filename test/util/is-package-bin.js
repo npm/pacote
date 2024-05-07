@@ -1,5 +1,5 @@
-const isPackageBin = require('../../lib/util/is-package-bin.js')
 const t = require('tap')
+const isPackageBin = require('../../lib/util/is-package-bin.js')
 
 t.ok(isPackageBin({ bin: 'foo' }, 'package/foo'), 'finds string')
 t.ok(isPackageBin({ bin: { bar: 'foo' } }, 'package/foo'), 'finds in obj')
