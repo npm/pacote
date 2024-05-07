@@ -1,13 +1,14 @@
-const fs = require('fs')
-const { relative, resolve, basename } = require('path')
 const t = require('tap')
-const Fetcher = require('../lib/fetcher.js')
-const abbrevMani = require('./fixtures/abbrev-manifest-min.json')
+const fs = require('node:fs')
+const { relative, resolve, basename } = require('node:path')
 const cacache = require('cacache')
 const { Minipass } = require('minipass')
+const npa = require('npm-package-arg')
+// FUN FACT if we require FileFetcher first the code can't run cause of a circular dependency
+const Fetcher = require('../lib/fetcher.js')
 // we actually use a file fetcher for this, because we need implementations
 const FileFetcher = require('../lib/file.js')
-const npa = require('npm-package-arg')
+const abbrevMani = require('./fixtures/abbrev-manifest-min.json')
 
 const byDigest = cacache.get.stream.byDigest
 

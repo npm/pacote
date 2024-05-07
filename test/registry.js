@@ -1,6 +1,6 @@
 const t = require('tap')
-const path = require('path')
-const fs = require('fs')
+const path = require('node:path')
+const fs = require('node:fs')
 const mr = require('npm-registry-mock')
 const tnock = require('./fixtures/tnock')
 // Stub out sigstore verification for testing to avoid needing to refresh the tuf cache
@@ -1236,7 +1236,7 @@ t.test('corgi packument is not cached as full packument', async t => {
     cache,
     fullMetadata: true,
   })
-  t.notEqual(await f.packument(), packument, 'did not get cached packument')
+  t.not(await f.packument(), packument, 'did not get cached packument')
   t.ok(packumentCache.has(`full:${packumentUrl}`), 'full packument is also now cached')
 })
 

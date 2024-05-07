@@ -1,17 +1,21 @@
 const t = require('tap')
-const os = require('os')
-
-os.tmpdir = () => '/tmp'
-os.homedir = () => '/home/isaacs'
-const path = require('path')
-path.resolve = path.posix.resolve
+const path = require('node:path')
 process.getuid = () => 69420
 process.env.LOCALAPPDATA = ''
 const isWindows = process.platform === 'win32'
 const posix = isWindows ? 'posix' : null
 const windows = isWindows ? null : 'win32'
 
-const cacheDir = require('../../lib/util/cache-dir.js')
+let homedir = '/home/isaacs'
+const cacheDir = t.mock('../../lib/util/cache-dir.js', {
+  'node:path': {
+    resolve: path.posix.resolve,
+  },
+  'node:os': {
+    tmpdir: () => '/tmp',
+    homedir: () => homedir,
+  },
+})
 
 // call it once just to cover the default arg setting
 // the tests all specify something, so they work predictably
@@ -23,7 +27,7 @@ t.equal(cacheDir(windows).cacache, '/home/isaacs/npm-cache/_cacache')
 t.equal(cacheDir(posix).tufcache, '/home/isaacs/.npm/_tuf')
 t.equal(cacheDir(windows).tufcache, '/home/isaacs/npm-cache/_tuf')
 
-os.homedir = () => null
+homedir = null
 t.equal(cacheDir(posix).cacache, '/tmp/npm-69420/.npm/_cacache')
 t.equal(cacheDir(windows).cacache, '/tmp/npm-69420/npm-cache/_cacache')
 t.equal(cacheDir(posix).tufcache, '/tmp/npm-69420/.npm/_tuf')

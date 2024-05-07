@@ -1,6 +1,6 @@
 const t = require('tap')
-const addGitSha = require('../../lib/util/add-git-sha.js')
 const npa = require('npm-package-arg')
+const addGitSha = require('../../lib/util/add-git-sha.js')
 
 const cases = [
   // unknown host

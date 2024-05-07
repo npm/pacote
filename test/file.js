@@ -1,7 +1,7 @@
-const FileFetcher = require('../lib/file.js')
 const t = require('tap')
-const { relative, resolve, basename } = require('path')
-const fs = require('fs')
+const { relative, resolve, basename } = require('node:path')
+const fs = require('node:fs')
+const FileFetcher = require('../lib/file.js')
 
 t.cleanSnapshot = str => str.split(process.cwd()).join('${CWD}')
 
