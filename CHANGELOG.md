@@ -1,5 +1,12 @@
 # Changelog
 
+## [18.0.6](https://github.com/npm/pacote/compare/v18.0.5...v18.0.6) (2024-05-07)
+
+### Bug Fixes
+
+* [`79441a5`](https://github.com/npm/pacote/commit/79441a5cce9bc9927ae3e439188c2add5fa70d89) [#371](https://github.com/npm/pacote/pull/371) clean up requires (#371) (@wraithgar)
+* [`b19aacb`](https://github.com/npm/pacote/commit/b19aacb925e44ccce1d99a713ad12bdf7b4a008f) [#369](https://github.com/npm/pacote/pull/369) isolate full and corgi packuments in packumentCache (#369) (@wraithgar)
+
 ## [18.0.5](https://github.com/npm/pacote/compare/v18.0.4...v18.0.5) (2024-05-06)
 
 ### Bug Fixes
