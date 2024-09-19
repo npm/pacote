@@ -66,6 +66,22 @@ t.test('with prepare script', async t => {
     }, 'should run in background'))
 })
 
+t.test('with prepare script with scriptshell configuration', async t => {
+  RUNS.length = 0
+  const f = new DirFetcher(preparespec, { tree: await loadActual(prepare), scriptShell: 'sh' })
+  t.resolveMatchSnapshot(f.packument(), 'packument')
+  t.resolveMatchSnapshot(f.manifest(), 'manifest')
+  const index = me + '/prepare/index.js'
+  return t.resolveMatchSnapshot(f.extract(me + '/prepare'), 'extract')
+    .then(() => t.spawn(process.execPath, [index], 'test prepared result'))
+    .then(() => t.matchSnapshot(fs.readdirSync(me + '/prepare').sort(), 'file list'))
+    .then(() => t.match(RUNS,
+      [{
+        stdio: 'pipe',
+        scriptShell: 'sh',
+      }], 'should run in background and use scriptshell configuration'))
+})
+
 t.test('responds to foregroundScripts: true', async t => {
   RUNS.length = 0
   const opt = { foregroundScripts: true, tree: await loadActual(prepare) }
