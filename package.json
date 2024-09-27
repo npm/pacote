@@ -50,7 +50,7 @@
     "@npmcli/package-json": "^5.1.0",
     "@npmcli/promise-spawn": "^8.0.0",
     "@npmcli/run-script": "^9.0.0",
-    "cacache": "^18.0.0",
+    "cacache": "^19.0.0",
     "fs-minipass": "^3.0.0",
     "minipass": "^7.0.2",
     "npm-package-arg": "^12.0.0",
