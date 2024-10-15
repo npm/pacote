@@ -1,5 +1,12 @@
 # Changelog
 
+## [19.0.1](https://github.com/npm/pacote/compare/v19.0.0...v19.0.1) (2024-10-15)
+### Bug Fixes
+* [`cbf94e8`](https://github.com/npm/pacote/commit/cbf94e8b0486e80f8f2e4c9ed7c7d18c3282096b) [#389](https://github.com/npm/pacote/pull/389) prepare script respects scriptshell config (#389) (@milaninfy)
+* [`2b2948f`](https://github.com/npm/pacote/commit/2b2948faaebff35dd469c653e76517887f6e119d) [#403](https://github.com/npm/pacote/pull/403) log tarball retrieval from cache (#403) (@mbtools, @wraithgar)
+### Dependencies
+* [`a9fc4d1`](https://github.com/npm/pacote/commit/a9fc4d13ad4b28bb64ae92077ce6d35d2c130125) [#405](https://github.com/npm/pacote/pull/405) bump sigstore from 2.2.0 to 3.0.0 (#405) (@bdehamer)
+
 ## [19.0.0](https://github.com/npm/pacote/compare/v18.0.6...v19.0.0) (2024-09-27)
 ### ⚠️ BREAKING CHANGES
 * `pacote` now supports node `^18.17.0 || >=20.5.0`
