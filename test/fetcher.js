@@ -303,7 +303,7 @@ t.test('extract', t => {
             sri: Object,
           }, 'got expected error')
           t.match(logs, [
-            [ 'http',
+            ['http',
               'cache',
               /file:test\/fixtures\/abbrev-1.1.1.tgz.*(cache hit)/,
             ],
