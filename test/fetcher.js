@@ -207,7 +207,7 @@ t.test('extract', t => {
       }).extract(target + '/badcache')
         .then(({ resolved, integrity }) => {
           t.match(logs, [
-            [ 'http',
+            ['http',
               'cache',
               /file:test\/fixtures\/abbrev-1.1.1.tgz.*(cache hit)/,
             ],
