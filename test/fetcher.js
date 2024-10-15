@@ -207,6 +207,10 @@ t.test('extract', t => {
       }).extract(target + '/badcache')
         .then(({ resolved, integrity }) => {
           t.match(logs, [
+            ['http',
+              'cache',
+              /file:test\/fixtures\/abbrev-1.1.1.tgz.*(cache hit)/,
+            ],
             ['warn', 'tar', 'zlib: incorrect header check'],
             [
               'silly',
@@ -298,7 +302,11 @@ t.test('extract', t => {
             algorithm: 'sha512',
             sri: Object,
           }, 'got expected error')
-          t.same(logs, [
+          t.match(logs, [
+            ['http',
+              'cache',
+              /file:test\/fixtures\/abbrev-1.1.1.tgz.*(cache hit)/,
+            ],
             [
               'silly',
               'tarball',
