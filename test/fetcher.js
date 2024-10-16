@@ -210,6 +210,10 @@ t.test('extract', t => {
         .then(({ resolved, integrity }) => {
           if (process.platform !== 'win32') {
             t.match(logs, [
+              ['http',
+                'cache',
+                /file:test\/fixtures\/abbrev-1.1.1.tgz.*(cache hit)/,
+              ],
               ['warn', 'tar', 'zlib: incorrect header check'],
               [
                 'silly',
@@ -239,6 +243,10 @@ t.test('extract', t => {
             ], 'got expected logs')
           } else {
             t.match(logs, [
+              ['http',
+                'cache',
+                /file:test\\\\fixtures\\\\abbrev-1.1.1.tgz.*(cache hit)/,
+              ],
               ['warn', 'tar', 'zlib: incorrect header check'],
               [
                 'silly',
@@ -334,6 +342,10 @@ t.test('extract', t => {
           }, 'got expected error')
           if (process.platform !== 'win32') {
             t.same(logs, [
+              ['http',
+                'cache',
+                /file:test\/fixtures\/abbrev-1.1.1.tgz.*(cache hit)/,
+              ],
               [
                 'silly',
                 'tarball',
