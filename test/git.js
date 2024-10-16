@@ -18,6 +18,9 @@ const httpPort = 18000 + (+process.env.TAP_CHILD_ID || 0)
 const hostedUrl = `http://localhost:${httpPort}`
 const gitPort = 12345 + (+process.env.TAP_CHILD_ID || 0)
 
+// script for creating a file
+const touchFile = process.platform === 'win32' ? 'type nul > foo' : 'touch foo'
+
 HostedGit.addHost('localhost', {
   domain: 'localhost',
   protocols: ['git+https:', 'git+ssh:'],
@@ -305,7 +308,7 @@ t.test('setup', { bail: true }, t => {
         name: 'a',
         version: '1.0.0',
         scripts: {
-          prepare: 'touch foo',
+          prepare: touchFile,
         },
       })))
       .then(() => git('add', 'a/package.json'))
@@ -327,7 +330,7 @@ t.test('setup', { bail: true }, t => {
         name: 'prepack-root',
         version: '1.0.0',
         scripts: {
-          prepare: 'touch foo',
+          prepare: touchFile,
         },
       })))
       .then(() => git('add', 'package.json'))
@@ -677,17 +680,21 @@ t.test('handle it when prepared git deps depend on each other', async t => {
   for (const project of ['cycle-a', 'cycle-b']) {
     const localRemote = `git://localhost:${gitPort}/${project}`
     const local = `${path}/${project}`
-    const npmBin = `${path}/npm-mock.js`
+    const npmBin = process.platform !== 'win32' ?
+      `${path}/npm-mock.js` : `${path}\\npm-mock.js`
     const g = new GitFetcher(localRemote, { ...opts, npmBin })
     await g.extract(local)
     const log = JSON.parse(fs.readFileSync(`${local}/log`, 'utf8'))
+    const cwdRegex = process.platform !== 'win32' ?
+      new RegExp(`${me}/cache/tmp/git-clone[a-zA-Z0-9]{6,8}`) :
+      new RegExp(`${me}\\cache\\tmp\\git-clone[a-zA-Z0-9]{6,8}`.replace(/\\/g, '\\\\'))
     t.match(log, {
       argv: [
         process.execPath,
         npmBin,
       ],
       noPrepare: [g.resolved],
-      cwd: new RegExp(`${me}/cache/tmp/git-clone[a-zA-Z0-9]{6,8}`),
+      cwd: cwdRegex,
     })
     // our rudimentary package manager dumps the deps into the pkg root
     // but it doesn't get installed once the loop is detected.

@@ -9,7 +9,7 @@ exports[`test/dir.js TAP basic > extract 1`] = `
 Object {
   "from": "file:test/fixtures/abbrev",
   "integrity": "{integrity}",
-  "resolved": "\${CWD}/test/fixtures/abbrev",
+  "resolved": "{CWD}/test/fixtures/abbrev",
 }
 `
 
@@ -18,7 +18,7 @@ Object {
   "_from": "file:test/fixtures/abbrev",
   "_id": "abbrev@1.1.1",
   "_integrity": null,
-  "_resolved": "\${CWD}/test/fixtures/abbrev",
+  "_resolved": "{CWD}/test/fixtures/abbrev",
   "author": "Isaac Z. Schlueter <i@izs.me>",
   "description": "Like ruby's abbrev module, but in js",
   "devDependencies": Object {
@@ -76,7 +76,7 @@ Object {
       "_from": "file:test/fixtures/abbrev",
       "_id": "abbrev@1.1.1",
       "_integrity": null,
-      "_resolved": "\${CWD}/test/fixtures/abbrev",
+      "_resolved": "{CWD}/test/fixtures/abbrev",
       "author": "Isaac Z. Schlueter <i@izs.me>",
       "description": "Like ruby's abbrev module, but in js",
       "devDependencies": Object {
@@ -84,7 +84,7 @@ Object {
       },
       "dist": Object {
         "integrity": null,
-        "tarball": "file:\${CWD}/test/fixtures/abbrev",
+        "tarball": "file:{CWD}/test/fixtures/abbrev",
       },
       "files": Array [
         "abbrev.js",
@@ -110,7 +110,7 @@ Object {
   "_from": "file:test/fixtures/abbrev",
   "_id": "abbrev@1.1.1",
   "_integrity": null,
-  "_resolved": "\${CWD}/test/fixtures/abbrev",
+  "_resolved": "{CWD}/test/fixtures/abbrev",
   "author": "Isaac Z. Schlueter <i@izs.me>",
   "description": "Like ruby's abbrev module, but in js",
   "devDependencies": Object {
@@ -144,7 +144,7 @@ Object {
       "_from": "file:test/fixtures/abbrev",
       "_id": "abbrev@1.1.1",
       "_integrity": "sha512-whatever-this-is-only-checked-if-we-extract-it",
-      "_resolved": "\${CWD}/test/fixtures/abbrev",
+      "_resolved": "{CWD}/test/fixtures/abbrev",
       "author": "Isaac Z. Schlueter <i@izs.me>",
       "description": "Like ruby's abbrev module, but in js",
       "devDependencies": Object {
@@ -152,7 +152,7 @@ Object {
       },
       "dist": Object {
         "integrity": "{integrity}",
-        "tarball": "file:\${CWD}/test/fixtures/abbrev",
+        "tarball": "file:{CWD}/test/fixtures/abbrev",
       },
       "files": Array [
         "abbrev.js",
@@ -177,7 +177,7 @@ exports[`test/dir.js TAP make bins executable > results of unpack 1`] = `
 Object {
   "from": "file:test/fixtures/bin-object",
   "integrity": "{integrity}",
-  "resolved": "\${CWD}/test/fixtures/bin-object",
+  "resolved": "{CWD}/test/fixtures/bin-object",
 }
 `
 
@@ -185,7 +185,7 @@ exports[`test/dir.js TAP responds to foregroundScripts: true > extract 1`] = `
 Object {
   "from": "file:test/fixtures/prepare-script",
   "integrity": "{integrity}",
-  "resolved": "\${CWD}/test/fixtures/prepare-script",
+  "resolved": "{CWD}/test/fixtures/prepare-script",
 }
 `
 
@@ -202,7 +202,7 @@ Object {
   "_from": "file:test/fixtures/prepare-script",
   "_id": "git-prepare-script@1.0.0",
   "_integrity": null,
-  "_resolved": "\${CWD}/test/fixtures/prepare-script",
+  "_resolved": "{CWD}/test/fixtures/prepare-script",
   "devDependencies": Object {
     "abbrev": "^1.1.1",
   },
@@ -227,13 +227,13 @@ Object {
       "_from": "file:test/fixtures/prepare-script",
       "_id": "git-prepare-script@1.0.0",
       "_integrity": null,
-      "_resolved": "\${CWD}/test/fixtures/prepare-script",
+      "_resolved": "{CWD}/test/fixtures/prepare-script",
       "devDependencies": Object {
         "abbrev": "^1.1.1",
       },
       "dist": Object {
         "integrity": null,
-        "tarball": "file:\${CWD}/test/fixtures/prepare-script",
+        "tarball": "file:{CWD}/test/fixtures/prepare-script",
       },
       "license": "ISC",
       "main": "index.js",
@@ -251,7 +251,7 @@ exports[`test/dir.js TAP with prepare script > extract 1`] = `
 Object {
   "from": "file:test/fixtures/prepare-script",
   "integrity": "{integrity}",
-  "resolved": "\${CWD}/test/fixtures/prepare-script",
+  "resolved": "{CWD}/test/fixtures/prepare-script",
 }
 `
 
@@ -268,7 +268,7 @@ Object {
   "_from": "file:test/fixtures/prepare-script",
   "_id": "git-prepare-script@1.0.0",
   "_integrity": null,
-  "_resolved": "\${CWD}/test/fixtures/prepare-script",
+  "_resolved": "{CWD}/test/fixtures/prepare-script",
   "devDependencies": Object {
     "abbrev": "^1.1.1",
   },
@@ -293,13 +293,13 @@ Object {
       "_from": "file:test/fixtures/prepare-script",
       "_id": "git-prepare-script@1.0.0",
       "_integrity": null,
-      "_resolved": "\${CWD}/test/fixtures/prepare-script",
+      "_resolved": "{CWD}/test/fixtures/prepare-script",
       "devDependencies": Object {
         "abbrev": "^1.1.1",
       },
       "dist": Object {
         "integrity": null,
-        "tarball": "file:\${CWD}/test/fixtures/prepare-script",
+        "tarball": "file:{CWD}/test/fixtures/prepare-script",
       },
       "license": "ISC",
       "main": "index.js",
