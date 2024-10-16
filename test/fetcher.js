@@ -36,6 +36,10 @@ const weird = resolve(__dirname, 'fixtures/weird-pkg.tgz')
 const weirdspec = `file:${relative(process.cwd(), weird)}`
 const cache = resolve(me, 'cache')
 
+t.teardown(async () => {
+  fs.rmSync(me, { recursive: true, force: true, maxRetries: 3 })
+})
+
 t.test('do not mutate opts object passed in', t => {
   const opts = {}
   const f = new FileFetcher(abbrevspec, opts)
@@ -152,7 +156,8 @@ t.test('tarballFile', t => {
       .then(() => fsm.WriteStream = WriteStream)
   })
 
-  t.test('file not found', t => {
+  // Blocks removal of the test directory on Windows
+  t.test('file not found', { skip: process.platform === 'win32' }, t => {
     const f = abbrev + '-not-found.tgz'
     return t.rejects(new FileFetcher(f, { cache })
       .tarballFile(target + '/not-found.tgz'), {
@@ -341,8 +346,9 @@ t.test('extract', t => {
             sri: Object,
           }, 'got expected error')
           if (process.platform !== 'win32') {
-            t.same(logs, [
-              ['http',
+            t.match(logs, [
+              [
+                'http',
                 'cache',
                 /file:test\/fixtures\/abbrev-1.1.1.tgz.*(cache hit)/,
               ],
@@ -363,6 +369,35 @@ t.test('extract', t => {
                 'tarball',
                 'tarball data for file:test/fixtures/abbrev-1.1.1.tgz ' +
                 '(sha512-0) seems to be corrupted. Trying again.',
+              ],
+            ], 'got expected logs')
+          } else {
+            t.match(logs, [
+              [
+                'http',
+                'cache',
+                /file:test\\+fixtures\\+abbrev-1.1.1.tgz.*(cache hit)/,
+              ],
+              [
+                'warn',
+                'tar',
+                'TAR_BAD_ARCHIVE: Unrecognized archive format',
+              ],
+              [
+                'silly',
+                'tar',
+              ],
+              [
+                'warn',
+                'tarball',
+                'cached data for file:test\\fixtures\\abbrev-1.1.1.tgz ' +
+                '(sha512-0) seems to be corrupted. Refreshing cache.',
+              ],
+              [
+                'silly',
+                'tarball',
+                'no local data for file:test\\fixtures\\abbrev-1.1.1.tgz. ' +
+                'Extracting by manifest.',
               ],
             ], 'got expected logs')
           }
