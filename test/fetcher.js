@@ -245,7 +245,7 @@ t.test('extract', t => {
             t.match(logs, [
               ['http',
                 'cache',
-                /file:test\\\\fixtures\\\\abbrev-1.1.1.tgz.*(cache hit)/,
+                /file:test\\fixtures\\abbrev-1.1.1.tgz.*(cache hit)/,
               ],
               ['warn', 'tar', 'zlib: incorrect header check'],
               [

@@ -317,7 +317,7 @@ exports[`test/dir.js TAP with prepare script with scriptshell configuration > ex
 Object {
   "from": "file:test/fixtures/prepare-script",
   "integrity": "{integrity}",
-  "resolved": "\${CWD}/test/fixtures/prepare-script",
+  "resolved": "{CWD}/test/fixtures/prepare-script",
 }
 `
 
@@ -334,7 +334,7 @@ Object {
   "_from": "file:test/fixtures/prepare-script",
   "_id": "git-prepare-script@1.0.0",
   "_integrity": null,
-  "_resolved": "\${CWD}/test/fixtures/prepare-script",
+  "_resolved": "{CWD}/test/fixtures/prepare-script",
   "devDependencies": Object {
     "abbrev": "^1.1.1",
   },
@@ -359,13 +359,13 @@ Object {
       "_from": "file:test/fixtures/prepare-script",
       "_id": "git-prepare-script@1.0.0",
       "_integrity": null,
-      "_resolved": "\${CWD}/test/fixtures/prepare-script",
+      "_resolved": "{CWD}/test/fixtures/prepare-script",
       "devDependencies": Object {
         "abbrev": "^1.1.1",
       },
       "dist": Object {
         "integrity": null,
-        "tarball": "file:\${CWD}/test/fixtures/prepare-script",
+        "tarball": "file:{CWD}/test/fixtures/prepare-script",
       },
       "license": "ISC",
       "main": "index.js",
