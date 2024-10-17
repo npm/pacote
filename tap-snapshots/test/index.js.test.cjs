@@ -9,7 +9,7 @@ exports[`test/index.js TAP > extract 1`] = `
 Object {
   "from": "file:test/fixtures/abbrev-1.1.1.tgz",
   "integrity": "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==",
-  "resolved": "\${CWD}/test/fixtures/abbrev-1.1.1.tgz",
+  "resolved": "{CWD}/test/fixtures/abbrev-1.1.1.tgz",
 }
 `
 
@@ -18,7 +18,7 @@ Object {
   "_from": "file:test/fixtures/abbrev-1.1.1.tgz",
   "_id": "abbrev@1.1.1",
   "_integrity": "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==",
-  "_resolved": "\${CWD}/test/fixtures/abbrev-1.1.1.tgz",
+  "_resolved": "{CWD}/test/fixtures/abbrev-1.1.1.tgz",
   "author": "Isaac Z. Schlueter <i@izs.me>",
   "description": "Like ruby's abbrev module, but in js",
   "devDependencies": Object {
@@ -46,7 +46,7 @@ Object {
   "_from": "file:test/fixtures/abbrev-1.1.1.tgz",
   "_id": "abbrev@1.1.1",
   "_integrity": "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==",
-  "_resolved": "\${CWD}/test/fixtures/abbrev-1.1.1.tgz",
+  "_resolved": "{CWD}/test/fixtures/abbrev-1.1.1.tgz",
   "author": "Isaac Z. Schlueter <i@izs.me>",
   "description": "Like ruby's abbrev module, but in js",
   "devDependencies": Object {
@@ -80,7 +80,7 @@ Object {
       "_from": "file:test/fixtures/abbrev-1.1.1.tgz",
       "_id": "abbrev@1.1.1",
       "_integrity": "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==",
-      "_resolved": "\${CWD}/test/fixtures/abbrev-1.1.1.tgz",
+      "_resolved": "{CWD}/test/fixtures/abbrev-1.1.1.tgz",
       "author": "Isaac Z. Schlueter <i@izs.me>",
       "description": "Like ruby's abbrev module, but in js",
       "devDependencies": Object {
@@ -88,7 +88,7 @@ Object {
       },
       "dist": Object {
         "integrity": "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==",
-        "tarball": "file:\${CWD}/test/fixtures/abbrev-1.1.1.tgz",
+        "tarball": "file:{CWD}/test/fixtures/abbrev-1.1.1.tgz",
       },
       "files": Array [
         "abbrev.js",
@@ -110,13 +110,13 @@ Object {
 `
 
 exports[`test/index.js TAP > resolve 1`] = `
-\${CWD}/test/fixtures/abbrev-1.1.1.tgz
+{CWD}/test/fixtures/abbrev-1.1.1.tgz
 `
 
 exports[`test/index.js TAP > tarball to file 1`] = `
 Object {
   "from": "file:test/fixtures/abbrev-1.1.1.tgz",
   "integrity": "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==",
-  "resolved": "\${CWD}/test/fixtures/abbrev-1.1.1.tgz",
+  "resolved": "{CWD}/test/fixtures/abbrev-1.1.1.tgz",
 }
 `

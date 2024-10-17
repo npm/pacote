@@ -38,9 +38,9 @@
       "homepage": "https://github.com/isaacs/abbrev-js#readme",
       "_id": "abbrev@1.1.1",
       "_integrity": "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==",
-      "_resolved": "${CWD}/test/fixtures/abbrev-1.1.1.tgz",
+      "_resolved": "{CWD}/test/fixtures/abbrev-1.1.1.tgz",
       "dist": {
-        "tarball": "file:${CWD}/test/fixtures/abbrev-1.1.1.tgz",
+        "tarball": "file:{CWD}/test/fixtures/abbrev-1.1.1.tgz",
         "integrity": "sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q=="
       }
     }

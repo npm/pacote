@@ -7,15 +7,14 @@ const GitFetcher = require('../lib/git.js')
 const RegistryFetcher = require('../lib/registry.js')
 const RemoteFetcher = require('../lib/remote.js')
 const pacote = require('../lib/index.js')
+const cleanSnapshot = require('./helpers/clean-snapshot.js')
 
 const abbrev = resolve(__dirname, 'fixtures/abbrev-1.1.1.tgz')
 const abbrevspec = `file:${relative(process.cwd(), abbrev)}`
 
 const me = t.testdir()
 
-t.cleanSnapshot = str => str
-  .split(process.cwd()).join('${CWD}')
-  .replace(/\\/g, '/')
+t.cleanSnapshot = str => cleanSnapshot(str)
 
 // Putting all these tests inside a `t.test` suite broke the tests. They either
 // didn't run or failed w/ no message.  Ignoring promise/catch-or-return for now.

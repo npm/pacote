@@ -4,6 +4,8 @@ const t = require('tap')
 const Arborist = require('@npmcli/arborist')
 const fs = require('node:fs')
 const { relative, resolve, basename } = require('node:path')
+const cleanSnapshot = require('./helpers/clean-snapshot.js')
+const scriptMode = require('./helpers/script-mode.js')
 
 const loadActual = async (path) => {
   const arb = new Arborist({ path })
@@ -21,8 +23,7 @@ const DirFetcher = t.mock('../lib/dir.js', {
 
 const me = t.testdir()
 
-t.cleanSnapshot = str => str
-  .split(process.cwd()).join('${CWD}')
+t.cleanSnapshot = str => cleanSnapshot(str)
   .replace(/"integrity": ".*",/g, '"integrity": "{integrity}",')
 
 const abbrev = resolve(__dirname, 'fixtures/abbrev')
@@ -99,13 +100,23 @@ t.test('responds to foregroundScripts: true', async t => {
 
 t.test('missing dir cannot be packed', async t => {
   const f = new DirFetcher('file:/this/dir/doesnt/exist', { tree: await loadActual() })
-  return t.rejects(f.extract(me + '/nope'), {
-    message: `no such file or directory, open '/this/dir/doesnt/exist/package.json`,
-    errno: Number,
-    code: 'ENOENT',
-    syscall: 'open',
-    path: '/this/dir/doesnt/exist/package.json',
-  })
+  if (process.platform !== 'win32') {
+    return t.rejects(f.extract(me + '/nope'), {
+      message: `no such file or directory, open '/this/dir/doesnt/exist/package.json`,
+      errno: Number,
+      code: 'ENOENT',
+      syscall: 'open',
+      path: '/this/dir/doesnt/exist/package.json',
+    })
+  } else {
+    return t.rejects(f.extract(me + '/nope'), {
+      errno: Number,
+      code: 'ENOENT',
+      syscall: 'open',
+      path: new RegExp('\\\\this\\\\dir\\\\doesnt\\\\exist\\\\package.json'),
+      name: 'Error',
+    })
+  }
 })
 
 t.test('when read fails', async t => {
@@ -140,7 +151,7 @@ t.test('make bins executable', async t => {
     ...(res.integrity === newIntegrity ? { integrity: oldIntegrity } : {}),
   }
   t.matchSnapshot(resTest, 'results of unpack')
-  t.equal(fs.statSync(target + '/script.js').mode & 0o111, 0o111)
+  t.equal(fs.statSync(target + '/script.js').mode & scriptMode(), scriptMode())
 })
 
 t.test('exposes tarCreateOptions method', async t => {
