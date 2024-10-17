@@ -175,3 +175,29 @@ t.test('fails without a tree or constructor', async t => {
   const f = new DirFetcher(abbrevspec, {})
   t.rejects(() => f.extract(me + '/prepare'))
 })
+
+t.test('with prepare script and ignoreScripts true', async t => {
+  let shouldNotBePopulated = false
+
+  const DirFetcherIsolate = t.mock('../lib/dir.js', {
+    '@npmcli/run-script': () => {
+      shouldNotBePopulated = true
+    },
+  })
+
+  const dir = t.testdir({
+    'package.json': JSON.stringify({
+      name: 'meow',
+      version: '1.0.0',
+      scripts: {
+        prepare: 'noop',
+      },
+    }),
+  })
+  const f = new DirFetcherIsolate(`file:${relative(process.cwd(), dir)}`, {
+    tree: await loadActual(dir),
+    ignoreScripts: true,
+  })
+  await f.extract(me + '/prepare-ignore')
+  t.ok(!shouldNotBePopulated)
+})
