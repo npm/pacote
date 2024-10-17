@@ -1,5 +1,11 @@
 # Changelog
 
+## [20.0.0](https://github.com/npm/pacote/compare/v19.0.1...v20.0.0) (2024-10-17)
+### ⚠️ BREAKING CHANGES
+* honors `ignoreScripts` property within options
+### Bug Fixes
+* [`f27af63`](https://github.com/npm/pacote/commit/f27af6334daa0a51af547f1aef64035d4bebd359) [#407](https://github.com/npm/pacote/pull/407) honors `ignoreScripts` option to prevent `prepare` lifecycle script (@reggi)
+
 ## [19.0.1](https://github.com/npm/pacote/compare/v19.0.0...v19.0.1) (2024-10-15)
 ### Bug Fixes
 * [`cbf94e8`](https://github.com/npm/pacote/commit/cbf94e8b0486e80f8f2e4c9ed7c7d18c3282096b) [#389](https://github.com/npm/pacote/pull/389) prepare script respects scriptshell config (#389) (@milaninfy)
