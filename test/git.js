@@ -3,12 +3,12 @@ const fs = require('node:fs')
 const http = require('node:http')
 const { dirname, basename, resolve } = require('node:path')
 const { mkdir } = require('node:fs/promises')
+const { rmSync } = require('node:fs')
 const { spawn } = require('node:child_process')
 const Arborist = require('@npmcli/arborist')
 const HostedGit = require('hosted-git-info')
 const npa = require('npm-package-arg')
 const spawnGit = require('@npmcli/git').spawn
-const rimraf = require('rimraf')
 const tar = require('tar')
 const spawnNpm = require('../lib/util/npm.js')
 const GitFetcher = require('../lib/git.js')
@@ -229,7 +229,7 @@ t.test('setup', { bail: true, skip: isWindows && 'posix only' }, t => {
     }
     daemon.stderr.on('data', onDaemonData)
     // only clean up the dir once the daemon is banished
-    daemon.on('close', () => rimraf.sync(me))
+    daemon.on('close', () => rmSync(me, { recursive: true, force: true }))
   })
 
   t.test('create a repo with a submodule', () => {
