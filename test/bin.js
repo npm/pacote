@@ -4,10 +4,10 @@ const { Minipass } = require('minipass')
 const pkg = require('../package.json')
 const bin = require.resolve(`../${pkg.bin.pacote}`)
 const { main, run, parseArg, parse } = require(bin)
+const cleanSnapshot = require('./helpers/clean-snapshot.js')
 
-t.cleanSnapshot = str =>
-  str.split(pkg.version).join('{VERSION}')
-    .split(process.env.HOME).join('{HOME}')
+t.cleanSnapshot = str => cleanSnapshot(str)
+  .split(pkg.version).join('{VERSION}')
 
 const pacote = require('../')
 pacote.resolve = (spec, conf) =>
