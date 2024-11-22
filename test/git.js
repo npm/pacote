@@ -221,6 +221,7 @@ t.test('setup', { bail: true }, t => {
     }
     daemon.stderr.on('data', onDaemonData)
     // only clean up the dir once the daemon is banished
+    // do NOT replace this with node's internal rmSync.  It generates EBUSY errors in windows.
     daemon.on('close', () => rimraf.sync(me))
   })
 
