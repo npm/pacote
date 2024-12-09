@@ -2,6 +2,7 @@ const t = require('tap')
 const cp = require('node:child_process')
 const EventEmitter = require('node:events')
 const { Minipass } = require('minipass')
+const cleanSnapshot = require('../helpers/clean-snapshot.js')
 
 const { spawn } = cp
 
@@ -14,7 +15,7 @@ cp.spawn = (...args) => {
 }
 t.teardown = () => cp.spawn = spawn
 
-t.cleanSnapshot = s => s.split(process.execPath).join('{NODE}')
+t.cleanSnapshot = str => cleanSnapshot(str)
 
 const npm = require('../../lib/util/npm.js')
 t.test('do the things', t => {

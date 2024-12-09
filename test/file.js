@@ -2,8 +2,10 @@ const t = require('tap')
 const { relative, resolve, basename } = require('node:path')
 const fs = require('node:fs')
 const FileFetcher = require('../lib/file.js')
+const cleanSnapshot = require('./helpers/clean-snapshot.js')
+const scriptMode = require('./helpers/script-mode.js')
 
-t.cleanSnapshot = str => str.split(process.cwd()).join('${CWD}')
+t.cleanSnapshot = str => cleanSnapshot(str)
 
 const me = t.testdir({ cache: {} })
 const cache = resolve(me, 'cache')
@@ -42,7 +44,7 @@ t.test('make bins executable', t => {
     const target = resolve(me, basename(file, '.tgz'))
     const res = await f.extract(target)
     t.matchSnapshot(res, 'results of unpack')
-    t.equal(fs.statSync(target + '/script.js').mode & 0o111, 0o111)
+    t.equal(fs.statSync(target + '/script.js').mode & scriptMode(), scriptMode())
   }))
 })
 

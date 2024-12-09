@@ -1,5 +1,25 @@
 # Changelog
 
+## [21.0.0](https://github.com/npm/pacote/compare/v20.0.0...v21.0.0) (2024-11-25)
+### ⚠️ BREAKING CHANGES
+* `bun.lockb` files are now included in the strict ignore list during packing
+* this module is now compatible with the following node versions: ^20.17.0 || >=22.9.0
+### Bug Fixes
+* [`844dc08`](https://github.com/npm/pacote/commit/844dc08895a16f67573f9d24eab092a32b77e3a3) update node engines to ^20.17.0 || >=22.9.0 (#414) (@wraithgar)
+### Dependencies
+* [`2cb6fa7`](https://github.com/npm/pacote/commit/2cb6fa7ecf8016776077ae76651aaf5e188715e5) [#415](https://github.com/npm/pacote/pull/415) `npm-packlist@10.0.0` (#415)
+* [`47b928c`](https://github.com/npm/pacote/commit/47b928ccefe1f3fc450e4d7df5058bac8a6090f6) [#412](https://github.com/npm/pacote/pull/412) replace node builtin rmSync with rimraf (#412) (@mbtools)
+### Chores
+* [`b6f35a2`](https://github.com/npm/pacote/commit/b6f35a20be8baf7552c63c8255b33937066a1f06) [#402](https://github.com/npm/pacote/pull/402) bump @npmcli/arborist from 7.5.4 to 8.0.0 (#402) (@dependabot[bot])
+* [`1ef54ba`](https://github.com/npm/pacote/commit/1ef54ba08b37fe4d83786d6de70f7a93917d3b6f) [#408](https://github.com/npm/pacote/pull/408) support tests on win32 (#408) (@mbtools)
+* [`555b000`](https://github.com/npm/pacote/commit/555b00080f608468fd9219b77e6b24570e98caa2) [#401](https://github.com/npm/pacote/pull/401) bump @npmcli/template-oss from 4.23.3 to 4.23.4 (#401) (@dependabot[bot], @npm-cli-bot)
+
+## [20.0.0](https://github.com/npm/pacote/compare/v19.0.1...v20.0.0) (2024-10-17)
+### ⚠️ BREAKING CHANGES
+* honors `ignoreScripts` property within options
+### Bug Fixes
+* [`f27af63`](https://github.com/npm/pacote/commit/f27af6334daa0a51af547f1aef64035d4bebd359) [#407](https://github.com/npm/pacote/pull/407) honors `ignoreScripts` option to prevent `prepare` lifecycle script (@reggi)
+
 ## [19.0.1](https://github.com/npm/pacote/compare/v19.0.0...v19.0.1) (2024-10-15)
 ### Bug Fixes
 * [`cbf94e8`](https://github.com/npm/pacote/commit/cbf94e8b0486e80f8f2e4c9ed7c7d18c3282096b) [#389](https://github.com/npm/pacote/pull/389) prepare script respects scriptshell config (#389) (@milaninfy)

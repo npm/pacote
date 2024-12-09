@@ -9,6 +9,8 @@ const Fetcher = require('../lib/fetcher.js')
 // we actually use a file fetcher for this, because we need implementations
 const FileFetcher = require('../lib/file.js')
 const abbrevMani = require('./fixtures/abbrev-manifest-min.json')
+const cleanSnapshot = require('./helpers/clean-snapshot.js')
+const scriptMode = require('./helpers/script-mode.js')
 
 const byDigest = cacache.get.stream.byDigest
 
@@ -25,7 +27,7 @@ fs.futimesSync = () => {
   throw new Error('do not call futimesSync')
 }
 
-t.cleanSnapshot = s => s.split(process.cwd()).join('{CWD}')
+t.cleanSnapshot = str => cleanSnapshot(str)
 
 const me = t.testdir()
 const abbrev = resolve(__dirname, 'fixtures/abbrev-1.1.1.tgz')
@@ -33,6 +35,10 @@ const abbrevspec = `file:${relative(process.cwd(), abbrev)}`
 const weird = resolve(__dirname, 'fixtures/weird-pkg.tgz')
 const weirdspec = `file:${relative(process.cwd(), weird)}`
 const cache = resolve(me, 'cache')
+
+t.teardown(async () => {
+  fs.rmSync(me, { recursive: true, force: true, maxRetries: 3 })
+})
 
 t.test('do not mutate opts object passed in', t => {
   const opts = {}
@@ -150,7 +156,8 @@ t.test('tarballFile', t => {
       .then(() => fsm.WriteStream = WriteStream)
   })
 
-  t.test('file not found', t => {
+  // Blocks removal of the test directory on Windows
+  t.test('file not found', { skip: process.platform === 'win32' }, t => {
     const f = abbrev + '-not-found.tgz'
     return t.rejects(new FileFetcher(f, { cache })
       .tarballFile(target + '/not-found.tgz'), {
@@ -206,37 +213,73 @@ t.test('extract', t => {
         preferOnline: false,
       }).extract(target + '/badcache')
         .then(({ resolved, integrity }) => {
-          t.match(logs, [
-            ['http',
-              'cache',
-              /file:test\/fixtures\/abbrev-1.1.1.tgz.*(cache hit)/,
-            ],
-            ['warn', 'tar', 'zlib: incorrect header check'],
-            [
-              'silly',
-              'tar',
-              { message: 'zlib: incorrect header check',
-                errno: Number,
-                code: 'Z_DATA_ERROR',
-                recoverable: false,
-                tarCode: 'TAR_ABORT',
-              },
-            ],
-            [
-              'warn',
-              'tarball',
-              'cached data for file:test/fixtures/abbrev-1.1.1.tgz (sha512-' +
-              'nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTN' +
-              'NfNtAfZ9/1RtehkszU9qcTii0Q==) seems to be corrupted. ' +
-              'Refreshing cache.',
-            ],
-            [
-              'silly',
-              'tarball',
-              'no local data for file:test/fixtures/abbrev-1.1.1.tgz. ' +
-              'Extracting by manifest.',
-            ],
-          ], 'got expected logs')
+          if (process.platform !== 'win32') {
+            t.match(logs, [
+              ['http',
+                'cache',
+                /file:test\/fixtures\/abbrev-1.1.1.tgz.*(cache hit)/,
+              ],
+              ['warn', 'tar', 'zlib: incorrect header check'],
+              [
+                'silly',
+                'tar',
+                {
+                  message: 'zlib: incorrect header check',
+                  errno: Number,
+                  code: 'Z_DATA_ERROR',
+                  recoverable: false,
+                  tarCode: 'TAR_ABORT',
+                },
+              ],
+              [
+                'warn',
+                'tarball',
+                'cached data for file:test/fixtures/abbrev-1.1.1.tgz (sha512-' +
+                'nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTN' +
+                'NfNtAfZ9/1RtehkszU9qcTii0Q==) seems to be corrupted. ' +
+                'Refreshing cache.',
+              ],
+              [
+                'silly',
+                'tarball',
+                'no local data for file:test/fixtures/abbrev-1.1.1.tgz. ' +
+                'Extracting by manifest.',
+              ],
+            ], 'got expected logs')
+          } else {
+            t.match(logs, [
+              ['http',
+                'cache',
+                /file:test\\fixtures\\abbrev-1.1.1.tgz.*(cache hit)/,
+              ],
+              ['warn', 'tar', 'zlib: incorrect header check'],
+              [
+                'silly',
+                'tar',
+                {
+                  message: 'zlib: incorrect header check',
+                  errno: Number,
+                  code: 'Z_DATA_ERROR',
+                  recoverable: false,
+                  tarCode: 'TAR_ABORT',
+                },
+              ],
+              [
+                'warn',
+                'tarball',
+                'cached data for file:test\\fixtures\\abbrev-1.1.1.tgz (sha512-' +
+                'nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTN' +
+                'NfNtAfZ9/1RtehkszU9qcTii0Q==) seems to be corrupted. ' +
+                'Refreshing cache.',
+              ],
+              [
+                'silly',
+                'tarball',
+                'no local data for file:test\\fixtures\\abbrev-1.1.1.tgz. ' +
+                'Extracting by manifest.',
+              ],
+            ], 'got expected logs')
+          }
           process.removeListener('log', onlog)
           cacache.get.stream.byDigest = byDigest
           return check('badcache')({ resolved, integrity })
@@ -286,9 +329,9 @@ t.test('extract', t => {
         .catch(er => {
           t.match(er, {
             message: 'sha512-0 ' +
-            'integrity checksum failed when using sha512: wanted sha512-' +
-            '0 but got sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5p' +
-            'OFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==. (2301 bytes)',
+              'integrity checksum failed when using sha512: wanted sha512-' +
+              '0 but got sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5p' +
+              'OFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==. (2301 bytes)',
             code: 'EINTEGRITY',
             found: Object,
             expected: [
@@ -302,30 +345,62 @@ t.test('extract', t => {
             algorithm: 'sha512',
             sri: Object,
           }, 'got expected error')
-          t.match(logs, [
-            ['http',
-              'cache',
-              /file:test\/fixtures\/abbrev-1.1.1.tgz.*(cache hit)/,
-            ],
-            [
-              'silly',
-              'tarball',
-              'no local data for file:test/fixtures/abbrev-1.1.1.tgz. ' +
-              'Extracting by manifest.',
-            ],
-            [
-              'warn',
-              'tarball',
-              'tarball data for file:test/fixtures/abbrev-1.1.1.tgz ' +
-              '(sha512-0) seems to be corrupted. Trying again.',
-            ],
-            [
-              'warn',
-              'tarball',
-              'tarball data for file:test/fixtures/abbrev-1.1.1.tgz ' +
-              '(sha512-0) seems to be corrupted. Trying again.',
-            ],
-          ], 'got expected logs')
+          if (process.platform !== 'win32') {
+            t.match(logs, [
+              [
+                'http',
+                'cache',
+                /file:test\/fixtures\/abbrev-1.1.1.tgz.*(cache hit)/,
+              ],
+              [
+                'silly',
+                'tarball',
+                'no local data for file:test/fixtures/abbrev-1.1.1.tgz. ' +
+                'Extracting by manifest.',
+              ],
+              [
+                'warn',
+                'tarball',
+                'tarball data for file:test/fixtures/abbrev-1.1.1.tgz ' +
+                '(sha512-0) seems to be corrupted. Trying again.',
+              ],
+              [
+                'warn',
+                'tarball',
+                'tarball data for file:test/fixtures/abbrev-1.1.1.tgz ' +
+                '(sha512-0) seems to be corrupted. Trying again.',
+              ],
+            ], 'got expected logs')
+          } else {
+            t.match(logs, [
+              [
+                'http',
+                'cache',
+                /file:test\\+fixtures\\+abbrev-1.1.1.tgz.*(cache hit)/,
+              ],
+              [
+                'warn',
+                'tar',
+                'TAR_BAD_ARCHIVE: Unrecognized archive format',
+              ],
+              [
+                'silly',
+                'tar',
+              ],
+              [
+                'warn',
+                'tarball',
+                'cached data for file:test\\fixtures\\abbrev-1.1.1.tgz ' +
+                '(sha512-0) seems to be corrupted. Refreshing cache.',
+              ],
+              [
+                'silly',
+                'tarball',
+                'no local data for file:test\\fixtures\\abbrev-1.1.1.tgz. ' +
+                'Extracting by manifest.',
+              ],
+            ], 'got expected logs')
+          }
           process.removeListener('log', onlog)
         })
     })
@@ -472,7 +547,7 @@ t.test('make bins executable', async t => {
   const target = resolve(me, basename(file, '.tgz'))
   const res = await f.extract(target)
   t.matchSnapshot(res, 'results of unpack')
-  t.equal(fs.statSync(target + '/script.js').mode & 0o111, 0o111)
+  t.equal(fs.statSync(target + '/script.js').mode & scriptMode(), scriptMode())
 })
 
 t.test('set integrity, pick default algo', t => {
