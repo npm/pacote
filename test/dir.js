@@ -72,7 +72,7 @@ const prepackspec = `file:${relative(process.cwd(), prepack)}`
 
 t.test('with prepack script with _PACOTE_FROM_GIT_ is enabled', async t => {
   RUNS.length = 0
-  process.env._PACOTE_FROM_GIT_ = "yes"
+  process.env._PACOTE_FROM_GIT_ = 'yes'
   t.teardown(() => {
     delete process.env._PACOTE_FROM_GIT_
   })
@@ -107,7 +107,7 @@ t.test('with prepack script and _PACOTE_FROM_GIT_ is disabled', async t => {
     }),
   })
   const f = new DirFetcherIsolate(`file:${relative(process.cwd(), dir)}`, {
-    tree: await loadActual(dir)
+    tree: await loadActual(dir),
   })
   await f.extract(me + '/prepack-ignore')
   t.ok(!shouldNotBePopulated)
