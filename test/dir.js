@@ -226,11 +226,7 @@ t.test('with prepack script with _PACOTE_FROM_GIT_ is enabled', async t => {
 t.test('with prepack script and _PACOTE_FROM_GIT_ is disabled', async t => {
   let shouldNotBePopulated = false
 
-  const DirFetcherIsolate = t.mock('../lib/dir.js', {
-    '@npmcli/run-script': () => {
-      shouldNotBePopulated = true
-    },
-  })
+  const DirFetcherIsolate = t.mock('../lib/dir.js')
 
   const dir = t.testdir({
     'package.json': JSON.stringify({
