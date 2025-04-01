@@ -67,52 +67,6 @@ t.test('with prepare script', async t => {
     }, 'should run in background'))
 })
 
-const prepack = resolve(__dirname, 'fixtures/prepack-script')
-const prepackspec = `file:${relative(process.cwd(), prepack)}`
-
-t.test('with prepack script with _PACOTE_FROM_GIT_ is enabled', async t => {
-  RUNS.length = 0
-  process.env._PACOTE_FROM_GIT_ = 'yes'
-  t.teardown(() => {
-    delete process.env._PACOTE_FROM_GIT_
-  })
-  const f = new DirFetcher(prepackspec, { tree: await loadActual(prepack) })
-  t.resolveMatchSnapshot(f.packument(), 'packument')
-  t.resolveMatchSnapshot(f.manifest(), 'manifest')
-  const index = me + '/prepack/index.js'
-  return t.resolveMatchSnapshot(f.extract(me + '/prepack'), 'extract')
-    .then(() => t.spawn(process.execPath, [index], 'test prepacked result'))
-    .then(() => t.matchSnapshot(fs.readdirSync(me + '/prepack').sort(), 'file list'))
-    .then(() => t.match(RUNS[0], {
-      stdio: 'pipe',
-    }, 'should run in background'))
-})
-
-t.test('with prepack script and _PACOTE_FROM_GIT_ is disabled', async t => {
-  let shouldNotBePopulated = false
-
-  const DirFetcherIsolate = t.mock('../lib/dir.js', {
-    '@npmcli/run-script': () => {
-      shouldNotBePopulated = true
-    },
-  })
-
-  const dir = t.testdir({
-    'package.json': JSON.stringify({
-      name: 'meow',
-      version: '1.0.0',
-      scripts: {
-        prepack: 'noop',
-      },
-    }),
-  })
-  const f = new DirFetcherIsolate(`file:${relative(process.cwd(), dir)}`, {
-    tree: await loadActual(dir),
-  })
-  await f.extract(me + '/prepack-ignore')
-  t.ok(!shouldNotBePopulated)
-})
-
 t.test('with prepare script with scriptshell configuration', async t => {
   RUNS.length = 0
   const f = new DirFetcher(preparespec, { tree: await loadActual(prepare), scriptShell: 'sh' })
@@ -245,5 +199,51 @@ t.test('with prepare script and ignoreScripts true', async t => {
     ignoreScripts: true,
   })
   await f.extract(me + '/prepare-ignore')
+  t.ok(!shouldNotBePopulated)
+})
+
+const prepack = resolve(__dirname, 'fixtures/prepack-script')
+const prepackspec = `file:${relative(process.cwd(), prepack)}`
+
+t.test('with prepack script with _PACOTE_FROM_GIT_ is enabled', async t => {
+  RUNS.length = 0
+  process.env._PACOTE_FROM_GIT_ = 'yes'
+  t.teardown(() => {
+    delete process.env._PACOTE_FROM_GIT_
+  })
+  const f = new DirFetcher(prepackspec, { tree: await loadActual(prepack) })
+  t.resolveMatchSnapshot(f.packument(), 'packument')
+  t.resolveMatchSnapshot(f.manifest(), 'manifest')
+  const index = me + '/prepack/index.js'
+  return t.resolveMatchSnapshot(f.extract(me + '/prepack'), 'extract')
+    .then(() => t.spawn(process.execPath, [index], 'test prepacked result'))
+    .then(() => t.matchSnapshot(fs.readdirSync(me + '/prepack').sort(), 'file list'))
+    .then(() => t.match(RUNS[0], {
+      stdio: 'pipe',
+    }, 'should run in background'))
+})
+
+t.test('with prepack script and _PACOTE_FROM_GIT_ is disabled', async t => {
+  let shouldNotBePopulated = false
+
+  const DirFetcherIsolate = t.mock('../lib/dir.js', {
+    '@npmcli/run-script': () => {
+      shouldNotBePopulated = true
+    },
+  })
+
+  const dir = t.testdir({
+    'package.json': JSON.stringify({
+      name: 'meow',
+      version: '1.0.0',
+      scripts: {
+        prepack: 'noop',
+      },
+    }),
+  })
+  const f = new DirFetcherIsolate(`file:${relative(process.cwd(), dir)}`, {
+    tree: await loadActual(dir),
+  })
+  await f.extract(me + '/prepack-ignore')
   t.ok(!shouldNotBePopulated)
 })
