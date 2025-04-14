@@ -749,12 +749,27 @@ t.test('missing branch name throws pathspec error', { skip: isWindows && 'posix 
     }
   })
 
+const waitForFile = async (filePath, timeout = 2000) => {
+  const start = Date.now()
+  while (Date.now() - start < timeout) {
+    try {
+      if (fs.statSync(filePath)) {
+        return true
+      }
+    } catch {
+      await new Promise(r => setTimeout(r, 10))
+    }
+  }
+  throw new Error(`Timeout waiting for file: ${filePath}`)
+}
+
 t.test('simple repo with workspaces', { skip: isWindows && 'posix only' }, async t => {
   const ws = new GitFetcher(workspacesRemote, opts)
   const extract = resolve(me, 'extract-workspaces')
   await ws.extract(extract)
-  // the file ./a/foo does not exist in the original repo
-  // and should have been created during prepare phase
+
+  await waitForFile(me + '/extract-workspaces/a/foo')
+
   t.ok(
     fs.statSync(me + '/extract-workspaces/a/foo'),
     'should run prepare phase when finding workspaces'
