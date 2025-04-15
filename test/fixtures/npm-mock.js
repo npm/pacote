@@ -2,12 +2,14 @@
 const { argv, env } = process
 
 const pnp = env._PACOTE_NO_PREPARE_ || ''
+const pfg = env._PACOTE_FROM_GIT_
 const pacotePath = env._PACOTE_TEST_PATH_
 const pacoteOpts = env._PACOTE_TEST_OPTS_
 
 const data = {
   argv,
   noPrepare: pnp ? pnp.split('\\n') : [],
+  pfg,
   cwd: process.cwd(),
 }
 

@@ -1,0 +1,12 @@
+{
+  "name": "git-prepack-script",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "prepack": "node prepack.js"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "abbrev": "^1.1.1"
+  }
+}
