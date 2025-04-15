@@ -1,3 +1,6 @@
+// `npm test --ignore-scripts` overrides any local options, so we need to remove it from the env
+delete process.env.npm_config_ignore_scripts
+
 const t = require('tap')
 const fs = require('node:fs')
 const http = require('node:http')
