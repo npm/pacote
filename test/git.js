@@ -15,6 +15,7 @@ const rimraf = require('rimraf')
 const tar = require('tar')
 const spawnNpm = require('../lib/util/npm.js')
 const GitFetcher = require('../lib/git.js')
+const { makeStrategies, revListFailures, cdnFailures } = require('../lib/git.js')
 
 // set this up first, so we can use 127.0.0.1 as our "hosted git" service
 const httpPort = 18000 + (+process.env.TAP_CHILD_ID || 0)
@@ -781,3 +782,276 @@ t.test('fails without arborist constructor', { skip: isWindows && 'posix only' }
   const extract = resolve(me, 'extract-prepack')
   t.rejects(() => ws.extract(extract))
 })
+
+t.test('makeStrategies orders cdn→initial→fallback and skips tried', t => {
+  const hk = 'a/b'
+  revListFailures.clear()
+
+  let list = makeStrategies({ initial: 'git+https', hasSha: false, hostKey: hk })
+  t.same(list, ['cdn', 'git+https', 'git+ssh'], 'first pass')
+
+  // simulate https already tried
+  revListFailures.set(hk, new Set(['git+https']))
+  list = makeStrategies({ initial: 'git+https', hasSha: false, hostKey: hk })
+  t.same(list, ['cdn', 'git+ssh', 'git+https'], 'skips tried protocol')
+
+  // sha-pinned => only cdn
+  list = makeStrategies({ initial: 'git+ssh', hasSha: true, hostKey: hk })
+  t.same(list, ['cdn'], 'sha skips rev-list')
+
+  t.end()
+})
+
+t.test('makeStrategies pushes fallback in ensure block when previously tried', t => {
+  const hk = 'c/d'
+  revListFailures.clear()
+  // mark fallback (git+ssh) as tried
+  revListFailures.set(hk, new Set(['git+ssh']))
+
+  const list = makeStrategies({ initial: 'git+https', hasSha: false, hostKey: hk })
+  t.same(list, ['cdn', 'git+https', 'git+ssh'], 'fallback added during ensure step')
+  t.end()
+})
+
+t.test('constructor falls back to fetchSpec when hosted.shortcut is not a function', t => {
+  const spec = npa(remote) // remote defined in setup above
+  spec.hosted = { shortcut: 'not-a-function' } // ensure else branch
+  const g = new GitFetcher(spec, opts)
+  t.equal(g.from, spec.fetchSpec, 'from set to fetchSpec')
+  t.end()
+})
+
+t.test('fetch branch coverage', { skip: isWindows && 'posix only' }, t => {
+  t.test('cdn strategy succeeds and short-circuits', async t => {
+    const gf = new GitFetcher(`localhost:repo/x#${REPO_HEAD}`, opts)
+    const res = await gf.fetch()
+    t.ok(res, 'got a result from cdn')
+    t.equal(
+      cdnFailures.get(`${gf.spec.hosted.host}/${gf.spec.hosted.repo}`),
+      undefined,
+      'cdn did not record a failure'
+    )
+  })
+
+  t.test('cdn fails then _gitRevList succeeds', async t => {
+    class RevListFetcher extends GitFetcher {
+      async _gitRevList (protocol) {
+        this.revProtocol = protocol
+        this.resolved = 'revlist-ok'
+      }
+    }
+
+    const f = new RevListFetcher('git+https://example.com/foo.git', opts)
+    const resolved = await f.fetch()
+    t.equal(resolved, 'revlist-ok')
+    t.equal(f.revProtocol, 'git+https', 'used initial protocol for rev-list')
+  })
+
+  t.test('fetch throws immediately on ECONNREFUSED', async t => {
+    class ErrorFetcher extends GitFetcher {
+      async _gitRevList () {
+        const er = new Error('refused')
+        er.code = 'ECONNREFUSED'
+        throw er
+      }
+    }
+
+    const e = new ErrorFetcher('git+https://example.com/foo.git', opts)
+    await t.rejects(e.fetch(), { code: 'ECONNREFUSED' })
+  })
+
+  t.end()
+})
+
+t.test('fetch triggers _gitClone branch with sha and no CDN', { skip: isWindows && 'posix only' }, async t => {
+  const sha = 'dddddddddddddddddddddddddddddddddddddddd'
+
+  class ShaCloneFetcher extends GitFetcher {
+    async _gitClone (protocol) {
+      this.cloneProto = protocol
+      this.resolved = 'clone-result'
+    }
+  }
+
+  // build a spec object so we can guarantee protocol is `git+https`
+  const spec = npa(`git+https://example.com/foo.git#${sha}`)
+  spec.protocol = 'git+https' // makeStrategies needs this exact value
+
+  const f = new ShaCloneFetcher(spec, opts)
+  const res = await f.fetch()
+
+  t.equal(res, 'clone-result', 'resolved value set by _gitClone')
+  t.equal(f.cloneProto, 'git+https', 'clone used initial protocol')
+})
+
+t.test('_gitRevList branch coverage', { skip: isWindows && 'posix only' }, async t => {
+  const gitMod = require('@npmcli/git')
+  const originalRevs = gitMod.revs
+
+  t.teardown(() => gitMod.revs = originalRevs)
+
+  const sha = 'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+  const range = '1.2.3'
+
+  // 1) pickManifest returns item *without* sha → fall back to _gitClone
+  {
+    class RevListClone extends GitFetcher {
+      async _gitClone (proto) {
+        this.clonedWith = proto
+        this.resolved = 'clone-fallback'
+      }
+    }
+
+    gitMod.revs = async () => ({
+      versions: { [range]: { version: range } }, // note: no sha property
+      'dist-tags': { latest: range },
+    })
+
+    const spec = npa(`git+https://example.com/foo.git#semver:${range}`)
+    const f = new RevListClone(spec, opts)
+    await f._gitRevList('git+https')
+
+    t.equal(f.clonedWith, 'git+https', 'fell back to _gitClone when sha missing')
+    t.equal(f.resolved, 'clone-fallback', 'resolved set by clone fallback')
+  }
+
+  // 2) pickManifest returns item *with* sha → success path, no _gitClone
+  {
+    class RevListSuccess extends GitFetcher {
+      async _gitClone () {
+        throw new Error('should not be called')
+      }
+    }
+
+    gitMod.revs = async () => ({
+      versions: { [range]: { version: range, sha } },
+      'dist-tags': { latest: range },
+    })
+
+    const spec = npa(`git+https://example.com/bar.git#semver:${range}`)
+    const f = new RevListSuccess(spec, opts)
+    await f._gitRevList('git+https')
+
+    t.equal(f.resolvedSha, sha, 'sha set from successful pick')
+    t.match(f.resolved, /^git\+https:\/\/example\.com\/bar\.git#/, 'resolved updated')
+  }
+
+  t.end()
+})
+
+t.test('#cloneHosted honors explicit protocol', { skip: isWindows && 'posix only' }, async t => {
+  const gitMod = require('@npmcli/git')
+  const origClone = gitMod.clone
+  let cloneCalled = false
+
+  // stub git.clone so no real process runs
+  gitMod.clone = async (r, ref, dir, o) => {
+    cloneCalled = { r, ref, protocol: o.spec.protocol }
+    // return fake sha
+    return 'ffffffffffffffffffffffffffffffffffffffff'
+  }
+
+  t.teardown(() => gitMod.clone = origClone)
+
+  // hosted spec (our tests registered the 'localhost' host)
+  const spec = npa('localhost:repo/x')
+  // ensure initial protocol is git+https so makeStrategies works,
+  // but we will request ssh explicitly below
+  spec.protocol = 'git+https'
+
+  const f = new GitFetcher(spec, { cache: t.testdir() })
+  const dir = await f._gitClone('git+ssh')
+
+  t.ok(dir && typeof dir === 'string', 'clone returned directory path')
+  t.match(cloneCalled, {
+    protocol: 'git+ssh',
+  }, 'git.clone invoked with ssh protocol as requested')
+  t.match(cloneCalled.repo,
+    /^git\+git:\/\/127\.0\.0\.1:[0-9]+\/repo$/,
+    'git.clone used repo url generated with explicit protocol')
+})
+
+t.test('fetch reuses existing revListFailures set', { skip: isWindows && 'posix only' }, async t => {
+  // spec.hosted is falsy, so fetch() will use spec.fetchSpec as hostKey
+  const specStr = 'git+https://example.com/reused.git'
+  const hostKey = npa(specStr).fetchSpec
+  const preset = new Set(['git+ssh'])
+
+  revListFailures.clear()
+  revListFailures.set(hostKey, preset)
+
+  class FailRevList extends GitFetcher {
+    async _gitRevList () {
+      const err = new Error('rev-list boom')
+      err.code = 'SOME'
+      throw err
+    }
+  }
+
+  const gf = new FailRevList(specStr, opts)
+
+  await t.rejects(gf.fetch(), /rev-list boom/, 'fetch fails as expected')
+
+  const after = revListFailures.get(hostKey)
+  t.equal(after, preset, 'same Set instance reused')
+  t.ok(after.has('git+ssh'), 'original entry preserved')
+  t.ok(after.has('git+https'), 'new failure added')
+})
+
+t.test('_gitRevList uses hosted repoUrl when hosted is truthy',
+  { skip: isWindows && 'posix only' }, async t => {
+    const gitMod = require('@npmcli/git')
+    const origRevs = gitMod.revs
+    let calledRemote = ''
+
+    // stub git.revs so no network access
+    gitMod.revs = async r => {
+      calledRemote = r
+      return {
+        versions: { '1.0.0': { version: '1.0.0', sha: 'f'.repeat(40) } },
+        'dist-tags': { latest: '1.0.0' },
+      }
+    }
+    t.teardown(() => gitMod.revs = origRevs)
+
+    // hosted spec → spec.hosted is truthy
+    const spec = npa('github:foo/bar#semver:1.0.0')
+    const fetcher = new GitFetcher(spec, opts)
+
+    await fetcher._gitRevList('git+https')
+
+    t.match(
+      calledRemote,
+      /^git\+https:\/\/github\.com\/foo\/bar\.git$/,
+      'git.revs called with hosted repo url'
+    )
+    t.equal(fetcher.resolvedSha.length, 40, 'sha set from pick')
+  })
+
+t.test('_gitRevList works when spec.gitRange is falsy',
+  { skip: isWindows && 'posix only' }, async t => {
+    const gitMod = require('@npmcli/git')
+    const origRevs = gitMod.revs
+    let calledRemote = ''
+
+    const sha = 'a'.repeat(40)
+
+    // stub git.revs so no real network access
+    gitMod.revs = async r => {
+      calledRemote = r
+      return {
+        versions: { '1.0.0': { version: '1.0.0', sha } },
+        'dist-tags': { latest: '1.0.0' },
+      }
+    }
+    t.teardown(() => gitMod.revs = origRevs)
+
+    // spec with NO gitRange or committish
+    const spec = npa('git+https://example.com/no-range.git')
+    const fetcher = new GitFetcher(spec, opts)
+
+    await fetcher._gitRevList('git+https')
+
+    t.equal(calledRemote, spec.fetchSpec, 'git.revs called with fetchSpec')
+    t.equal(fetcher.resolvedSha, sha, 'resolvedSha set from pickManifest result')
+  })
