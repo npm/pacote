@@ -1,5 +1,20 @@
 # Changelog
 
+## [21.0.1](https://github.com/npm/pacote/compare/v21.0.0...v21.0.1) (2025-09-02)
+### Dependencies
+* [`aae7798`](https://github.com/npm/pacote/commit/aae7798cdd0b08fcb4f648490b12d08f79016942) [#428](https://github.com/npm/pacote/pull/428) `@npmcli/run-script@10.0.0`
+* [`1b233e3`](https://github.com/npm/pacote/commit/1b233e33ecc6cde26a280aabc8745d60853da80c) [#428](https://github.com/npm/pacote/pull/428) `@npmcli/package-json@7.0.0`
+* [`d4b97ec`](https://github.com/npm/pacote/commit/d4b97ec0960485166513cf1583a71c575456bdea) [#428](https://github.com/npm/pacote/pull/428) `sigstore@4.0.0`
+* [`cf27487`](https://github.com/npm/pacote/commit/cf274873d6a5a94a20859329d0dadf40b4b66711) [#428](https://github.com/npm/pacote/pull/428) `npm-registry-fetch@19.0.0`
+* [`3e89235`](https://github.com/npm/pacote/commit/3e89235353d83e632408c322dc2a6ac21326e4e9) [#428](https://github.com/npm/pacote/pull/428) `npm-packlist@10.0.1`
+* [`d46fc27`](https://github.com/npm/pacote/commit/d46fc27cbc572f8a2c6310129d27876a977eb59b) [#428](https://github.com/npm/pacote/pull/428) `npm-package-arg@13.0.0`
+* [`2a6a9f0`](https://github.com/npm/pacote/commit/2a6a9f0b25b8451337e266379660561d7178a48d) [#428](https://github.com/npm/pacote/pull/428) `hosted-git-info@9.0.0`
+* [`bbb72cf`](https://github.com/npm/pacote/commit/bbb72cfa30ed9a188c0117b6bf9a934ed381d453) [#428](https://github.com/npm/pacote/pull/428) `cacache@20.0.0`
+* [`8a642c0`](https://github.com/npm/pacote/commit/8a642c0d83f1cc740d60293fcd38be2ac0d52083) [#426](https://github.com/npm/pacote/pull/426) `tar@7.4.3` (#426)
+### Chores
+* [`f81d8ed`](https://github.com/npm/pacote/commit/f81d8ed2458d58fe42b3cb67f96f2befc5422d3d) [#417](https://github.com/npm/pacote/pull/417) bump @npmcli/arborist from 8.0.0 to 9.0.0 (#417) (@dependabot[bot])
+* [`0310b7b`](https://github.com/npm/pacote/commit/0310b7be04fea4919bf11f66acde1e204a18cff4) [#422](https://github.com/npm/pacote/pull/422) tests should not inherit --ignore-scripts flag from `npm run t… (#422) (@owlstronaut)
+
 ## [21.0.0](https://github.com/npm/pacote/compare/v20.0.0...v21.0.0) (2024-11-25)
 ### ⚠️ BREAKING CHANGES
 * `bun.lockb` files are now included in the strict ignore list during packing
