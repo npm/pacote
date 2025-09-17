@@ -1,5 +1,9 @@
 # Changelog
 
+## [21.0.3](https://github.com/npm/pacote/compare/v21.0.2...v21.0.3) (2025-09-17)
+### Dependencies
+* [`eed1bd5`](https://github.com/npm/pacote/commit/eed1bd52ea803bf075a81d3786c5240856aed9bf) [#431](https://github.com/npm/pacote/pull/431) `@npmcli/git@7.0.0` (#431)
+
 ## [21.0.2](https://github.com/npm/pacote/compare/v21.0.1...v21.0.2) (2025-09-17)
 ### Dependencies
 * [`32cb6d1`](https://github.com/npm/pacote/commit/32cb6d13bb0ef38473a1660329076b73bf4e2dea) [#429](https://github.com/npm/pacote/pull/429) `npm-pick-manifest@11.0.1` (#429)
