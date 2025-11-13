@@ -1,5 +1,15 @@
 # Changelog
 
+## [21.0.4](https://github.com/npm/pacote/compare/v21.0.3...v21.0.4) (2025-11-13)
+### Dependencies
+* [`edbcc02`](https://github.com/npm/pacote/commit/edbcc02933255ad72ab1d9f5adc070692e402c9b) [#436](https://github.com/npm/pacote/pull/436) `proc-log@6.0.0`
+* [`8dc1f22`](https://github.com/npm/pacote/commit/8dc1f2294ffc8843e65fe582dde49756581580e1) [#436](https://github.com/npm/pacote/pull/436) `@npmcli/installed-package-contents@4.0.0`
+* [`505c3b0`](https://github.com/npm/pacote/commit/505c3b0c8335694c690e18c0aba373e68482545e) [#436](https://github.com/npm/pacote/pull/436) `ssri@13.0.0`
+* [`a23fb17`](https://github.com/npm/pacote/commit/a23fb17692d2978290441e99e2d8baf68a4bd22e) [#436](https://github.com/npm/pacote/pull/436) `@npmcli/promise-spawn@9.0.0`
+### Chores
+* [`ff261aa`](https://github.com/npm/pacote/commit/ff261aa39e58437776043bb562fd388742d39185) [#436](https://github.com/npm/pacote/pull/436) `@npmcli/eslint-config@6.0.0` (@wraithgar)
+* [`2bba862`](https://github.com/npm/pacote/commit/2bba86201e3e5c226ff23544a18cdc8d480eb888) [#436](https://github.com/npm/pacote/pull/436) `@npmcli/template-oss@4.28.0` (@wraithgar)
+
 ## [21.0.3](https://github.com/npm/pacote/compare/v21.0.2...v21.0.3) (2025-09-17)
 ### Dependencies
 * [`eed1bd5`](https://github.com/npm/pacote/commit/eed1bd52ea803bf075a81d3786c5240856aed9bf) [#431](https://github.com/npm/pacote/pull/431) `@npmcli/git@7.0.0` (#431)
