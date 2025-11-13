@@ -28,9 +28,9 @@ const cases = [
     'sha',
     'https://git@github.com/user/repo.git#sha'],
   // github https no auth
-  ['git+https://github.com/user/repo', 'sha', 'github:user/repo#sha'],
-  ['git+https://github.com/user/repo#othersha', 'sha', 'github:user/repo#sha'],
-  ['git+https://github.com/user/repo#othersha#otherothersha', 'sha', 'github:user/repo#sha'],
+  ['git+https://github.com/user/repo', 'sha', 'https://github.com/user/repo.git#sha'],
+  ['git+https://github.com/user/repo#othersha', 'sha', 'https://github.com/user/repo.git#sha'],
+  ['git+https://github.com/user/repo#othersha#otherothersha', 'sha', 'https://github.com/user/repo.git#sha'],
   // github ssh
   ['git+ssh://git@github.com/user/repo', 'sha', 'github:user/repo#sha'],
   ['git+ssh://git@github.com/user/repo#othersha', 'sha', 'github:user/repo#sha'],
