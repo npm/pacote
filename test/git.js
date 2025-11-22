@@ -670,13 +670,14 @@ t.test('repoUrl function', { skip: isWindows && 'posix only' }, async t => {
   const { hosted: ssh } = npa(`git+ssh://git@github.com/${proj}`)
   const { hosted: git } = npa(`git://github.com/${proj}`)
   const { repoUrl } = GitFetcher
-  const expectNoAuth = `git+ssh://git@github.com/${proj}`
+  const expectNoAuthSsh = `git+ssh://git@github.com/${proj}`
+  const expectNoAuthHttps = `git+https://github.com/${proj}`
   const expectAuth = `git+https://user:pass@github.com/${proj}`
-  t.match(repoUrl(shortcut), expectNoAuth)
+  t.match(repoUrl(shortcut), expectNoAuthSsh)
   t.match(repoUrl(hasAuth), expectAuth)
-  t.match(repoUrl(noAuth), expectNoAuth)
-  t.match(repoUrl(ssh), expectNoAuth)
-  t.match(repoUrl(git), expectNoAuth)
+  t.match(repoUrl(noAuth), expectNoAuthHttps)
+  t.match(repoUrl(ssh), expectNoAuthSsh)
+  t.match(repoUrl(git), expectNoAuthSsh)
 })
 
 t.test('handle it when prepared git deps depend on each other', { skip: isWindows && 'posix only' },
