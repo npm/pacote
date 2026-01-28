@@ -525,14 +525,30 @@ t.test('fetcher.get', t => {
     '@foo/bar@1.2.3': 'RegistryFetcher',
     'foo.tgz': 'FileFetcher',
     '/path/to/foo': 'DirFetcher',
-    'isaacs/foo': 'GitFetcher',
-    'git+https://github.com/isaacs/foo': 'GitFetcher',
+    'npm/foo': 'GitFetcher',
+    'git+https://github.com/npm/foo': 'GitFetcher',
     'https://server.com/foo.tgz': 'RemoteFetcher',
   }
   for (const [spec, type] of Object.entries(specToType)) {
     t.equal(Fetcher.get(spec).type, type)
   }
 
+  t.end()
+})
+
+t.test('allowGit', t => {
+  t.ok(Fetcher.get('npm/repo'), 'defaults')
+  t.ok(Fetcher.get('npm/foo', { allowGit: 'all' }), 'allowGit: all')
+  t.ok(Fetcher.get('npm/foo', { allowGit: 'root', _isRoot: true }), 'allowGit: root')
+  t.throws(() => {
+    Fetcher.get('npm/foo', { allowGit: 'none' })
+  }, { code: 'EALLOWGIT' })
+  t.throws(() => {
+    Fetcher.get('npm/foo', { allowGit: 'root' })
+  }, { code: 'EALLOWGIT' })
+  t.throws(() => {
+    Fetcher.get('npm/foo', { allowGit: 'root', _isRoot: false })
+  }, { code: 'EALLOWGIT' })
   t.end()
 })
 
