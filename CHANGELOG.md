@@ -1,5 +1,9 @@
 # Changelog
 
+## [21.1.0](https://github.com/npm/pacote/compare/v21.0.4...v21.1.0) (2026-01-28)
+### Features
+* [`258e5fd`](https://github.com/npm/pacote/commit/258e5fde5576b5dfebc0d5f9a098b15afdd70875) [#440](https://github.com/npm/pacote/pull/440) add allowGit option (#440) (@wraithgar)
+
 ## [21.0.4](https://github.com/npm/pacote/compare/v21.0.3...v21.0.4) (2025-11-13)
 ### Dependencies
 * [`edbcc02`](https://github.com/npm/pacote/commit/edbcc02933255ad72ab1d9f5adc070692e402c9b) [#436](https://github.com/npm/pacote/pull/436) `proc-log@6.0.0`
