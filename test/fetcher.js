@@ -536,19 +536,30 @@ t.test('fetcher.get', t => {
   t.end()
 })
 
-t.test('allowGit', t => {
-  t.ok(Fetcher.get('npm/repo'), 'defaults')
-  t.ok(Fetcher.get('npm/foo', { allowGit: 'all' }), 'allowGit: all')
-  t.ok(Fetcher.get('npm/foo', { allowGit: 'root', _isRoot: true }), 'allowGit: root')
-  t.throws(() => {
-    Fetcher.get('npm/foo', { allowGit: 'none' })
-  }, { code: 'EALLOWGIT' })
-  t.throws(() => {
-    Fetcher.get('npm/foo', { allowGit: 'root' })
-  }, { code: 'EALLOWGIT' })
-  t.throws(() => {
-    Fetcher.get('npm/foo', { allowGit: 'root', _isRoot: false })
-  }, { code: 'EALLOWGIT' })
+t.test('allowX', t => {
+  const allowTypes = [
+    ['allowGit', 'npm/foo'],
+    ['allowRemote', 'http://npmjs.org/package'],
+    ['allowFile', './local.tgz'],
+    ['allowDirectory', './local/dir'],
+  ]
+  for (const [allowType, spec] of allowTypes) {
+    t.test(`${allowType}: ${spec}`, t => {
+      t.ok(Fetcher.get(spec), 'defaults')
+      t.ok(Fetcher.get(spec, { [allowType]: 'all' }), `${allowType}: all`)
+      t.ok(Fetcher.get(spec, { [allowType]: 'root', _isRoot: true }), `${allowType}: root`)
+      t.throws(() => {
+        Fetcher.get(spec, { [allowType]: 'none' })
+      }, { code: `E${allowType.toUpperCase()}` })
+      t.throws(() => {
+        Fetcher.get(spec, { [allowType]: 'root' })
+      }, { code: `E${allowType.toUpperCase()}` })
+      t.throws(() => {
+        Fetcher.get(spec, { [allowType]: 'root', _isRoot: false })
+      }, { code: `E${allowType.toUpperCase()}` })
+      t.end()
+    })
+  }
   t.end()
 })
 
