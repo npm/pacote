@@ -72,6 +72,7 @@ HostedGit.addHost('localhostssh', {
 })
 
 const remote = `git://localhost:${gitPort}/repo`
+const remoteBroken = `git://localhost:${gitPort}/broken`
 const remoteHosted = `git://127.0.0.1:${gitPort}/repo`
 const submodsRemote = `git://localhost:${gitPort}/submodule-repo`
 const workspacesRemote = `git://localhost:${gitPort}/workspaces-repo`
@@ -86,6 +87,7 @@ const me = t.testdir({
   cache: {},
 })
 const repo = resolve(me, 'repo')
+const broken = resolve(me, 'broken')
 const cache = resolve(me, 'cache')
 const cycleA = resolve(me, 'cycle-a')
 const cycleB = resolve(me, 'cycle-b')
@@ -452,6 +454,30 @@ t.test('ignores integrity for git deps', { skip: isWindows && 'posix only' }, as
     _integrity: undefined, // _integrity should never be present for git deps npm/rfcs#525
     _resolved: `${remote}#${fetcher.resolvedSha}`,
   })
+  t.end()
+})
+
+t.test('detects changes in the resolved sha', {}, async (t) => {
+  const git = (...cmd) => spawnGit(cmd, { cwd: broken })
+  const write = (f, c) => fs.writeFileSync(f, c)
+
+  await mkdir(broken, { recursive: true })
+    .then(() => git('config', 'user.name', 'pacotedev'))
+    .then(() => git('config', 'user.email', 'i+pacotedev@izs.me'))
+    .then(() => git('config', 'tag.gpgSign', 'false'))
+    .then(() => git('config', 'commit.gpgSign', 'false'))
+    .then(() => git('config', 'tag.forceSignAnnotated', 'false'))
+    .then(() => git('init'))
+    .then(() => write(`${broken}/package.json`, JSON.stringify({
+      name: 'repo',
+      version: '0.0.0',
+    })))
+    .then(() => git('add', 'package.json'))
+    .then(() => git('commit', '-m', 'package json file'))
+    .then(() => git('checkout', '-b', REPO_HEAD))
+
+  const fetcher = new GitFetcher(remoteBroken + '#' + REPO_HEAD, opts)
+  await t.rejects(() => fetcher.manifest())
   t.end()
 })
 
