@@ -781,3 +781,50 @@ t.test('fails without arborist constructor', { skip: isWindows && 'posix only' }
   const extract = resolve(me, 'extract-prepack')
   t.rejects(() => ws.extract(extract))
 })
+
+t.test('gitSubdir extraction', { skip: isWindows && 'posix only' }, async t => {
+  const subdirRepo = resolve(me, 'subdir-repo')
+  const git = (...cmd) => spawnGit(cmd, { cwd: subdirRepo })
+  const write = (f, c) => fs.writeFileSync(`${subdirRepo}/${f}`, c)
+
+  await mkdir(subdirRepo, { recursive: true })
+  await git('init')
+  await git('config', 'user.name', 'pacotedev')
+  await git('config', 'user.email', 'i+pacotedev@izs.me')
+  await git('config', 'tag.gpgSign', 'false')
+  await git('config', 'commit.gpgSign', 'false')
+  await git('config', 'tag.forceSignAnnotated', 'false')
+
+  // root package.json (should be ignored)
+  await write('package.json', JSON.stringify({
+    name: 'root-package',
+    version: '1.0.0',
+  }))
+
+  // subdirectory with actual package
+  await mkdir(`${subdirRepo}/packages/subpkg`, { recursive: true })
+  await write('packages/subpkg/package.json', JSON.stringify({
+    name: 'sub-package',
+    version: '1.0.0',
+    description: 'package in subdirectory',
+  }))
+  await write('packages/subpkg/index.js', 'console.log("subpkg")')
+
+  await git('add', '.')
+  await git('commit', '-m', 'add subdirectory package')
+
+  const subdirRemote = `git://localhost:${gitPort}/subdir-repo`
+  const gf = new GitFetcher(`${subdirRemote}#HEAD::path:packages/subpkg`, opts)
+  const extract = resolve(me, 'extract-subdir')
+  await gf.extract(extract)
+
+  // verify it reads from subdirectory, not root
+  const manifest = await gf.manifest()
+  t.equal(manifest.name, 'sub-package')
+  t.equal(manifest.version, '1.0.0')
+  t.equal(manifest.description, 'package in subdirectory')
+
+  // verify files are extracted from subdirectory
+  t.ok(fs.statSync(`${extract}/index.js`))
+  t.ok(fs.statSync(`${extract}/package.json`))
+})
