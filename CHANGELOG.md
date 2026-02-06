@@ -1,5 +1,10 @@
 # Changelog
 
+## [21.2.0](https://github.com/npm/pacote/compare/v21.1.0...v21.2.0) (2026-02-06)
+### Features
+* [`db21624`](https://github.com/npm/pacote/commit/db21624fd9ee8fe3ccea5f671f2e39c7f68546eb) [#442](https://github.com/npm/pacote/pull/442) implement gitSubdir according to npa spec (#442) (@Kakadus)
+* [`c2a4217`](https://github.com/npm/pacote/commit/c2a4217fc8b49d58c4bafd41ec1127105a37ae05) [#443](https://github.com/npm/pacote/pull/443) add allowRemote, allowFile, allowDirectory (#443) (@wraithgar)
+
 ## [21.1.0](https://github.com/npm/pacote/compare/v21.0.4...v21.1.0) (2026-01-28)
 ### Features
 * [`258e5fd`](https://github.com/npm/pacote/commit/258e5fde5576b5dfebc0d5f9a098b15afdd70875) [#440](https://github.com/npm/pacote/pull/440) add allowGit option (#440) (@wraithgar)
