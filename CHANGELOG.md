@@ -1,5 +1,9 @@
 # Changelog
 
+## [21.3.0](https://github.com/npm/pacote/compare/v21.2.0...v21.3.0) (2026-02-09)
+### Features
+* [`8f5091d`](https://github.com/npm/pacote/commit/8f5091d0a7fc356756707241f8b52dc8a036c34e) [#445](https://github.com/npm/pacote/pull/445) add support for git-256 sha lengths (#445) (@wraithgar)
+
 ## [21.2.0](https://github.com/npm/pacote/compare/v21.1.0...v21.2.0) (2026-02-06)
 ### Features
 * [`db21624`](https://github.com/npm/pacote/commit/db21624fd9ee8fe3ccea5f671f2e39c7f68546eb) [#442](https://github.com/npm/pacote/pull/442) implement gitSubdir according to npa spec (#442) (@Kakadus)
