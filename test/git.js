@@ -828,3 +828,13 @@ t.test('gitSubdir extraction', { skip: isWindows && 'posix only' }, async t => {
   t.ok(fs.statSync(`${extract}/index.js`))
   t.ok(fs.statSync(`${extract}/package.json`))
 })
+
+t.test('sha-1 and sha-256', t => {
+  const sha1 = '0d7bd85a85fa2571fa532d2fc842ed099b236ad2'
+  const sha256 = '8e3a9b3579ab330238c06b761e7f1b5dc5b4ac6e5a96da4dd2fb3b7411009df8'
+  const g1 = new GitFetcher(`${remote}#${sha1}`, opts)
+  t.equal(g1.resolvedSha, sha1)
+  const g2 = new GitFetcher(`${remote}#${sha256}`, opts)
+  t.equal(g2.resolvedSha, sha256)
+  t.end()
+})
