@@ -140,14 +140,12 @@ t.test('provide different type of integrity, concats', async t => {
   const f = new RegistryFetcher('@isaacs/namespace-test', {
     registry,
     cache,
-    integrity: 'sha-a/la/beef/this/is/a/very/bad/joke/im/so/sorry',
+    integrity: 'sha1-1111111111111111111111111111111111111111',
   })
   return f.manifest().then(mani =>
     t.equal(
       mani._integrity,
-      'sha-a/la/beef/this/is/a/very/bad/joke/im/so/sorry ' +
-      // eslint-disable-next-line max-len
-      'sha512-5ZYe1LgwHIaag0p9loMwsf5N/wJ4XAuHVNhSO+qulQOXWnyJVuco6IZjo+5u4ZLF/GimdHJcX+QK892ONfOCqQ=='
+      'sha1-1111111111111111111111111111111111111111 sha512-5ZYe1LgwHIaag0p9loMwsf5N/wJ4XAuHVNhSO+qulQOXWnyJVuco6IZjo+5u4ZLF/GimdHJcX+QK892ONfOCqQ=='
     ))
 })
 
