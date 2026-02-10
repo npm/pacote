@@ -1,5 +1,11 @@
 # Changelog
 
+## [21.3.1](https://github.com/npm/pacote/compare/v21.3.0...v21.3.1) (2026-02-10)
+### Bug Fixes
+* [`96e571a`](https://github.com/npm/pacote/commit/96e571a4c2f1eaab1932ba40eb495cc6b9798c9b) [#439](https://github.com/npm/pacote/pull/439) ensure that resolved git ref matches expected sha (#439) (@klassiker, pacotedev)
+### Chores
+* [`91847c4`](https://github.com/npm/pacote/commit/91847c43637a5308119076371300be497cfcff74) [#447](https://github.com/npm/pacote/pull/447) fix test for ssri ignoring invalid hashes (#447) (@wraithgar)
+
 ## [21.3.0](https://github.com/npm/pacote/compare/v21.2.0...v21.3.0) (2026-02-09)
 ### Features
 * [`8f5091d`](https://github.com/npm/pacote/commit/8f5091d0a7fc356756707241f8b52dc8a036c34e) [#445](https://github.com/npm/pacote/pull/445) add support for git-256 sha lengths (#445) (@wraithgar)
