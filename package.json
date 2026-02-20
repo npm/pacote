@@ -46,6 +46,7 @@
     "git"
   ],
   "dependencies": {
+    "@gar/promise-retry": "^1.0.0",
     "@npmcli/git": "^7.0.0",
     "@npmcli/installed-package-contents": "^4.0.0",
     "@npmcli/package-json": "^7.0.0",
