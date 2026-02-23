@@ -809,6 +809,43 @@ t.test('simple repo with only a prepack script', { skip: isWindows && 'posix onl
   )
 })
 
+t.test('git dep preparation strips npm_config_min_release_age when before is set', { skip: isWindows && 'posix only' }, async t => {
+  const spawnCalls = []
+  const MockedGitFetcher = t.mock('../lib/git.js', {
+    '@npmcli/promise-spawn': (cmd, args, spawnOpts, extra) => {
+      spawnCalls.push({ cmd, args, opts: spawnOpts, extra })
+      return Promise.resolve({ stdout: '', stderr: '', code: 0, signal: null })
+    },
+  })
+
+  const beforeDate = new Date('2026-02-18T09:43:39.679Z')
+  const origEnv = process.env.npm_config_min_release_age
+  process.env.npm_config_min_release_age = '2'
+  t.teardown(() => {
+    if (origEnv !== undefined) {
+      process.env.npm_config_min_release_age = origEnv
+    } else {
+      delete process.env.npm_config_min_release_age
+    }
+  })
+
+  const fetcher = new MockedGitFetcher(prepackRemote, { ...opts, before: beforeDate })
+  const extractDir = resolve(me, 'extract-before-strip-test')
+  await fetcher.extract(extractDir)
+
+  t.ok(spawnCalls.length > 0, 'npm spawn was called during prepare')
+  const spawnWithBefore = spawnCalls.find(
+    call => call.args.some(a => typeof a === 'string' && a.startsWith('--before='))
+  )
+  t.ok(spawnWithBefore, 'child process receives --before flag')
+  if (spawnWithBefore) {
+    const hasMinReleaseAge = Object.keys(spawnWithBefore.opts.env || {}).some(
+      k => k.toLowerCase() === 'npm_config_min_release_age'
+    )
+    t.notOk(hasMinReleaseAge, 'child env must not have npm_config_min_release_age when --before is set')
+  }
+})
+
 t.test('fails without arborist constructor', { skip: isWindows && 'posix only' }, async t => {
   const ws = new GitFetcher(prepackRemote, { cache })
   const extract = resolve(me, 'extract-prepack')
