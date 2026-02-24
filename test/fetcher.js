@@ -542,6 +542,10 @@ t.test('allowX', t => {
     ['allowRemote', 'http://npmjs.org/package'],
     ['allowFile', './local.tgz'],
     ['allowDirectory', './local/dir'],
+    ['allowRegistry', '@npmcli/test'],
+    ['allowRegistry', '@npmcli/test@1.0.0'],
+    ['allowRegistry', '@npmcli/test@latest'],
+    ['allowRegistry', 'myalias@npm:@npmcli/test@1.2.3'],
   ]
   for (const [allowType, spec] of allowTypes) {
     t.test(`${allowType}: ${spec}`, t => {
