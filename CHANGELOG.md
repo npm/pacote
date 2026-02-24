@@ -1,5 +1,16 @@
 # Changelog
 
+## [21.4.0](https://github.com/npm/pacote/compare/v21.3.1...v21.4.0) (2026-02-24)
+### Features
+* [`6912f24`](https://github.com/npm/pacote/commit/6912f249599e9e27ed0b79ab0652cc60f6d2f755) [#451](https://github.com/npm/pacote/pull/451) add allowRegistry option (#451) (@wraithgar)
+### Bug Fixes
+* [`ab37bc1`](https://github.com/npm/pacote/commit/ab37bc1e7d0f1c0a590770e650f93500caa9b206) [#452](https://github.com/npm/pacote/pull/452) prevent path duplication in attestation URL for registries with … (#452) (@ajayk)
+* [`ab37bc1`](https://github.com/npm/pacote/commit/ab37bc1e7d0f1c0a590770e650f93500caa9b206) [#452](https://github.com/npm/pacote/pull/452) prevent path duplication in attestation URL for registries with (@ajayk)
+* [`8b8ea3b`](https://github.com/npm/pacote/commit/8b8ea3b27f49097806fc798b478c5179bea21266) [#454](https://github.com/npm/pacote/pull/454) skip registry key check for keyless (Sigstore/Fulcio) attestations (#454) (@ajayk)
+* [`8b8ea3b`](https://github.com/npm/pacote/commit/8b8ea3b27f49097806fc798b478c5179bea21266) [#454](https://github.com/npm/pacote/pull/454) skip registry key check for keyless (Sigstore/Fulcio) attestations (@ajayk)
+### Chores
+* [`0dfd1cd`](https://github.com/npm/pacote/commit/0dfd1cdc15cf8586d0d7c1f4b30bffe73d5277dc) [#456](https://github.com/npm/pacote/pull/456) remove git config from tests (#456) (@wraithgar)
+
 ## [21.3.1](https://github.com/npm/pacote/compare/v21.3.0...v21.3.1) (2026-02-10)
 ### Bug Fixes
 * [`96e571a`](https://github.com/npm/pacote/commit/96e571a4c2f1eaab1932ba40eb495cc6b9798c9b) [#439](https://github.com/npm/pacote/pull/439) ensure that resolved git ref matches expected sha (#439) (@klassiker, pacotedev)
