@@ -661,14 +661,54 @@ t.test('verifyAttestations no attestation with keyid', async t => {
     }],
   })
 
-  return t.rejects(
-    f.manifest(),
-    // eslint-disable-next-line max-len
-    /sigstore@0\.4\.0 has attestations but no corresponding public key\(s\) can be found/,
-    {
-      code: 'EMISSINGSIGNATUREKEY',
-    }
+  // Keyless attestations (no keyid) should not require registry keys
+  const mani = await f.manifest()
+  t.ok(mani._attestations)
+  t.ok(mani._integrity)
+})
+
+t.test('verifyAttestations keyless without registry keys', async t => {
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/sigstore')
+    .reply(200, {
+      _id: 'sigstore',
+      _rev: 'deadbeef',
+      name: 'sigstore',
+      'dist-tags': { latest: '0.4.0' },
+      versions: {
+        '0.4.0': {
+          name: 'sigstore',
+          version: '0.4.0',
+          dist: {
+            // eslint-disable-next-line max-len
+            integrity: 'sha512-KCwMX6k20mQyFkNYG2XT3lwK9u1P36wS9YURFd85zCXPrwrSLZCEh7/vMBFNYcJXRiBtGDS+T4/RZZF493zABA==',
+            // eslint-disable-next-line max-len
+            attestations: { url: 'https://registry.npmjs.org/-/npm/v1/attestations/sigstore@0.4.0', provenance: { predicateType: 'https://slsa.dev/provenance/v0.2' } },
+          },
+        },
+      },
+    })
+
+  const fixture = fs.readFileSync(
+    path.join(__dirname, 'fixtures', 'sigstore/no-keyid-attestations.json'),
+    'utf8'
   )
+
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/-/npm/v1/attestations/sigstore@0.4.0')
+    .reply(200, JSON.parse(fixture))
+
+  // Keyless (Sigstore/Fulcio) attestations embed the signing certificate
+  // in the bundle and should verify without any registry keys at all
+  const f = new MockedRegistryFetcher('sigstore@0.4.0', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifyAttestations: true,
+  })
+
+  const mani = await f.manifest()
+  t.ok(mani._attestations)
+  t.ok(mani._integrity)
 })
 
 t.test('verifyAttestations valid attestations', async t => {
