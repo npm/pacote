@@ -397,6 +397,62 @@ t.test('verifyAttestations valid attestations', async t => {
   t.ok(mani._integrity)
 })
 
+t.test('verifyAttestations with registry path does not duplicate path', async t => {
+  const customRegistry = 'https://registry.example.com/custom'
+
+  tnock(t, 'https://registry.example.com')
+    .get('/custom/sigstore')
+    .reply(200, {
+      _id: 'sigstore',
+      _rev: 'deadbeef',
+      name: 'sigstore',
+      'dist-tags': { latest: '0.4.0' },
+      versions: {
+        '0.4.0': {
+          name: 'sigstore',
+          version: '0.4.0',
+          dist: {
+            // eslint-disable-next-line max-len
+            integrity: 'sha512-KCwMX6k20mQyFkNYG2XT3lwK9u1P36wS9YURFd85zCXPrwrSLZCEh7/vMBFNYcJXRiBtGDS+T4/RZZF493zABA==',
+            // eslint-disable-next-line max-len
+            attestations: { url: 'https://registry.example.com/custom/-/npm/v1/attestations/sigstore@0.4.0', provenance: { predicateType: 'https://slsa.dev/provenance/v0.2' } },
+          },
+        },
+      },
+    })
+
+  const fixture = fs.readFileSync(
+    path.join(__dirname, 'fixtures', 'sigstore/valid-attestations.json'),
+    'utf8'
+  )
+
+  // This should fetch /custom/-/npm/v1/attestations/sigstore@0.4.0
+  // NOT /custom/custom/-/npm/v1/attestations/sigstore@0.4.0
+  tnock(t, 'https://registry.example.com')
+    .get('/custom/-/npm/v1/attestations/sigstore@0.4.0')
+    .reply(200, JSON.parse(fixture))
+
+  const f = new MockedRegistryFetcher('sigstore@0.4.0', {
+    registry: customRegistry,
+    cache,
+    verifyAttestations: true,
+    [`//registry.example.com/custom:_keys`]: [{
+      expires: null,
+      keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+      keytype: 'ecdsa-sha2-nistp256',
+      scheme: 'ecdsa-sha2-nistp256',
+      // eslint-disable-next-line max-len
+      key: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==',
+      // eslint-disable-next-line max-len
+      pemkey: '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==\n-----END PUBLIC KEY-----',
+    }],
+  })
+
+  const mani = await f.manifest()
+  t.ok(mani._attestations)
+  t.ok(mani._integrity)
+})
+
 t.test('verifyAttestations when registry returns no attestations', async t => {
   tnock(t, 'https://registry.npmjs.org')
     .get('/sigstore')
