@@ -108,11 +108,6 @@ t.test('setup', { bail: true, skip: isWindows && 'posix only' }, t => {
 
     return mkdir(repo, { recursive: true })
       .then(() => git('init'))
-      .then(() => git('config', 'user.name', 'pacotedev'))
-      .then(() => git('config', 'user.email', 'i+pacotedev@izs.me'))
-      .then(() => git('config', 'tag.gpgSign', 'false'))
-      .then(() => git('config', 'commit.gpgSign', 'false'))
-      .then(() => git('config', 'tag.forceSignAnnotated', 'false'))
       .then(() => write('package.json', JSON.stringify({
         name: 'repo',
         version: '0.0.0',
@@ -189,11 +184,6 @@ t.test('setup', { bail: true, skip: isWindows && 'posix only' }, t => {
 
       await mkdir(repoDir, { recursive: true })
       await git('init')
-      await git('config', 'user.name', 'pacotedev')
-      await git('config', 'user.email', 'i+pacotedev@izs.me')
-      await git('config', 'tag.gpgSign', 'false')
-      await git('config', 'commit.gpgSign', 'false')
-      await git('config', 'tag.forceSignAnnotated', 'false')
       await write('package.json', JSON.stringify({
         name,
         version: '0.0.0',
@@ -244,11 +234,6 @@ t.test('setup', { bail: true, skip: isWindows && 'posix only' }, t => {
     const write = (f, c) => fs.writeFileSync(`${submoduleRepo}/${f}`, c)
     return mkdir(submoduleRepo, { recursive: true })
       .then(() => git('init'))
-      .then(() => git('config', 'user.name', 'pacotedev'))
-      .then(() => git('config', 'user.email', 'i+pacotedev@izs.me'))
-      .then(() => git('config', 'tag.gpgSign', 'false'))
-      .then(() => git('config', 'commit.gpgSign', 'false'))
-      .then(() => git('config', 'tag.forceSignAnnotated', 'false'))
       .then(() => write('package.json', JSON.stringify({
         name: 'submod-repo',
         version: '1.2.3',
@@ -303,11 +288,6 @@ t.test('setup', { bail: true, skip: isWindows && 'posix only' }, t => {
     const write = (f, c) => fs.writeFileSync(`${workspacesRepo}/${f}`, c)
     return mkdir(wsfolder, { recursive: true })
       .then(() => git('init'))
-      .then(() => git('config', 'user.name', 'pacotedev'))
-      .then(() => git('config', 'user.email', 'i+pacotedev@github.com'))
-      .then(() => git('config', 'tag.gpgSign', 'false'))
-      .then(() => git('config', 'commit.gpgSign', 'false'))
-      .then(() => git('config', 'tag.forceSignAnnotated', 'false'))
       .then(() => write('package.json', JSON.stringify({
         name: 'workspaces-root',
         version: '1.2.3',
@@ -332,11 +312,6 @@ t.test('setup', { bail: true, skip: isWindows && 'posix only' }, t => {
     const write = (f, c) => fs.writeFileSync(`${prepackRepo}/${f}`, c)
     return mkdir(prepackRepo, { recursive: true })
       .then(() => git('init'))
-      .then(() => git('config', 'user.name', 'pacotedev'))
-      .then(() => git('config', 'user.email', 'i+pacotedev@github.com'))
-      .then(() => git('config', 'tag.gpgSign', 'false'))
-      .then(() => git('config', 'commit.gpgSign', 'false'))
-      .then(() => git('config', 'tag.forceSignAnnotated', 'false'))
       .then(() => write('package.json', JSON.stringify({
         name: 'prepack-root',
         version: '1.0.0',
@@ -462,11 +437,6 @@ t.test('detects changes in the resolved sha', {}, async (t) => {
   const write = (f, c) => fs.writeFileSync(f, c)
 
   await mkdir(broken, { recursive: true })
-    .then(() => git('config', 'user.name', 'pacotedev'))
-    .then(() => git('config', 'user.email', 'i+pacotedev@izs.me'))
-    .then(() => git('config', 'tag.gpgSign', 'false'))
-    .then(() => git('config', 'commit.gpgSign', 'false'))
-    .then(() => git('config', 'tag.forceSignAnnotated', 'false'))
     .then(() => git('init'))
     .then(() => write(`${broken}/package.json`, JSON.stringify({
       name: 'repo',
@@ -822,11 +792,6 @@ t.test('gitSubdir extraction', { skip: isWindows && 'posix only' }, async t => {
 
   await mkdir(subdirRepo, { recursive: true })
   await git('init')
-  await git('config', 'user.name', 'pacotedev')
-  await git('config', 'user.email', 'i+pacotedev@izs.me')
-  await git('config', 'tag.gpgSign', 'false')
-  await git('config', 'commit.gpgSign', 'false')
-  await git('config', 'tag.forceSignAnnotated', 'false')
 
   // root package.json (should be ignored)
   await write('package.json', JSON.stringify({
