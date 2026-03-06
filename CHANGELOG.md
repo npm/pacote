@@ -1,5 +1,13 @@
 # Changelog
 
+## [19.0.2](https://github.com/npm/pacote/compare/v19.0.1...v19.0.2) (2026-03-06)
+### Dependencies
+* [`bf6e354`](https://github.com/npm/pacote/commit/bf6e35458e054232f476afab7656548f54bfe7e6) [#459](https://github.com/npm/pacote/pull/459) `tar@7.5.10`
+### Chores
+* [`b7f2691`](https://github.com/npm/pacote/commit/b7f26912c7f6fc8db20d3d1c08a57d5011150fd6) [#465](https://github.com/npm/pacote/pull/465) enable backport mode for v19 (#465) (@wraithgar)
+* [`ed1aef0`](https://github.com/npm/pacote/commit/ed1aef00aab628558d27199434ae5ac16e3d803e) [#459](https://github.com/npm/pacote/pull/459) tests should not inherit --ignore-scripts flag from `npm run t… (#422) (@owlstronaut)
+* [`415e369`](https://github.com/npm/pacote/commit/415e36973db3ad0f610b32215d9f5d3efcdb256b) [#459](https://github.com/npm/pacote/pull/459) `@npmcli/template-oss@4.29.0` (@wraithgar)
+
 ## [19.0.1](https://github.com/npm/pacote/compare/v19.0.0...v19.0.1) (2024-10-15)
 ### Bug Fixes
 * [`cbf94e8`](https://github.com/npm/pacote/commit/cbf94e8b0486e80f8f2e4c9ed7c7d18c3282096b) [#389](https://github.com/npm/pacote/pull/389) prepare script respects scriptshell config (#389) (@milaninfy)
