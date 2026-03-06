@@ -394,6 +394,15 @@ t.test('verifyAttestations valid attestations', async t => {
 
   const mani = await f.manifest()
   t.ok(mani._attestations)
+  t.ok(mani._attestationBundles, 'should include fetched attestation bundles')
+  t.equal(mani._attestationBundles.length, 2, 'should have two attestation bundles')
+  t.equal(mani._attestationBundles[0].predicateType, 'https://slsa.dev/provenance/v0.2')
+  t.equal(
+    mani._attestationBundles[1].predicateType,
+    'https://github.com/npm/attestation/tree/main/specs/publish/v0.1'
+  )
+  t.ok(mani._attestations.url, 'should preserve original attestation url')
+  t.ok(mani._attestations.provenance, 'should preserve original provenance metadata')
   t.ok(mani._integrity)
 })
 
@@ -450,6 +459,8 @@ t.test('verifyAttestations with registry path does not duplicate path', async t 
 
   const mani = await f.manifest()
   t.ok(mani._attestations)
+  t.ok(mani._attestationBundles, 'should include fetched attestation bundles')
+  t.equal(mani._attestationBundles.length, 2)
   t.ok(mani._integrity)
 })
 
@@ -554,6 +565,7 @@ t.test('disable verifyAttestations when package has attestations', async t => {
 
   const mani = await f.manifest()
   t.ok(mani._attestations)
+  t.notOk(mani._attestationBundles, 'should not include bundles when verification is disabled')
   t.ok(mani._integrity)
 })
 
@@ -720,6 +732,7 @@ t.test('verifyAttestations no attestation with keyid', async t => {
   // Keyless attestations (no keyid) should not require registry keys
   const mani = await f.manifest()
   t.ok(mani._attestations)
+  t.ok(mani._attestationBundles, 'should include bundles for keyless attestations')
   t.ok(mani._integrity)
 })
 
@@ -764,6 +777,7 @@ t.test('verifyAttestations keyless without registry keys', async t => {
 
   const mani = await f.manifest()
   t.ok(mani._attestations)
+  t.ok(mani._attestationBundles, 'should include bundles for keyless attestations without registry keys')
   t.ok(mani._integrity)
 })
 
@@ -945,6 +959,7 @@ t.test('verifyAttestations rotated key', async t => {
 
   const mani = await f.manifest()
   t.ok(mani._attestations)
+  t.ok(mani._attestationBundles, 'should include bundles with rotated key')
   t.ok(mani._integrity)
 })
 
