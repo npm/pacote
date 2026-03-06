@@ -1,5 +1,13 @@
 # Changelog
 
+## [20.0.1](https://github.com/npm/pacote/compare/v20.0.0...v20.0.1) (2026-03-06)
+### Dependencies
+* [`f8e2931`](https://github.com/npm/pacote/commit/f8e29319e98311ea694379862a7aa6238da581f5) [#461](https://github.com/npm/pacote/pull/461) `tar@7.5.10`
+### Chores
+* [`01a126d`](https://github.com/npm/pacote/commit/01a126d8650a79df6781faa7409af54f2d44ccb1) [#466](https://github.com/npm/pacote/pull/466) enable backport mode for v20 (#466) (@wraithgar)
+* [`98f72f6`](https://github.com/npm/pacote/commit/98f72f6c7181df329c8e05dd2be2caa3a6fcd786) [#461](https://github.com/npm/pacote/pull/461) tests should not inherit --ignore-scripts flag from `npm run t… (#422) (@owlstronaut)
+* [`f8cf9ba`](https://github.com/npm/pacote/commit/f8cf9ba221a690680d081061055214af352e2aee) [#461](https://github.com/npm/pacote/pull/461) `@npmcli/template-oss@4.29.0` (@wraithgar)
+
 ## [20.0.0](https://github.com/npm/pacote/compare/v19.0.1...v20.0.0) (2024-10-17)
 ### ⚠️ BREAKING CHANGES
 * honors `ignoreScripts` property within options
