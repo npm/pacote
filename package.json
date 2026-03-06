@@ -74,6 +74,7 @@
     "//@npmcli/template-oss": "This file is partially managed by @npmcli/template-oss. Edits may be overwritten.",
     "version": "4.29.0",
     "windowsCI": false,
-    "publish": "true"
+    "publish": "true",
+    "backport": 20
   }
 }
