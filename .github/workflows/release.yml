@@ -52,7 +52,7 @@ jobs:
         id: release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx --offline template-oss-release-please --branch="${{ github.ref_name }}" --backport="" --defaultTag="latest"
+        run: npx --offline template-oss-release-please --branch="${{ github.ref_name }}" --backport="20" --defaultTag="latest"
       - name: Create Release Manager Comment Text
         if: steps.release.outputs.pr-number
         uses: actions/github-script@v7
@@ -132,7 +132,7 @@ jobs:
         id: comment-text
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm exec --offline -- template-oss-release-manager --pr="${{ needs.release.outputs.pr-number }}" --backport="" --defaultTag="latest" --publish
+        run: npm exec --offline -- template-oss-release-manager --pr="${{ needs.release.outputs.pr-number }}" --backport="20" --defaultTag="latest" --publish
       - name: Append Release Manager Comment
         uses: peter-evans/create-or-update-comment@v3
         with:
