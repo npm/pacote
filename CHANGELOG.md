@@ -1,5 +1,13 @@
 # Changelog
 
+## [21.5.0](https://github.com/npm/pacote/compare/v21.4.0...v21.5.0) (2026-03-09)
+### Features
+* [`d912f17`](https://github.com/npm/pacote/commit/d912f17785cd547879c59342b1c2104f71a5a0e6) [#457](https://github.com/npm/pacote/pull/457) expose fetched attestation bundles on manifest (#457) (@mitchdenny)
+### Chores
+* [`586a55d`](https://github.com/npm/pacote/commit/586a55dc0cb9e44740be28ffd1fb227cf8111d2a) [#471](https://github.com/npm/pacote/pull/471) template-oss-apply for new macos images (#471) (@wraithgar)
+* [`d1cc5c8`](https://github.com/npm/pacote/commit/d1cc5c8bf2ac35c52fc606f96d47129f042739e6) [#460](https://github.com/npm/pacote/pull/460) template-oss-apply for release branches (#460) (@wraithgar)
+* [`b741e8b`](https://github.com/npm/pacote/commit/b741e8b1a401c46841b7c37241e8ec85ad420841) [#468](https://github.com/npm/pacote/pull/468) bump @npmcli/template-oss from 4.28.0 to 4.29.0 (#468) (@dependabot[bot], @npm-cli-bot)
+
 ## [21.4.0](https://github.com/npm/pacote/compare/v21.3.1...v21.4.0) (2026-02-24)
 ### Features
 * [`6912f24`](https://github.com/npm/pacote/commit/6912f249599e9e27ed0b79ab0652cc60f6d2f755) [#451](https://github.com/npm/pacote/pull/451) add allowRegistry option (#451) (@wraithgar)
