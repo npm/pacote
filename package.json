@@ -28,7 +28,7 @@
   "devDependencies": {
     "@npmcli/arborist": "^7.1.0",
     "@npmcli/eslint-config": "^5.0.0",
-    "@npmcli/template-oss": "4.29.0",
+    "@npmcli/template-oss": "4.30.0",
     "hosted-git-info": "^8.0.0",
     "mutate-fs": "^2.1.1",
     "nock": "^13.2.4",
@@ -72,7 +72,7 @@
   },
   "templateOSS": {
     "//@npmcli/template-oss": "This file is partially managed by @npmcli/template-oss. Edits may be overwritten.",
-    "version": "4.29.0",
+    "version": "4.30.0",
     "windowsCI": false,
     "publish": "true",
     "backport": 19
