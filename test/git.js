@@ -632,13 +632,31 @@ t.test('fetch a private repo where the tgz is a 404', { skip: isWindows && 'posi
 })
 
 t.test('fetch a private repo where the tgz is not a tarball', { skip: isWindows && 'posix only' },
-  t => {
+  () => {
     const gf = new GitFetcher(`localhost:repo/x#${REPO_HEAD}`, opts)
     gf.spec.hosted.tarball = () => `${hostedUrl}/not-tar.tgz`
-    // should NOT retry, because the error was not an HTTP fetch error
-    return t.rejects(gf.extract(me + '/bad-tgz'), {
-      code: 'TAR_BAD_ARCHIVE',
+    // should fall back to clone, since the tarball content is not valid.
+    // this can happen when a hosted git provider returns an HTML page
+    // (e.g. a sign-in page) with HTTP 200 for private repo archives.
+    return gf.extract(me + '/bad-tgz')
+  })
+
+t.test('non-retriable tarball error is thrown, not retried', { skip: isWindows && 'posix only' },
+  async t => {
+    const gf = new GitFetcher(`localhost:repo/x#${REPO_HEAD}`, opts)
+    gf.spec.hosted.tarball = () => `${hostedUrl}/not-tar.tgz`
+    // override the hosted tarball to simulate a non-recoverable error
+    // that is neither an HTTP error nor a TAR error
+    const orig = gf.spec.hosted.tarball
+    gf.spec.hosted.tarball = () => orig()
+    const RemoteFetcher = require('../lib/remote.js')
+    const _extract = RemoteFetcher.prototype.extract
+    t.teardown(() => {
+      RemoteFetcher.prototype.extract = _extract
     })
+    RemoteFetcher.prototype.extract = () =>
+      Promise.reject(Object.assign(new Error('bad'), { code: 'EINTEGRITY' }))
+    await t.rejects(gf.extract(me + '/bad-tgz-other'), { code: 'EINTEGRITY' })
   })
 
 t.test('resolved is a git+ssh url for hosted repos that support it',
