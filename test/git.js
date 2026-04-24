@@ -15,6 +15,7 @@ const rimraf = require('rimraf')
 const tar = require('tar')
 const spawnNpm = require('../lib/util/npm.js')
 const GitFetcher = require('../lib/git.js')
+const RemoteFetcher = require('../lib/remote.js')
 
 // set this up first, so we can use 127.0.0.1 as our "hosted git" service
 const httpPort = 18000 + (+process.env.TAP_CHILD_ID || 0)
@@ -630,6 +631,22 @@ t.test('fetch a private repo where the tgz is a 404', { skip: isWindows && 'posi
   // should fetch it by falling back to ssh when it gets an http error
   return gf.extract(me + '/no-tgz')
 })
+
+t.test('fetch a private repo where the tgz is a 404 and http error has minified class name',
+  { skip: isWindows && 'posix only' }, async t => {
+    const gf = new GitFetcher(`localhost:repo/x#${REPO_HEAD}`, opts)
+    const origExtract = RemoteFetcher.prototype.extract
+    RemoteFetcher.prototype.extract = () => {
+      const err = new Error('404 Not Found')
+      err.statusCode = 404
+      err.code = 'E404'
+      return Promise.reject(err)
+    }
+    t.teardown(() => {
+      RemoteFetcher.prototype.extract = origExtract
+    })
+    await gf.extract(me + '/no-tgz')
+  })
 
 t.test('fetch a private repo where the tgz is not a tarball', { skip: isWindows && 'posix only' },
   t => {
