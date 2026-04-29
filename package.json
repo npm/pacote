@@ -28,7 +28,7 @@
   "devDependencies": {
     "@npmcli/arborist": "^9.0.2",
     "@npmcli/eslint-config": "^6.0.0",
-    "@npmcli/template-oss": "4.29.0",
+    "@npmcli/template-oss": "4.30.0",
     "hosted-git-info": "^9.0.0",
     "mutate-fs": "^2.1.1",
     "nock": "^13.2.4",
