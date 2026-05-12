@@ -78,6 +78,7 @@ const remoteHosted = `git://127.0.0.1:${gitPort}/repo`
 const submodsRemote = `git://localhost:${gitPort}/submodule-repo`
 const workspacesRemote = `git://localhost:${gitPort}/workspaces-repo`
 const prepackRemote = `git://localhost:${gitPort}/prepack-repo`
+const installScriptRemote = `git://localhost:${gitPort}/install-script-repo`
 
 const fixtures = resolve(__dirname, 'fixtures')
 const abbrev = resolve(fixtures, 'abbrev-1.1.1.tgz')
@@ -318,6 +319,23 @@ t.test('setup', { bail: true, skip: isWindows && 'posix only' }, t => {
         version: '1.0.0',
         scripts: {
           prepare: touchFile,
+        },
+      })))
+      .then(() => git('add', 'package.json'))
+      .then(() => git('commit', '-m', 'package.json'))
+  })
+
+  t.test('create a repo with an install lifecycle script', () => {
+    const installScriptRepo = resolve(me, 'install-script-repo')
+    const git = (...cmd) => spawnGit(cmd, { cwd: installScriptRepo })
+    const write = (f, c) => fs.writeFileSync(`${installScriptRepo}/${f}`, c)
+    return mkdir(installScriptRepo, { recursive: true })
+      .then(() => git('init'))
+      .then(() => write('package.json', JSON.stringify({
+        name: 'install-script-root',
+        version: '1.0.0',
+        scripts: {
+          install: touchFile,
         },
       })))
       .then(() => git('add', 'package.json'))
@@ -813,6 +831,34 @@ t.test('simple repo with only a prepack script', { skip: isWindows && 'posix onl
     'should run prepack lifecycle script'
   )
 })
+
+t.test('ignoreScripts: install lifecycle is not run for git deps',
+  { skip: isWindows && 'posix only' }, async t => {
+    const g = new GitFetcher(installScriptRemote, { ...opts, ignoreScripts: true })
+    const extract = resolve(me, 'extract-ignorescripts-install')
+    await g.extract(extract)
+    // the install script would create ./foo when run; with ignoreScripts:true,
+    // the nested `npm install` spawn must be skipped so foo is never created.
+    t.throws(
+      () => fs.statSync(`${extract}/foo`),
+      { code: 'ENOENT' },
+      'install lifecycle script did not run during extract'
+    )
+  })
+
+t.test('ignoreScripts: prepare phase is skipped for git deps with workspaces',
+  { skip: isWindows && 'posix only' }, async t => {
+    const ws = new GitFetcher(workspacesRemote, { ...opts, ignoreScripts: true })
+    const extract = resolve(me, 'extract-ignorescripts-workspaces')
+    await ws.extract(extract)
+    // a/foo is only created when the prepare phase runs via `npm install`;
+    // with ignoreScripts:true that spawn must be skipped.
+    t.throws(
+      () => fs.statSync(`${extract}/a/foo`),
+      { code: 'ENOENT' },
+      'prepare phase did not run during extract'
+    )
+  })
 
 t.test('fails without arborist constructor', { skip: isWindows && 'posix only' }, async t => {
   const ws = new GitFetcher(prepackRemote, { cache })
