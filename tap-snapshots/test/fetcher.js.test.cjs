@@ -48,6 +48,7 @@ Array [
   "--include=optional",
   "--no-package-lock-only",
   "--no-dry-run",
+  "--global=false",
 ]
 `
 
@@ -66,6 +67,7 @@ Array [
   "--include=optional",
   "--no-package-lock-only",
   "--no-dry-run",
+  "--global=false",
 ]
 `
 
