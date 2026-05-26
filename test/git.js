@@ -770,6 +770,14 @@ t.test('handle it when prepared git deps depend on each other', { skip: isWindow
         noPrepare: [g.resolved],
         cwd: cwdRegex,
       })
+      // the inner `npm install` spawned by pacote to prepare a git clone
+      // must always run with --global=false so it does not honor an
+      // inherited npm_config_global=true and reify into the outer global
+      // prefix.
+      t.ok(
+        log.argv.includes('--global=false'),
+        'inner npm install is invoked with --global=false'
+      )
       // our rudimentary package manager dumps the deps into the pkg root
       // but it doesn't get installed once the loop is detected.
       const base = basename(local)
