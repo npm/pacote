@@ -6,8 +6,7 @@ const cases = [
   // unknown host
   ['git+ssh://git@some-host:user/repo', 'sha', 'git+ssh://git@some-host:user/repo#sha'],
   ['git+ssh://git@some-host:user/repo#othersha', 'sha', 'git+ssh://git@some-host:user/repo#sha'],
-  [
-    'git+ssh://git@some-host:user/repo#othersha#otherothersha',
+  ['git+ssh://git@some-host:user/repo#othersha#otherothersha',
     'sha',
     'git+ssh://git@some-host:user/repo#sha'],
   ['git+ssh://git@some-host/user/repo', 'sha', 'git+ssh://git@some-host/user/repo#sha'],
@@ -40,7 +39,23 @@ const cases = [
   ['git+ssh://git@github.com:user/repo#othersha#otherothersha', 'sha', 'github:user/repo#sha'],
 ]
 
-t.plan(cases.length)
-for (const [spec, sha, result] of cases) {
-  t.equal(addGitSha(npa(spec), sha), result, `${spec} + ${sha} = ${result}`)
-}
+t.test('matches expected committish-stripping results', t => {
+  t.plan(cases.length)
+  for (const [spec, sha, result] of cases) {
+    t.equal(addGitSha(npa(spec), sha), result, `${spec} + ${sha} = ${result}`)
+  }
+})
+
+t.test('strips committish from a malicious rawSpec without catastrophic backtracking (CVE-2026-9496)', t => {
+  // a plain object exercises the non-hosted branch directly. the `\n` + trailing
+  // char make this rawSpec pathological for the old `/#.*$/` regex (O(n^2)
+  // backtracking from every `#`), but it stays linear for indexOf/slice
+  const base = 'git+ssh://git@some-host/user/repo'
+  const spec = { hosted: null, rawSpec: `${base}${'#'.repeat(1e5)}\nx` }
+  const start = process.hrtime.bigint()
+  const result = addGitSha(spec, 'sha')
+  const elapsedMs = Number(process.hrtime.bigint() - start) / 1e6
+  t.equal(result, `${base}#sha`, 'strips everything from the first committish')
+  t.ok(elapsedMs < 1000, `completes quickly (took ${elapsedMs.toFixed(1)}ms)`)
+  t.end()
+})
