@@ -51,3 +51,20 @@ updates:
       - "Backport"
       - "release/v20"
     open-pull-requests-limit: 10
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: daily
+    target-branch: "release/v21"
+    allow:
+      - dependency-type: direct
+        dependency-name: "@npmcli/template-oss"
+    versioning-strategy: increase-if-necessary
+    commit-message:
+      prefix: deps
+      prefix-development: chore
+    labels:
+      - "Dependencies"
+      - "Backport"
+      - "release/v21"
+    open-pull-requests-limit: 10
