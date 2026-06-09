@@ -1,5 +1,24 @@
 # Changelog
 
+## [22.0.0](https://github.com/npm/pacote/compare/v21.5.0...v22.0.0) (2026-06-09)
+### ⚠️ BREAKING CHANGES
+* git specs using the `https` or `git+https` protocol now resolve to `git+https` URLs instead of being switched to `git+ssh`. Shortcut specs (e.g. `github:user/repo`, `user/repo`) and `git+ssh`/`git://` specs are unchanged.
+### Features
+* [`2ab74b0`](https://github.com/npm/pacote/commit/2ab74b0e49f00ddcd29335547dba79d7261da6d3) [#497](https://github.com/npm/pacote/pull/497) strip patchedDependencies from the packed package.json (#497) (@manzoorwanijk)
+* [`66e7ea7`](https://github.com/npm/pacote/commit/66e7ea79a325bccc3fedc07ab5b690b96a263f2c) [#487](https://github.com/npm/pacote/pull/487) forward globalIgnoreFile option to npm-packlist (@ljharb)
+### Bug Fixes
+* [`ce804fb`](https://github.com/npm/pacote/commit/ce804fb1647fe1699b2f87efd01ea9f4efed8508) [#498](https://github.com/npm/pacote/pull/498) avoid ReDoS in addGitSha committish stripping (#498) (@owlstronaut)
+* [`1f5f131`](https://github.com/npm/pacote/commit/1f5f131a4a6dc7cc915b99ea37ee41e2e49eb7c8) [#494](https://github.com/npm/pacote/pull/494) pass --global=false when preparing git dependencies (@owlstronaut)
+* [`e0af7f6`](https://github.com/npm/pacote/commit/e0af7f6a49880895817aa863f99747b102495f93) [#486](https://github.com/npm/pacote/pull/486) respect ignoreScripts option for git dependencies (@owlstronaut)
+* [`12c8c8f`](https://github.com/npm/pacote/commit/12c8c8fdd95d7a8507e6f3d66f4319456dc79920) [#481](https://github.com/npm/pacote/pull/481) fall back to git clone when tarball response is not a valid archive (@babyhuey)
+* [`61f065a`](https://github.com/npm/pacote/commit/61f065a2c313a2fc4e631fb3c12c2011ac4547d4) [#481](https://github.com/npm/pacote/pull/481) use statusCode instead of constructor name for tarball fallback in git fetcher (@j1mb0-1)
+* [`6d160c1`](https://github.com/npm/pacote/commit/6d160c11e7b1e48a705b5a912bbf1531a379554f) [#434](https://github.com/npm/pacote/pull/434) do not switch to git+ssh for https repository links (#434) (@oldium)
+### Chores
+* [`e9ac85e`](https://github.com/npm/pacote/commit/e9ac85e383173ed55bb87177bcc285cdacf23b05) [#501](https://github.com/npm/pacote/pull/501) template-oss-apply (@owlstronaut)
+* [`e184356`](https://github.com/npm/pacote/commit/e184356a61ac09052937a8146896ae2a1f9dc5b0) [#501](https://github.com/npm/pacote/pull/501) `template-oss@5.1.0` (@owlstronaut)
+* [`644ebb6`](https://github.com/npm/pacote/commit/644ebb6affa9d5ea9f1e4120ce309fb4d4820bbd) [#479](https://github.com/npm/pacote/pull/479) template-oss-apply (@owlstronaut)
+* [`ee64bea`](https://github.com/npm/pacote/commit/ee64bea0710394273490cd5bf3ee7dbb79f7def9) [#479](https://github.com/npm/pacote/pull/479) `@npmcli/template-oss@4.30.0` (@owlstronaut)
+
 ## [21.5.0](https://github.com/npm/pacote/compare/v21.4.0...v21.5.0) (2026-03-09)
 ### Features
 * [`d912f17`](https://github.com/npm/pacote/commit/d912f17785cd547879c59342b1c2104f71a5a0e6) [#457](https://github.com/npm/pacote/pull/457) expose fetched attestation bundles on manifest (#457) (@mitchdenny)
