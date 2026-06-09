@@ -1,5 +1,13 @@
 # Changelog
 
+## [21.5.1](https://github.com/npm/pacote/compare/v21.5.0...v21.5.1) (2026-06-09)
+### Bug Fixes
+* [`627a7dc`](https://github.com/npm/pacote/commit/627a7dc1a214d857472a13b48e42559c75288c9e) [#499](https://github.com/npm/pacote/pull/499) avoid ReDoS in addGitSha committish stripping (@owlstronaut)
+### Chores
+* [`790a24b`](https://github.com/npm/pacote/commit/790a24b4201fa1f844645f99601d478621f079e4) [#500](https://github.com/npm/pacote/pull/500) template-oss-apply (#500) (@owlstronaut, test)
+* [`09cb304`](https://github.com/npm/pacote/commit/09cb304ca4f85ef85b2acdb2108f3e839ad9556e) [#499](https://github.com/npm/pacote/pull/499) template-oss-apply (@owlstronaut)
+* [`bea9f84`](https://github.com/npm/pacote/commit/bea9f847decbcd1a712481643b15d92ddd8f8087) [#499](https://github.com/npm/pacote/pull/499) `@npmcli/template-oss@5.1.0` (@owlstronaut)
+
 ## [21.5.0](https://github.com/npm/pacote/compare/v21.4.0...v21.5.0) (2026-03-09)
 ### Features
 * [`d912f17`](https://github.com/npm/pacote/commit/d912f17785cd547879c59342b1c2104f71a5a0e6) [#457](https://github.com/npm/pacote/pull/457) expose fetched attestation bundles on manifest (#457) (@mitchdenny)
