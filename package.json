@@ -61,7 +61,7 @@
     "npm-registry-fetch": "^19.0.0",
     "proc-log": "^6.0.0",
     "sigstore": "^4.0.0",
-    "ssri": "^13.0.0",
+    "ssri": "^14.0.0",
     "tar": "^7.4.3"
   },
   "engines": {
