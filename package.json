@@ -49,7 +49,7 @@
     "@gar/promise-retry": "^1.0.0",
     "@npmcli/git": "^8.0.0",
     "@npmcli/installed-package-contents": "^5.0.0",
-    "@npmcli/package-json": "^7.0.0",
+    "@npmcli/package-json": "^8.0.0",
     "@npmcli/promise-spawn": "^9.0.0",
     "@npmcli/run-script": "^10.0.0",
     "cacache": "^20.0.0",
