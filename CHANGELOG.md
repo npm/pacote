@@ -1,5 +1,43 @@
 # Changelog
 
+## [22.0.0](https://github.com/npm/pacote/compare/v21.5.0...v22.0.0) (2026-06-15)
+### ⚠️ BREAKING CHANGES
+* `pacote` now supports node `^22.22.2 || ^24.15.0 || >=26.0.0`
+* git specs using the `https` or `git+https` protocol now resolve to `git+https` URLs instead of being switched to `git+ssh`. Shortcut specs (e.g. `github:user/repo`, `user/repo`) and `git+ssh`/`git://` specs are unchanged.
+### Features
+* [`09316f5`](https://github.com/npm/pacote/commit/09316f540c702e79da66c4edc8412a91c47d038e) [#504](https://github.com/npm/pacote/pull/504) bump to new node engine range (@owlstronaut)
+* [`2ab74b0`](https://github.com/npm/pacote/commit/2ab74b0e49f00ddcd29335547dba79d7261da6d3) [#497](https://github.com/npm/pacote/pull/497) strip patchedDependencies from the packed package.json (#497) (@manzoorwanijk)
+* [`66e7ea7`](https://github.com/npm/pacote/commit/66e7ea79a325bccc3fedc07ab5b690b96a263f2c) [#487](https://github.com/npm/pacote/pull/487) forward globalIgnoreFile option to npm-packlist (@ljharb)
+### Bug Fixes
+* [`ce804fb`](https://github.com/npm/pacote/commit/ce804fb1647fe1699b2f87efd01ea9f4efed8508) [#498](https://github.com/npm/pacote/pull/498) avoid ReDoS in addGitSha committish stripping (#498) (@owlstronaut)
+* [`1f5f131`](https://github.com/npm/pacote/commit/1f5f131a4a6dc7cc915b99ea37ee41e2e49eb7c8) [#494](https://github.com/npm/pacote/pull/494) pass --global=false when preparing git dependencies (@owlstronaut)
+* [`e0af7f6`](https://github.com/npm/pacote/commit/e0af7f6a49880895817aa863f99747b102495f93) [#486](https://github.com/npm/pacote/pull/486) respect ignoreScripts option for git dependencies (@owlstronaut)
+* [`12c8c8f`](https://github.com/npm/pacote/commit/12c8c8fdd95d7a8507e6f3d66f4319456dc79920) [#481](https://github.com/npm/pacote/pull/481) fall back to git clone when tarball response is not a valid archive (@babyhuey)
+* [`61f065a`](https://github.com/npm/pacote/commit/61f065a2c313a2fc4e631fb3c12c2011ac4547d4) [#481](https://github.com/npm/pacote/pull/481) use statusCode instead of constructor name for tarball fallback in git fetcher (@j1mb0-1)
+* [`6d160c1`](https://github.com/npm/pacote/commit/6d160c11e7b1e48a705b5a912bbf1531a379554f) [#434](https://github.com/npm/pacote/pull/434) do not switch to git+ssh for https repository links (#434) (@oldium)
+### Dependencies
+* [`371e8b0`](https://github.com/npm/pacote/commit/371e8b0688c1209f4cd818e42d9860e34d39f5d0) [#504](https://github.com/npm/pacote/pull/504) `ssri@14.0.0`
+* [`b68c6c2`](https://github.com/npm/pacote/commit/b68c6c2b89a809e833b29c11c41f3f6769f6cdb4) [#504](https://github.com/npm/pacote/pull/504) `sigstore@5.0.0`
+* [`57793ab`](https://github.com/npm/pacote/commit/57793ab082e87c0138db4e53ad986f08324efb32) [#504](https://github.com/npm/pacote/pull/504) `proc-log@7.0.0`
+* [`33eacc9`](https://github.com/npm/pacote/commit/33eacc95835c574130254fc0e988cfa20768c6b0) [#504](https://github.com/npm/pacote/pull/504) `npm-registry-fetch@20.0.1`
+* [`a131916`](https://github.com/npm/pacote/commit/a131916319539de7ffe54b4aa7bafeb411cf436c) [#504](https://github.com/npm/pacote/pull/504) `npm-pick-manifest@12.0.0`
+* [`2b03527`](https://github.com/npm/pacote/commit/2b0352739a316df190fc95500d5b9c532aa674c9) [#504](https://github.com/npm/pacote/pull/504) `npm-packlist@11.2.0`
+* [`5f8ad42`](https://github.com/npm/pacote/commit/5f8ad426fdf5634803ed422c50d2d448e59fc7b2) [#504](https://github.com/npm/pacote/pull/504) `npm-package-arg@14.0.0`
+* [`ee3b96d`](https://github.com/npm/pacote/commit/ee3b96dc6dd3be6850dea66d9c3cffcd827ea161) [#504](https://github.com/npm/pacote/pull/504) `cacache@21.0.1`
+* [`033f655`](https://github.com/npm/pacote/commit/033f65514de11d25d2a139bb7dd6b052b5485a66) [#504](https://github.com/npm/pacote/pull/504) `@npmcli/run-script@11.0.0`
+* [`ddcc738`](https://github.com/npm/pacote/commit/ddcc7383cb2103fe5809eae04ae286133ac556b3) [#504](https://github.com/npm/pacote/pull/504) `@npmcli/promise-spawn@10.0.0`
+* [`6a28eb2`](https://github.com/npm/pacote/commit/6a28eb294dbf6d2de58224ff09300b7ce4031679) [#504](https://github.com/npm/pacote/pull/504) `@npmcli/package-json@8.0.0`
+* [`5879416`](https://github.com/npm/pacote/commit/58794166002651457a0a900af1ae6932a6901c1b) [#504](https://github.com/npm/pacote/pull/504) `@npmcli/installed-package-contents@5.0.0`
+* [`41ea727`](https://github.com/npm/pacote/commit/41ea727dc400431ac7b1dc7e73e98d0e3f490acb) [#504](https://github.com/npm/pacote/pull/504) `@npmcli/git@8.0.0`
+### Chores
+* [`3fc5fd4`](https://github.com/npm/pacote/commit/3fc5fd430c4f78f4cff8a204a3b0bd27e969d9b4) [#504](https://github.com/npm/pacote/pull/504) `@npmcli/eslint-config@7.0.0` (@owlstronaut)
+* [`7350ab8`](https://github.com/npm/pacote/commit/7350ab8c2b0f1e96dcea7ed6d9941d68f6a1ec31) [#504](https://github.com/npm/pacote/pull/504) `hosted-git-info@10.1.1` (@owlstronaut)
+* [`c7c7d7f`](https://github.com/npm/pacote/commit/c7c7d7f826634e7e4779f4ccbb297ddc4f0a5003) [#504](https://github.com/npm/pacote/pull/504) template-oss-apply (@owlstronaut)
+* [`e9ac85e`](https://github.com/npm/pacote/commit/e9ac85e383173ed55bb87177bcc285cdacf23b05) [#501](https://github.com/npm/pacote/pull/501) template-oss-apply (@owlstronaut)
+* [`e184356`](https://github.com/npm/pacote/commit/e184356a61ac09052937a8146896ae2a1f9dc5b0) [#501](https://github.com/npm/pacote/pull/501) `template-oss@5.1.0` (@owlstronaut)
+* [`644ebb6`](https://github.com/npm/pacote/commit/644ebb6affa9d5ea9f1e4120ce309fb4d4820bbd) [#479](https://github.com/npm/pacote/pull/479) template-oss-apply (@owlstronaut)
+* [`ee64bea`](https://github.com/npm/pacote/commit/ee64bea0710394273490cd5bf3ee7dbb79f7def9) [#479](https://github.com/npm/pacote/pull/479) `@npmcli/template-oss@4.30.0` (@owlstronaut)
+
 ## [21.5.0](https://github.com/npm/pacote/compare/v21.4.0...v21.5.0) (2026-03-09)
 ### Features
 * [`d912f17`](https://github.com/npm/pacote/commit/d912f17785cd547879c59342b1c2104f71a5a0e6) [#457](https://github.com/npm/pacote/pull/457) expose fetched attestation bundles on manifest (#457) (@mitchdenny)
