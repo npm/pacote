@@ -69,6 +69,14 @@ t.test('snapshot the npmInstallCmd and npmInstallConfig', async t => {
     'do not have a _cacache folder on cache config passed to npm cli')
   t.equal(basename(def.cache), '_cacache',
     'have a _cacache folder on default pacote config itself')
+  t.not(def.npmCliConfig.includes('--prefer-offline=false'), 'does not pass disabled prefer-offline')
+  t.not(def.npmCliConfig.includes('--prefer-online=false'), 'does not pass disabled prefer-online')
+  const preferOffline = new FileFetcher(abbrevspec, { preferOffline: true })
+  t.ok(preferOffline.npmCliConfig.includes('--prefer-offline=true'), 'passes prefer-offline when enabled')
+  t.not(preferOffline.npmCliConfig.includes('--prefer-online=true'), 'does not pass prefer-online with prefer-offline')
+  const preferOnline = new FileFetcher(abbrevspec, { preferOnline: true })
+  t.ok(preferOnline.npmCliConfig.includes('--prefer-online=true'), 'passes prefer-online when enabled')
+  t.not(preferOnline.npmCliConfig.includes('--prefer-offline=true'), 'does not pass prefer-offline with prefer-online')
   const bef = new FileFetcher(abbrevspec, {
     before: new Date('1979-07-01T19:10:00.000Z'),
   })
