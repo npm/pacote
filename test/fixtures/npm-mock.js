@@ -9,6 +9,10 @@ const data = {
   argv,
   noPrepare: pnp ? pnp.split('\\n') : [],
   cwd: process.cwd(),
+  allowScriptsEnv: Object.fromEntries(Object.entries(env).filter(([key]) =>
+    key.toLowerCase() === 'npm_config_allow_scripts')),
+  preservedEnv: env._PACOTE_TEST_ENV_,
+  userConfig: env.npm_config_userconfig,
 }
 
 if (data.noPrepare.length > 5) {
