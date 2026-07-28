@@ -37,8 +37,6 @@ Array [
 exports[`test/fetcher.js TAP snapshot the npmInstallCmd and npmInstallConfig > default install config 1`] = `
 Array [
   "--cache={CACHE}",
-  "--prefer-offline=false",
-  "--prefer-online=false",
   "--offline=false",
   "--no-progress",
   "--no-save",
@@ -55,8 +53,6 @@ Array [
 exports[`test/fetcher.js TAP snapshot the npmInstallCmd and npmInstallConfig > default install config with before 1`] = `
 Array [
   "--cache={CACHE}",
-  "--prefer-offline=false",
-  "--prefer-online=false",
   "--offline=false",
   "--before=1979-07-01T19:10:00.000Z",
   "--no-progress",
