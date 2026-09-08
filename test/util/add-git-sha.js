@@ -96,6 +96,18 @@ t.test('leaves specs without a subdirectory untouched', t => {
   t.end()
 })
 
+t.test('accepts a subdirectory that was not normalized by npa', t => {
+  // npa always stores gitSubdir with a leading slash, but a hand built spec
+  // should not have its first path segment truncated
+  const spec = {
+    hosted: null,
+    rawSpec: 'git+ssh://git@some-host/user/repo#main',
+    gitSubdir: 'packages/a',
+  }
+  t.equal(addGitSha(spec, 'sha'), 'git+ssh://git@some-host/user/repo#sha::path:packages/a')
+  t.end()
+})
+
 t.test('strips committish from a malicious rawSpec without catastrophic backtracking (CVE-2026-9496)', t => {
   // a plain object exercises the non-hosted branch directly. the `\n` + trailing
   // char make this rawSpec pathological for the old `/#.*$/` regex (O(n^2)
