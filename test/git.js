@@ -916,6 +916,40 @@ t.test('gitSubdir extraction', { skip: isWindows && 'posix only' }, async t => {
   t.ok(fs.statSync(`${extract}/package.json`))
 })
 
+t.test('resolving a named ref keeps gitSubdir', { skip: isWindows && 'posix only' }, async t => {
+  const subdirRepo = resolve(me, 'subdir-ref-repo')
+  const git = (...cmd) => spawnGit(cmd, { cwd: subdirRepo })
+  const write = (f, c) => fs.writeFileSync(`${subdirRepo}/${f}`, c)
+
+  await mkdir(subdirRepo, { recursive: true })
+  await git('init')
+  await write('package.json', JSON.stringify({ name: 'root-package', version: '1.0.0' }))
+  await mkdir(`${subdirRepo}/packages/subpkg`, { recursive: true })
+  await write('packages/subpkg/package.json', JSON.stringify({
+    name: 'sub-package',
+    version: '1.0.0',
+  }))
+  await git('add', '.')
+  await git('commit', '-m', 'add subdirectory package')
+  await git('branch', '-M', 'test-branch')
+
+  // a named ref is replaced by the sha it resolves to, which must not discard
+  // the subdirectory selector, or the resolved spec silently points at the root
+  const unhosted = `git://localhost:${gitPort}/subdir-ref-repo#test-branch::path:packages/subpkg`
+  const resolved = await new GitFetcher(unhosted, opts).resolve()
+  t.match(resolved, /::path:packages\/subpkg$/, 'resolved spec keeps the subdirectory')
+  t.equal(npa(resolved).gitSubdir, '/packages/subpkg', 'resolved spec reparses')
+
+  // the resolved spec is what gets recorded and reinstalled from later on
+  const manifest = await new GitFetcher(resolved, opts).manifest()
+  t.equal(manifest.name, 'sub-package', 'resolved spec still fetches the subdirectory')
+
+  // hosted specs rebuild the url from hosted-git-info instead of the raw spec
+  const hosted = `git://127.0.0.1:${gitPort}/subdir-ref-repo#test-branch::path:packages/subpkg`
+  const resolvedHosted = await new GitFetcher(hosted, opts).resolve()
+  t.match(resolvedHosted, /::path:packages\/subpkg$/, 'hosted resolved spec keeps the subdirectory')
+})
+
 t.test('sha-1 and sha-256', t => {
   const sha1 = '0d7bd85a85fa2571fa532d2fc842ed099b236ad2'
   const sha256 = '8e3a9b3579ab330238c06b761e7f1b5dc5b4ac6e5a96da4dd2fb3b7411009df8'

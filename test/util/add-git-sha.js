@@ -37,6 +37,32 @@ const cases = [
   ['git+ssh://git@github.com:user/repo', 'sha', 'github:user/repo#sha'],
   ['git+ssh://git@github.com:user/repo#othersha', 'sha', 'github:user/repo#sha'],
   ['git+ssh://git@github.com:user/repo#othersha#otherothersha', 'sha', 'github:user/repo#sha'],
+  // repository subdirectory selectors survive the committish swap
+  ['git+ssh://git@some-host/user/repo#othersha::path:packages/a',
+    'sha',
+    'git+ssh://git@some-host/user/repo#sha::path:packages/a'],
+  ['git+ssh://git@some-host:user/repo#othersha::path:packages/a',
+    'sha',
+    'git+ssh://git@some-host:user/repo#sha::path:packages/a'],
+  ['github:user/repo#othersha::path:packages/a', 'sha', 'github:user/repo#sha::path:packages/a'],
+  ['git+https://git@github.com/user/repo#othersha::path:packages/a',
+    'sha',
+    'https://git@github.com/user/repo.git#sha::path:packages/a'],
+  ['git+https://github.com/user/repo#othersha::path:packages/a',
+    'sha',
+    'https://github.com/user/repo.git#sha::path:packages/a'],
+  ['git+ssh://git@github.com/user/repo#othersha::path:packages/a',
+    'sha',
+    'github:user/repo#sha::path:packages/a'],
+  // a subdirectory paired with a semver range instead of a committish
+  ['git+ssh://git@some-host/user/repo#semver:^1.0.0::path:packages/a',
+    'sha',
+    'git+ssh://git@some-host/user/repo#sha::path:packages/a'],
+  ['github:user/repo#semver:^1.0.0::path:packages/a', 'sha', 'github:user/repo#sha::path:packages/a'],
+  // nested subdirectories keep every segment
+  ['github:user/repo#othersha::path:packages/scope/plugin',
+    'sha',
+    'github:user/repo#sha::path:packages/scope/plugin'],
 ]
 
 t.test('matches expected committish-stripping results', t => {
@@ -44,6 +70,30 @@ t.test('matches expected committish-stripping results', t => {
   for (const [spec, sha, result] of cases) {
     t.equal(addGitSha(npa(spec), sha), result, `${spec} + ${sha} = ${result}`)
   }
+})
+
+t.test('resolved subdirectory specs round trip back through npa', t => {
+  const specs = [
+    'git+ssh://git@some-host/user/repo#main::path:packages/a',
+    'github:user/repo#main::path:packages/a',
+    'git+https://git@github.com/user/repo#main::path:packages/a',
+    'git+https://github.com/user/repo#main::path:packages/a',
+    'git+ssh://git@github.com/user/repo#main::path:packages/scope/plugin',
+  ]
+  t.plan(specs.length * 2)
+  for (const spec of specs) {
+    const parsed = npa(spec)
+    const resolved = npa(addGitSha(parsed, 'sha'))
+    t.equal(resolved.gitSubdir, parsed.gitSubdir, `${spec} keeps its subdirectory`)
+    t.equal(resolved.gitCommittish, 'sha', `${spec} resolves to the new sha`)
+  }
+})
+
+t.test('leaves specs without a subdirectory untouched', t => {
+  // a plain object exercises the non-hosted branch with no gitSubdir at all
+  const spec = { hosted: null, rawSpec: 'git+ssh://git@some-host/user/repo#main' }
+  t.equal(addGitSha(spec, 'sha'), 'git+ssh://git@some-host/user/repo#sha')
+  t.end()
 })
 
 t.test('strips committish from a malicious rawSpec without catastrophic backtracking (CVE-2026-9496)', t => {
