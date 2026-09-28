@@ -411,6 +411,31 @@ t.test('verifySignatures rejects signed manifest replayed from another version',
   )
 })
 
+t.test('verifySignatures rejects a mismatched manifest id', async t => {
+  const manifest = signedNamespaceTest()
+  manifest._id = 'another-package@1.0.0'
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/@isaacs%2fnamespace-test')
+    .reply(200, replayPackument('@isaacs/namespace-test', { '1.0.0': manifest }))
+
+  const f = new RegistryFetcher('@isaacs/namespace-test@1.0.0', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifySignatures: true,
+    ...npmjsKeys,
+  })
+  return t.rejects(
+    f.manifest(),
+    {
+      code: 'EMANIFESTMISMATCH',
+      // eslint-disable-next-line max-len
+      message: '@isaacs/namespace-test@1.0.0 registry manifest has mismatched id: expected @isaacs/namespace-test@1.0.0 but got another-package@1.0.0',
+      expected: '@isaacs/namespace-test@1.0.0',
+      found: 'another-package@1.0.0',
+    }
+  )
+})
+
 t.test('verifySignatures rejects signed manifest replayed into another version alongside the real one', async t => {
   // the genuine 1.0.0 entry is also present, so only the listing key reveals the replay
   tnock(t, 'https://registry.npmjs.org')
