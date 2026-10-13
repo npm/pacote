@@ -746,9 +746,17 @@ t.test('handle it when prepared git deps depend on each other', { skip: isWindow
 
     process.env._PACOTE_TEST_PATH_ = dirname(__dirname)
     process.env._PACOTE_TEST_OPTS_ = JSON.stringify(opts)
+    process.env._PACOTE_TEST_ENV_ = 'preserved'
+    process.env.npm_config_allow_scripts = 'lowercase'
+    process.env.npm_config_userconfig = '/tmp/user.npmrc'
+    process.env.NPM_CONFIG_ALLOW_SCRIPTS = 'uppercase'
     t.teardown(() => {
       delete process.env._PACOTE_TEST_PATH_
       delete process.env._PACOTE_TEST_OPTS_
+      delete process.env._PACOTE_TEST_ENV_
+      delete process.env.npm_config_allow_scripts
+      delete process.env.npm_config_userconfig
+      delete process.env.NPM_CONFIG_ALLOW_SCRIPTS
     })
 
     for (const project of ['cycle-a', 'cycle-b']) {
@@ -778,6 +786,12 @@ t.test('handle it when prepared git deps depend on each other', { skip: isWindow
         log.argv.includes('--global=false'),
         'inner npm install is invoked with --global=false'
       )
+      t.strictSame(log.allowScriptsEnv, {},
+        'allow-scripts config is not forwarded as an environment override')
+      t.equal(log.preservedEnv, 'preserved',
+        'unrelated environment variables are preserved')
+      t.equal(log.userConfig, '/tmp/user.npmrc',
+        'the user config remains available to the inner install')
       // our rudimentary package manager dumps the deps into the pkg root
       // but it doesn't get installed once the loop is detected.
       const base = basename(local)
