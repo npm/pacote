@@ -5,6 +5,7 @@ const mr = require('npm-registry-mock')
 const tnock = require('./fixtures/tnock')
 // Stub out sigstore verification for testing to avoid needing to refresh the tuf cache
 const RegistryFetcher = require('../lib/registry.js')
+const npa = require('npm-package-arg')
 
 const MockedRegistryFetcher = t.mock('../lib/registry.js', {
   sigstore: {
@@ -311,6 +312,240 @@ t.test('verifySignatures invalid signature', async t => {
       integrity: 'sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==',
     }
   )
+})
+
+// A genuinely signed manifest for @isaacs/namespace-test@1.0.0, used to
+// simulate a registry replaying valid signed metadata under another identity.
+const signedNamespaceTest = () => ({
+  name: '@isaacs/namespace-test',
+  version: '1.0.0',
+  dist: {
+    // eslint-disable-next-line max-len
+    integrity: 'sha512-5ZYe1LgwHIaag0p9loMwsf5N/wJ4XAuHVNhSO+qulQOXWnyJVuco6IZjo+5u4ZLF/GimdHJcX+QK892ONfOCqQ==',
+    tarball: 'https://registry.npmjs.org/@isaacs/namespace-test/-/namespace-test-1.0.0.tgz',
+    signatures: [{
+      keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+      // eslint-disable-next-line max-len
+      sig: 'MEQCIHXwKYe70+xcDOvFhM1etZQFUKEwz9VarppUbp5/Ie1+AiAM7aZcT1a2JR0oF/XwjNb13YEHwiagnDapLgYbklRvtA==',
+    }],
+  },
+})
+
+const npmjsKeys = {
+  [`//registry.npmjs.org/:_keys`]: [{
+    expires: null,
+    keyid: 'SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA',
+    keytype: 'ecdsa-sha2-nistp256',
+    scheme: 'ecdsa-sha2-nistp256',
+    // eslint-disable-next-line max-len
+    key: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==',
+    // eslint-disable-next-line max-len
+    pemkey: '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg==\n-----END PUBLIC KEY-----',
+  }],
+}
+
+const replayPackument = (name, versions, extra = {}) => ({
+  name,
+  'dist-tags': { latest: Object.keys(versions)[0] },
+  versions,
+  ...extra,
+})
+
+t.test('verifySignatures accepts signed manifest served under its own identity', async t => {
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/@isaacs%2fnamespace-test')
+    .reply(200, replayPackument('@isaacs/namespace-test', { '1.0.0': signedNamespaceTest() }))
+
+  const f = new RegistryFetcher('@isaacs/namespace-test@1.0.0', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifySignatures: true,
+    ...npmjsKeys,
+  })
+  const mani = await f.manifest()
+  t.equal(mani._id, '@isaacs/namespace-test@1.0.0')
+  t.same(mani._signatures, signedNamespaceTest().dist.signatures)
+})
+
+t.test('verifySignatures rejects signed manifest replayed from another package', async t => {
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/victim')
+    .reply(200, replayPackument('victim', { '1.0.0': signedNamespaceTest() }))
+
+  const f = new RegistryFetcher('victim@1.0.0', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifySignatures: true,
+    ...npmjsKeys,
+  })
+  return t.rejects(
+    f.manifest(),
+    {
+      code: 'EMANIFESTMISMATCH',
+      // eslint-disable-next-line max-len
+      message: 'victim registry manifest has mismatched package name: expected victim but got @isaacs/namespace-test@1.0.0',
+      expected: 'victim',
+      found: '@isaacs/namespace-test@1.0.0',
+    }
+  )
+})
+
+t.test('verifySignatures rejects signed manifest replayed from another version', async t => {
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/@isaacs%2fnamespace-test')
+    .reply(200, replayPackument('@isaacs/namespace-test', { '2.0.0': signedNamespaceTest() }))
+
+  const f = new RegistryFetcher('@isaacs/namespace-test@2.0.0', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifySignatures: true,
+    ...npmjsKeys,
+  })
+  return t.rejects(
+    f.manifest(),
+    {
+      code: 'EMANIFESTMISMATCH',
+      // eslint-disable-next-line max-len
+      message: '@isaacs/namespace-test@1.0.0 registry manifest has mismatched version: listed in the packument as 2.0.0',
+      expected: ['2.0.0'],
+      found: '@isaacs/namespace-test@1.0.0',
+    }
+  )
+})
+
+t.test('verifySignatures rejects a mismatched manifest id', async t => {
+  const manifest = signedNamespaceTest()
+  manifest._id = 'another-package@1.0.0'
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/@isaacs%2fnamespace-test')
+    .reply(200, replayPackument('@isaacs/namespace-test', { '1.0.0': manifest }))
+
+  const f = new RegistryFetcher('@isaacs/namespace-test@1.0.0', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifySignatures: true,
+    ...npmjsKeys,
+  })
+  return t.rejects(
+    f.manifest(),
+    {
+      code: 'EMANIFESTMISMATCH',
+      // eslint-disable-next-line max-len
+      message: '@isaacs/namespace-test@1.0.0 registry manifest has mismatched id: expected @isaacs/namespace-test@1.0.0 but got another-package@1.0.0',
+      expected: '@isaacs/namespace-test@1.0.0',
+      found: 'another-package@1.0.0',
+    }
+  )
+})
+
+t.test('verifySignatures rejects signed manifest replayed into another version alongside the real one', async t => {
+  // the genuine 1.0.0 entry is also present, so only the listing key reveals the replay
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/@isaacs%2fnamespace-test')
+    .reply(200, replayPackument('@isaacs/namespace-test', {
+      '2.0.0': signedNamespaceTest(),
+      '1.0.0': signedNamespaceTest(),
+    }))
+
+  const f = new RegistryFetcher('@isaacs/namespace-test@2.0.0', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifySignatures: true,
+    ...npmjsKeys,
+  })
+  return t.rejects(f.manifest(), { code: 'EMANIFESTMISMATCH', expected: ['2.0.0'] })
+})
+
+t.test('verifySignatures rejects signed manifest replayed into staged versions', async t => {
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/@isaacs%2fnamespace-test')
+    .reply(200, replayPackument('@isaacs/namespace-test', {}, {
+      stagedVersions: { versions: { '2.0.0': signedNamespaceTest() } },
+    }))
+
+  const f = new RegistryFetcher('@isaacs/namespace-test@2.0.0', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifySignatures: true,
+    includeStaged: true,
+    ...npmjsKeys,
+  })
+  return t.rejects(f.manifest(), { code: 'EMANIFESTMISMATCH', expected: ['2.0.0'] })
+})
+
+t.test('verifyAttestations alone enables the manifest identity check', async t => {
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/victim')
+    .reply(200, replayPackument('victim', { '1.0.0': signedNamespaceTest() }))
+
+  const f = new RegistryFetcher('victim', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifyAttestations: true,
+  })
+  return t.rejects(f.manifest(), { code: 'EMANIFESTMISMATCH' })
+})
+
+t.test('manifest identity is not checked without verification', async t => {
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/victim')
+    .reply(200, replayPackument('victim', { '1.0.0': signedNamespaceTest() }))
+
+  const f = new RegistryFetcher('victim@1.0.0', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+  })
+  const mani = await f.manifest()
+  t.equal(mani._id, '@isaacs/namespace-test@1.0.0', 'existing behavior is preserved')
+})
+
+t.test('verifySignatures checks aliases against the real package name', async t => {
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/@isaacs%2fnamespace-test')
+    .reply(200, replayPackument('@isaacs/namespace-test', { '1.0.0': signedNamespaceTest() }))
+
+  // Fetcher.get() hands aliases to RegistryFetcher as their subSpec
+  const { subSpec } = npa('myalias@npm:@isaacs/namespace-test@1.0.0')
+  const f = new RegistryFetcher(subSpec, {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifySignatures: true,
+    ...npmjsKeys,
+  })
+  const mani = await f.manifest()
+  t.equal(mani._id, '@isaacs/namespace-test@1.0.0')
+  t.ok(mani._signatures)
+})
+
+t.test('verifySignatures accepts matching manifest copied by pickManifest', async t => {
+  tnock(t, 'https://registry.npmjs.org')
+    .get('/@isaacs%2fnamespace-test')
+    .reply(200, replayPackument('@isaacs/namespace-test', { '1.0.0': signedNamespaceTest() }, {
+      policyRestrictions: { versions: {} },
+    }))
+
+  const f = new RegistryFetcher('@isaacs/namespace-test@1.0.0', {
+    registry: 'https://registry.npmjs.org',
+    cache,
+    verifySignatures: true,
+    // makes npm-pick-manifest return a shallow copy of the version entry
+    avoid: '1.0.0',
+    ...npmjsKeys,
+  })
+  const mani = await f.manifest()
+  t.equal(mani._id, '@isaacs/namespace-test@1.0.0')
+  t.ok(mani._shouldAvoid)
+  t.ok(mani._signatures)
+})
+
+t.test('verifySignatures accepts matching manifest with nothing to verify', async t => {
+  const f = new RegistryFetcher('no-tarball', {
+    registry,
+    cache,
+    verifySignatures: true,
+  })
+  const mani = await f.manifest()
+  t.equal(mani._id, 'no-tarball@1.2.3')
 })
 
 t.test('verifySignatures no valid key', async t => {
