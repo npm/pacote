@@ -1,5 +1,12 @@
 # Changelog
 
+## [22.0.1](https://github.com/npm/pacote/compare/v22.0.0...v22.0.1) (2026-10-12)
+### Bug Fixes
+* [`c6edb33`](https://github.com/npm/pacote/commit/c6edb334639a3f992b94ba5c032e199ff1f3ddbb) [#516](https://github.com/npm/pacote/pull/516) verify registry manifest identity (@martinrrm, @Copilot)
+### Chores
+* [`c82bdcd`](https://github.com/npm/pacote/commit/c82bdcdd8010a9a87c95e1e09b0ba51322b4f93f) [#511](https://github.com/npm/pacote/pull/511) bump @npmcli/arborist from 9.9.0 to 10.0.1 (#511) (@dependabot[bot])
+* [`3b5c462`](https://github.com/npm/pacote/commit/3b5c462a96326fe7c88dc46312122ea720194179) [#507](https://github.com/npm/pacote/pull/507) bump @npmcli/template-oss from 5.1.0 to 5.1.1 (#507) (@dependabot[bot], @npm-cli-bot)
+
 ## [22.0.0](https://github.com/npm/pacote/compare/v21.5.0...v22.0.0) (2026-06-15)
 ### ⚠️ BREAKING CHANGES
 * `pacote` now supports node `^22.22.2 || ^24.15.0 || >=26.0.0`
