@@ -1719,3 +1719,108 @@ t.test('packument contentLength from registry', async t => {
   const p = await f.packument()
   t.equal(p._contentLength, undefined, 'content length is undefined from registry requests')
 })
+
+const npmjs = 'https://registry.npmjs.org'
+// like the public registry, let packuments be cached for five minutes
+const cacheHeaders = { 'cache-control': 'public, max-age=300' }
+const mockPackument = (t, name, ...versions) => tnock(t, npmjs)
+  .get(`/${name}`)
+  .reply(200, {
+    name,
+    'dist-tags': { latest: versions[versions.length - 1] },
+    versions: Object.fromEntries(versions.map(version => [version, {
+      name,
+      version,
+      dist: { tarball: `${npmjs}/${name}/-/${name}-${version}.tgz` },
+    }])),
+  }, cacheHeaders)
+
+// fill a new local cache with a packument from before 2.0.0 was published
+const seedCache = async (t, name) => {
+  const localCache = t.testdir()
+  mockPackument(t, name, '1.0.0')
+  await new RegistryFetcher(`${name}@1.0.0`, { registry: npmjs, cache: localCache }).manifest()
+  return localCache
+}
+
+t.test('preferOffline revalidates a cached packument on ETARGET', async t => {
+  const localCache = await seedCache(t, 'prefer-offline')
+  mockPackument(t, 'prefer-offline', '1.0.0', '2.0.0')
+  const f = new RegistryFetcher('prefer-offline@^2.0.0', {
+    registry: npmjs,
+    cache: localCache,
+    preferOffline: true,
+  })
+  t.match(await f.manifest(), { version: '2.0.0' })
+  const offline = new RegistryFetcher('prefer-offline@2.0.0', {
+    registry: npmjs,
+    cache: localCache,
+    offline: true,
+  })
+  t.match(await offline.manifest(), { version: '2.0.0' }, 'local cache was updated')
+})
+
+t.test('fresh cached packument is revalidated on ETARGET', async t => {
+  const localCache = await seedCache(t, 'still-fresh')
+  mockPackument(t, 'still-fresh', '1.0.0', '2.0.0')
+  const f = new RegistryFetcher('still-fresh@2.0.0', { registry: npmjs, cache: localCache })
+  t.match(await f.manifest(), { version: '2.0.0' })
+})
+
+t.test('packumentCache entry is revalidated on ETARGET', async t => {
+  const localCache = await seedCache(t, 'in-memory')
+  const packumentCache = new Map()
+  const opts = { registry: npmjs, cache: localCache, packumentCache, preferOffline: true }
+  await new RegistryFetcher('in-memory@1.0.0', opts).manifest()
+  mockPackument(t, 'in-memory', '1.0.0', '2.0.0')
+  t.match(await new RegistryFetcher('in-memory@2.0.0', opts).manifest(), { version: '2.0.0' })
+  t.ok(packumentCache.get(`corgi:${npmjs}/in-memory`).versions['2.0.0'],
+    'packumentCache has the revalidated packument')
+})
+
+t.test('revalidation keeps going when corgis are not supported', async t => {
+  const localCache = await seedCache(t, 'no-corgis')
+  tnock(t, npmjs)
+    .matchHeader('accept', /application\/vnd\.npm\.install-v1\+json/)
+    .get('/no-corgis')
+    .reply(404, { error: 'corgi not found' })
+  mockPackument(t, 'no-corgis', '1.0.0', '2.0.0')
+  const f = new RegistryFetcher('no-corgis@^2.0.0', {
+    registry: npmjs,
+    cache: localCache,
+    preferOffline: true,
+  })
+  t.match(await f.manifest(), { version: '2.0.0' })
+  t.equal(f.fullMetadata, true, 'fell back to the full packument')
+})
+
+t.test('cached packument is revalidated only once on ETARGET', async t => {
+  const localCache = await seedCache(t, 'not-published')
+  mockPackument(t, 'not-published', '1.0.0')
+  const f = new RegistryFetcher('not-published@2.0.0', {
+    registry: npmjs,
+    cache: localCache,
+    preferOffline: true,
+  })
+  await t.rejects(f.manifest(), { code: 'ETARGET' })
+})
+
+t.test('offline does not revalidate on ETARGET', async t => {
+  const localCache = await seedCache(t, 'offline')
+  const f = new RegistryFetcher('offline@2.0.0', {
+    registry: npmjs,
+    cache: localCache,
+    offline: true,
+  })
+  await t.rejects(f.manifest(), { code: 'ETARGET' })
+})
+
+t.test('packument from the registry is not revalidated on ETARGET', async t => {
+  mockPackument(t, 'from-registry', '1.0.0')
+  const f = new RegistryFetcher('from-registry@2.0.0', {
+    registry: npmjs,
+    cache: t.testdir(),
+    preferOffline: true,
+  })
+  await t.rejects(f.manifest(), { code: 'ETARGET' })
+})
