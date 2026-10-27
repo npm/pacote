@@ -1,5 +1,11 @@
 # Changelog
 
+## [19.0.3](https://github.com/npm/pacote/compare/v19.0.2...v19.0.3) (2026-10-26)
+### Bug Fixes
+* [`0f5b096`](https://github.com/npm/pacote/commit/0f5b096c7bb6ba369ad00523a0e5713ec4a85a05) [#520](https://github.com/npm/pacote/pull/520) verify registry manifest identity (@Copilot)
+### Chores
+* [`38c3fd0`](https://github.com/npm/pacote/commit/38c3fd018e645b7cd8f3ea49d7353763d641cd66) [#520](https://github.com/npm/pacote/pull/520) test v19 maintenance release configuration (@Copilot)
+
 ## [19.0.2](https://github.com/npm/pacote/compare/v19.0.1...v19.0.2) (2026-03-06)
 ### Dependencies
 * [`bf6e354`](https://github.com/npm/pacote/commit/bf6e35458e054232f476afab7656548f54bfe7e6) [#459](https://github.com/npm/pacote/pull/459) `tar@7.5.10`
