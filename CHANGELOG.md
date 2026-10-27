@@ -1,5 +1,11 @@
 # Changelog
 
+## [21.5.2](https://github.com/npm/pacote/compare/v21.5.1...v21.5.2) (2026-10-26)
+### Bug Fixes
+* [`9f8d5aa`](https://github.com/npm/pacote/commit/9f8d5aa7077e2df1ffa1e7c056f6273a4b64bd91) [#521](https://github.com/npm/pacote/pull/521) verify registry manifest identity (@Copilot)
+### Chores
+* [`282b5b7`](https://github.com/npm/pacote/commit/282b5b7656737cd59a57f17860b843d910799587) [#521](https://github.com/npm/pacote/pull/521) configure v21 maintenance release workflows (@Copilot)
+
 ## [21.5.1](https://github.com/npm/pacote/compare/v21.5.0...v21.5.1) (2026-06-09)
 ### Bug Fixes
 * [`627a7dc`](https://github.com/npm/pacote/commit/627a7dc1a214d857472a13b48e42559c75288c9e) [#499](https://github.com/npm/pacote/pull/499) avoid ReDoS in addGitSha committish stripping (@owlstronaut)
