@@ -1,5 +1,9 @@
 # Changelog
 
+## [21.5.3](https://github.com/npm/pacote/compare/v21.5.2...v21.5.3) (2026-11-03)
+### Bug Fixes
+* [`6377643`](https://github.com/npm/pacote/commit/6377643e43469b73be42a4943ee352177aee1b02) [#529](https://github.com/npm/pacote/pull/529) respect ignoreScripts option for git dependencies (#529) (@martinrrm, Michael Smith)
+
 ## [21.5.2](https://github.com/npm/pacote/compare/v21.5.1...v21.5.2) (2026-10-26)
 ### Bug Fixes
 * [`9f8d5aa`](https://github.com/npm/pacote/commit/9f8d5aa7077e2df1ffa1e7c056f6273a4b64bd91) [#521](https://github.com/npm/pacote/pull/521) verify registry manifest identity (@Copilot)
