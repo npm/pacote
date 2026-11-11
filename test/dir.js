@@ -3,7 +3,8 @@ const RUNS = []
 const t = require('tap')
 const Arborist = require('@npmcli/arborist')
 const fs = require('node:fs')
-const { relative, resolve, basename } = require('node:path')
+const { relative, resolve, basename, dirname } = require('node:path')
+const tar = require('tar')
 const cleanSnapshot = require('./helpers/clean-snapshot.js')
 const scriptMode = require('./helpers/script-mode.js')
 
@@ -152,6 +153,59 @@ t.test('make bins executable', async t => {
   }
   t.matchSnapshot(resTest, 'results of unpack')
   t.equal(fs.statSync(target + '/script.js').mode & scriptMode(), scriptMode())
+})
+
+t.test('packed bin modes', { skip: process.platform === 'win32' }, async t => {
+  const sourceModes = {
+    'cli.js': 0o644,
+    'bin/index.js': 0o644,
+    'package/bin/index.js': 0o644,
+    'src/cli.js': 0o644,
+    'src/bin/index.js': 0o644,
+    'src/package/bin/index.js': 0o644,
+    '@scope/cli.js': 0o644,
+    '@scope/other.js': 0o644,
+    'src/@scope/cli.js': 0o644,
+    'already-executable.js': 0o755,
+  }
+  for (const [name, bin, executable] of [
+    ['string', 'bin/index.js', ['bin/index.js']],
+    ['object', {
+      root: 'cli.js',
+      nested: 'bin/index.js',
+      package: 'package/bin/index.js',
+    }, ['cli.js', 'bin/index.js', 'package/bin/index.js']],
+    ['scoped', '@scope/cli.js', ['@scope/cli.js']],
+    ['none', undefined, []],
+  ]) {
+    await t.test(name, async t => {
+      const dir = t.testdir({
+        'package.json': JSON.stringify({ name: 'bug', version: '1.2.3', bin }),
+      })
+      const expected = { ...sourceModes }
+      for (const path of executable) {
+        expected[path] = 0o755
+      }
+      for (const [path, mode] of Object.entries(sourceModes)) {
+        fs.mkdirSync(dirname(resolve(dir, path)), { recursive: true })
+        fs.writeFileSync(resolve(dir, path), `#!/usr/bin/env node\nconsole.log('${path}')\n`)
+        fs.chmodSync(resolve(dir, path), mode)
+      }
+
+      const f = new DirFetcher(`file:${dir}`, { tree: await loadActual(dir) })
+      const archive = resolve(me, `${name}-bins.tgz`)
+      await f.tarballFile(archive)
+      const modes = {}
+      await tar.t({ file: archive, onentry: entry => modes[entry.path] = entry.mode })
+
+      for (const [path, mode] of Object.entries(sourceModes)) {
+        t.equal(modes[`package/${path}`], expected[path], `${path} archive mode`)
+        t.equal(fs.statSync(resolve(dir, path)).mode & 0o777, mode, `${path} source mode`)
+        t.equal(fs.readFileSync(resolve(dir, path), 'utf8'),
+          `#!/usr/bin/env node\nconsole.log('${path}')\n`, `${path} source content`)
+      }
+    })
+  }
 })
 
 t.test('exposes tarCreateOptions method', async t => {

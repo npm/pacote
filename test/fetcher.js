@@ -11,6 +11,7 @@ const FileFetcher = require('../lib/file.js')
 const abbrevMani = require('./fixtures/abbrev-manifest-min.json')
 const cleanSnapshot = require('./helpers/clean-snapshot.js')
 const scriptMode = require('./helpers/script-mode.js')
+const tar = require('tar')
 
 const byDigest = cacache.get.stream.byDigest
 
@@ -579,6 +580,30 @@ t.test('make bins executable', async t => {
   const res = await f.extract(target)
   t.matchSnapshot(res, 'results of unpack')
   t.equal(fs.statSync(target + '/script.js').mode & scriptMode(), scriptMode())
+})
+
+t.test('make nested bins executable under any archive prefix', {
+  skip: process.platform === 'win32',
+}, async t => {
+  const manifest = { name: 'bug', version: '1.2.3', bin: 'package/bin/index.js' }
+  const dir = t.testdir({
+    'package.json': JSON.stringify(manifest),
+    package: { bin: { 'index.js': '#!/usr/bin/env node\n' } },
+    src: { package: { bin: { 'index.js': '#!/usr/bin/env node\n' } } },
+  })
+  const paths = ['package/bin/index.js', 'src/package/bin/index.js']
+  for (const path of paths) {
+    fs.chmodSync(resolve(dir, path), 0o644)
+  }
+  const archive = resolve(me, 'arbitrary-prefix.tgz')
+  await tar.c({ cwd: dir, file: archive, prefix: 'arbitrary-prefix/' }, paths)
+  const f = new FileFetcher(archive, { fmode: 0o644, umask: 0o022 })
+  // Registry and git fetchers know the manifest before extracting.
+  f.package = manifest
+  const target = resolve(me, 'arbitrary-prefix')
+  await f.extract(target)
+  t.equal(fs.statSync(resolve(target, paths[0])).mode & 0o777, 0o755, 'declared bin')
+  t.equal(fs.statSync(resolve(target, paths[1])).mode & 0o777, 0o644, 'unrelated nested file')
 })
 
 t.test('set integrity, pick default algo', t => {
