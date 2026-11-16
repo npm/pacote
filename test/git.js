@@ -79,6 +79,7 @@ const submodsRemote = `git://localhost:${gitPort}/submodule-repo`
 const workspacesRemote = `git://localhost:${gitPort}/workspaces-repo`
 const prepackRemote = `git://localhost:${gitPort}/prepack-repo`
 const installScriptRemote = `git://localhost:${gitPort}/install-script-repo`
+const extensionRemote = `git://localhost:${gitPort}/extension-repo`
 
 const fixtures = resolve(__dirname, 'fixtures')
 const abbrev = resolve(fixtures, 'abbrev-1.1.1.tgz')
@@ -340,6 +341,24 @@ t.test('setup', { bail: true, skip: isWindows && 'posix only' }, t => {
       })))
       .then(() => git('add', 'package.json'))
       .then(() => git('commit', '-m', 'package.json'))
+  })
+
+  t.test('create a repo with an .npm-extension file', () => {
+    const extensionRepo = resolve(me, 'extension-repo')
+    const git = (...cmd) => spawnGit(cmd, { cwd: extensionRepo })
+    const write = (f, c) => fs.writeFileSync(`${extensionRepo}/${f}`, c)
+    return mkdir(extensionRepo, { recursive: true })
+      .then(() => git('init'))
+      .then(() => write('package.json', JSON.stringify({
+        name: 'extension-root',
+        version: '1.0.0',
+      })))
+      .then(() => write('.npm-extension.cjs', [
+        `require('fs').writeFileSync(${JSON.stringify(resolve(me, 'extension-ran'))}, 'ran')`,
+        'module.exports.transformManifest = (pkg) => pkg',
+      ].join('\n')))
+      .then(() => git('add', '.'))
+      .then(() => git('commit', '-m', 'extension repo'))
   })
 
   t.test('hosted service', t => {
@@ -865,6 +884,18 @@ t.test('ignoreScripts: prepare phase is skipped for git deps with workspaces',
       () => fs.statSync(`${extract}/a/foo`),
       { code: 'ENOENT' },
       'prepare phase did not run during extract'
+    )
+  })
+
+t.test('a git dependency .npm-extension is never loaded',
+  { skip: isWindows && 'posix only' }, async t => {
+    const g = new GitFetcher(extensionRemote, { ...opts, ignoreScripts: true })
+    const extract = resolve(me, 'extract-extension')
+    await g.extract(extract)
+    t.throws(
+      () => fs.statSync(resolve(me, 'extension-ran')),
+      { code: 'ENOENT' },
+      'extension did not run during extract'
     )
   })
 
