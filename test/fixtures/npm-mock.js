@@ -9,6 +9,7 @@ const data = {
   argv,
   noPrepare: pnp ? pnp.split('\\n') : [],
   cwd: process.cwd(),
+  ignoreExtension: env.npm_config_ignore_extension || null,
 }
 
 if (data.noPrepare.length > 5) {

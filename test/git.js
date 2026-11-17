@@ -352,6 +352,10 @@ t.test('setup', { bail: true, skip: isWindows && 'posix only' }, t => {
       .then(() => write('package.json', JSON.stringify({
         name: 'extension-root',
         version: '1.0.0',
+        dependencies: {},
+        scripts: {
+          prepare: touchFile,
+        },
       })))
       .then(() => write('.npm-extension.cjs', [
         `require('fs').writeFileSync(${JSON.stringify(resolve(me, 'extension-ran'))}, 'ran')`,
@@ -896,6 +900,66 @@ t.test('a git dependency .npm-extension is never loaded',
       () => fs.statSync(resolve(me, 'extension-ran')),
       { code: 'ENOENT' },
       'extension did not run during extract'
+    )
+  })
+
+t.test('prepare phase for a git dependency is run with --ignore-extension',
+  { skip: isWindows && 'posix only' }, async t => {
+    // the extension repo has a prepare script, so with scripts enabled
+    // the clone is prepared by spawning the npm bin before it is packed.
+    // that inner install treats the clone as its root project, so it
+    // must be told to ignore the clone's .npm-extension.  the mocked
+    // bins record the argv they were spawned with, the same way the
+    // prepared git deps cycle test above verifies --global=false.
+    const mock = fs.readFileSync(resolve(fixtures, 'npm-mock.js')).toString()
+    const path = t.testdir({
+      'npm-cli.js': mock,
+      'yarn-mock.js': mock,
+    })
+
+    process.env._PACOTE_TEST_PATH_ = dirname(__dirname)
+    process.env._PACOTE_TEST_OPTS_ = JSON.stringify(opts)
+    t.teardown(() => {
+      delete process.env._PACOTE_TEST_PATH_
+      delete process.env._PACOTE_TEST_OPTS_
+    })
+
+    const npmBin = process.platform !== 'win32' ?
+      `${path}/npm-cli.js` : `${path}\\npm-cli.js`
+    const g = new GitFetcher(extensionRemote, { ...opts, npmBin })
+    const extract = resolve(me, 'extract-extension-prepare')
+    await g.extract(extract)
+    const log = JSON.parse(fs.readFileSync(`${extract}/log`, 'utf8'))
+    t.ok(
+      log.argv.includes('--ignore-extension'),
+      'inner npm install is invoked with --ignore-extension'
+    )
+    t.equal(
+      log.ignoreExtension, 'true',
+      'inner npm install env sets npm_config_ignore_extension'
+    )
+    t.throws(
+      () => fs.statSync(resolve(me, 'extension-ran')),
+      { code: 'ENOENT' },
+      'extension did not run during extract'
+    )
+
+    // another package manager's bin does not load .npm-extension, and
+    // must not be passed the npm only flag either.  the env is still
+    // set, so an npm wrapper under any name would be covered by it.
+    const yarnBin = process.platform !== 'win32' ?
+      `${path}/yarn-mock.js` : `${path}\\yarn-mock.js`
+    const y = new GitFetcher(extensionRemote, { ...opts, npmBin: yarnBin })
+    const yarnExtract = resolve(me, 'extract-extension-prepare-yarn')
+    await y.extract(yarnExtract)
+    const yarnLog = JSON.parse(fs.readFileSync(`${yarnExtract}/log`, 'utf8'))
+    t.notOk(
+      yarnLog.argv.includes('--ignore-extension'),
+      'inner install with another bin is not invoked with --ignore-extension'
+    )
+    t.equal(
+      yarnLog.ignoreExtension, 'true',
+      'inner install env sets npm_config_ignore_extension for any bin'
     )
   })
 
