@@ -201,3 +201,34 @@ t.test('with prepare script and ignoreScripts true', async t => {
   await f.extract(me + '/prepare-ignore')
   t.ok(!shouldNotBePopulated)
 })
+
+t.test('ignoreExtension is passed to the Arborist that loads the tree', async t => {
+  const marker = resolve(me, 'extension-ran')
+  const dir = t.testdir({
+    'package.json': JSON.stringify({
+      name: 'ext-pkg',
+      version: '1.0.0',
+    }),
+    'index.js': 'module.exports = 1',
+    '.npm-extension.cjs': [
+      `require('fs').writeFileSync(${JSON.stringify(marker)}, 'ran')`,
+      'module.exports.transformManifest = (pkg) => pkg',
+    ].join('\n'),
+  })
+  const spec = `file:${relative(process.cwd(), dir)}`
+
+  const ignored = new DirFetcher(spec, {
+    Arborist,
+    ignoreScripts: true,
+    ignoreExtension: true,
+  })
+  await ignored.extract(me + '/ext-ignored')
+  t.notOk(fs.existsSync(marker), 'extension did not run with ignoreExtension')
+
+  const allowed = new DirFetcher(spec, {
+    Arborist,
+    ignoreScripts: true,
+  })
+  await allowed.extract(me + '/ext-allowed')
+  t.ok(fs.existsSync(marker), 'extension ran without ignoreExtension')
+})
