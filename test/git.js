@@ -905,12 +905,6 @@ t.test('a git dependency .npm-extension is never loaded',
 
 t.test('prepare phase for a git dependency is run with --ignore-extension',
   { skip: isWindows && 'posix only' }, async t => {
-    // the extension repo has a prepare script, so with scripts enabled
-    // the clone is prepared by spawning the npm bin before it is packed.
-    // that inner install treats the clone as its root project, so it
-    // must be told to ignore the clone's .npm-extension.  the mocked
-    // bins record the argv they were spawned with, the same way the
-    // prepared git deps cycle test above verifies --global=false.
     const mock = fs.readFileSync(resolve(fixtures, 'npm-mock.js')).toString()
     const path = t.testdir({
       'npm-cli.js': mock,
@@ -944,9 +938,6 @@ t.test('prepare phase for a git dependency is run with --ignore-extension',
       'extension did not run during extract'
     )
 
-    // another package manager's bin does not load .npm-extension, and
-    // must not be passed the npm only flag either.  the env is still
-    // set, so an npm wrapper under any name would be covered by it.
     const yarnBin = process.platform !== 'win32' ?
       `${path}/yarn-mock.js` : `${path}\\yarn-mock.js`
     const y = new GitFetcher(extensionRemote, { ...opts, npmBin: yarnBin })
